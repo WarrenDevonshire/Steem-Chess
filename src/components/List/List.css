@@ -1,0 +1,9 @@
+.TeamList{
+    margin: 0 auto;
+    width: 960px;
+}
+
+.TeamList li{
+    color: #56D5FA;
+    text-align: left;
+}
