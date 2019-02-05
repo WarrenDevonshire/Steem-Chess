@@ -8,6 +8,9 @@ const List = () => (
             <li>
                 Warren Devonshire
             </li>
+            <li>
+                Daniel Haluszka
+            </li>
         </ol>
     </div>
 );
