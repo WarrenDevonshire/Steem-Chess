@@ -14,9 +14,13 @@ const List = () => (
             <li>
                 Troy Pastirko
             </li>
-
             <li>
                 Nisarg Brahmbhatt
+            <li>
+                Matt Halloran
+            </li>
+            <li>
+                Michael Naples
             </li>
         </ol>
     </div>
