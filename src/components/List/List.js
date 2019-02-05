@@ -9,6 +9,9 @@ const List = () => (
                 Warren Devonshire
             </li>
             <li>
+                Daniel Haluszka  
+            </li>
+            <li>
                 Troy Pastirko
             </li>
         </ol>
