@@ -15,6 +15,9 @@ const List = () => (
                 Troy Pastirko
             </li>
             <li>
+                Matt Halloran
+            </li>
+            <li>
                 Michael Naples
             </li>
         </ol>
