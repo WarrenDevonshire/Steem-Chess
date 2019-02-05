@@ -17,6 +17,9 @@ const List = () => (
             <li>
                 Matt Halloran
             </li>
+            <li>
+                Michael Naples
+            </li>
         </ol>
     </div>
 );
