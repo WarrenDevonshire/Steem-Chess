@@ -23,6 +23,9 @@ const List = () => (
             <li>
                 Michael Naples
             </li>
+            <li>
+                Alex Boyle
+            </li>
         </ol>
     </div>
 );
