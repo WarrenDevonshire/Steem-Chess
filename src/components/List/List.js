@@ -8,6 +8,24 @@ const List = () => (
             <li>
                 Warren Devonshire
             </li>
+            <li>
+                Daniel Haluszka
+            </li>
+            <li>
+                Troy Pastirko
+            </li>
+            <li>
+                Nisarg Brahmbhatt
+            </li>
+            <li>
+                Matt Halloran
+            </li>
+            <li>
+                Michael Naples
+            </li>
+            <li>
+                Alex Boyle
+            </li>
         </ol>
     </div>
 );
