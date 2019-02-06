@@ -16,11 +16,15 @@ const List = () => (
             </li>
             <li>
                 Nisarg Brahmbhatt
+            </li>
             <li>
                 Matt Halloran
             </li>
             <li>
                 Michael Naples
+            </li>
+            <li>
+                Alex Boyle
             </li>
         </ol>
     </div>
