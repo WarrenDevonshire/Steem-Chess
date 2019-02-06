@@ -16,6 +16,7 @@ const List = () => (
             </li>
             <li>
                 Nisarg Brahmbhatt
+            </li>
             <li>
                 Matt Halloran
             </li>
