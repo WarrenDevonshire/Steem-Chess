@@ -5,16 +5,17 @@ class Menubar extends Component{
     render(){
         return (  
             <div className="Menu">
-                <h1>Steem Chess</h1>
+                <h1 href="/Home">Steem Chess</h1>
                 <ul>
-                    <li>Play</li>
-                    <li>Trending</li>
-                    <li>New</li>
-                    <li>Hot</li>                    
+                    <li href="/Play">Play</li>
+                    <li href="/Trending">Trending</li>
+                    <li href="/New">New</li>
+                    <li href="/Hot">Hot</li>                    
                 </ul>
+            
                 <form>
                     <input type="text" placeholder="Search"/>
-                    <button type="submit"><i class='fa fa-search'></i></button>
+                    <button type="submit"></button>
                 </form>
             </div>
         )
