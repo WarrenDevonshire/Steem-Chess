@@ -11,13 +11,12 @@
 }
 
 .Menu form{
-    margin: 0;
-    float: right;
-    padding-left: 100px;
+    margin: 30;
+    padding-left: 1000px;
 }
 
 .Menu li{
-    background-color: gray;
+    font-size: 20px;
     list-style: none;
     display: inline;
     padding-left: 30px;
