@@ -5,6 +5,7 @@ import Header from '../shared/components/layout/Header';
 import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
 import List from './List/List';
+import ArticleFeed from '../shared/components/ArticleFeed/ArticleFeed';
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
 
         <Content>
           <Home />
+          <ArticleFeed />
         </Content>
         <List />
 
