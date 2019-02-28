@@ -1,19 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import logo from '../../images/logo.svg';
 
 // We created a component with a simple arrow function.
 const Header = props => {
     const {
-        title = 'Welcome to React',
+        title = 'Welcome to Steem-Chess',
         url = 'http://localhost:3000'
     } = props;
 
     return (
         <header className="App-header">
-            <a href={url}>
-                <img src={logo} className="App-logo" alt="logo" />
-            </a>
             <h1 className="App-title">{title}</h1>
         </header>
     );
