@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import Home from './Home/Home';
 import Header from '../shared/components/layout/Header';
 import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
-import List from './List/List';
 
 class App extends Component {
   render() {
@@ -13,9 +11,8 @@ class App extends Component {
         <Header title="Welcome to Steem-Chess" />
 
         <Content>
-          <Home />
+          <h1>This is a test.</h1>
         </Content>
-        <List />
 
         <Footer />
       </div>
