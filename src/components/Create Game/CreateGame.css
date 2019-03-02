@@ -46,7 +46,7 @@
     padding: 0;
 }
 
-.selectedItem {
+.selectedPiece {
     width: 100px;
     height: 100px;
     align-content: center;
@@ -58,7 +58,7 @@
     transition: border .2s;
 }
 
-.chessItem {
+.chessPiece {
     width: 100px;
     height: 100px;
     align-content: center;
@@ -70,7 +70,7 @@
     transition: border .2s;
 }
 
-.chessItem:hover {
+.chessPiece:hover {
     border: 4px solid #0099ff;
 }
 
