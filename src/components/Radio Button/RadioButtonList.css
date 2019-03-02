@@ -1,0 +1,49 @@
+.form {
+    white-space:nowrap;
+    overflow-x:hidden;
+    display: inline;
+}
+
+.horizontal {
+    margin: 0;
+    padding: 0;
+}
+
+.checked {
+    content: '';
+    position: relative;
+    left: 0;
+    top: 0;
+    height: 15px;
+    width: 15px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    border-width: 5px;
+    border-color: #4CAF50;
+    display: inline-block;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.unchecked {
+    content: '';
+    position: relative;
+    left: 0;
+    top: 0;
+    height: 12px;
+    width: 12px;
+    background-color: transparent;
+    border-radius: 50%;
+    border-width: 5px;
+    border-color: #4CAF50;
+    display: inline-block;
+}
+
+.label
+{
+    position: relative;
+    padding-left: 10px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+}

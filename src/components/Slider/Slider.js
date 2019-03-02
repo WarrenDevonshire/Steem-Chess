@@ -5,26 +5,27 @@ class Slider extends Component{
     constructor(props){
         super(props);
         this.state = {
-            value: 0
+            value: this.props.value
         }
-        this.setState({value:this.props.value});
     }
 
-    sliderDrag(e) {
+    valueChanged(e) {
         this.setState({value: e.target.value});
+        this.props.onValueChanged(e.target.value);
     }
 
     render(){
         return (
-            <div class="slidecontainer">
+            <div className="slidecontainer">
                 <p>{this.state.value} {this.props.unit}</p>
                 <input type="range" 
                     min={this.props.min} 
                     max={this.props.max} 
+                    step={this.props.step}
                     value={this.state.value} 
-                    class="slider" 
+                    className="slider" 
                     id="myRange"
-                    onChange={e => this.sliderDrag(e)}/>
+                    onChange={e => this.valueChanged(e)}/>
             </div>
         );
     }

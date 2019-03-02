@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './CreateGame.css'
 import Slider from '../Slider/Slider'
+import RadioButtonList from '../Radio Button/RadioButtonList'
 import WhitePiece from './Images/rook-white.png';
 import MixedPiece from './Images/rook-mixed.png';
 import BlackPiece from './Images/rook-black.png';
@@ -9,6 +10,8 @@ class CreateGame extends Component{
     constructor(props) {
         super(props)
         this.state = {
+          timeControlOptions: [[0, "Real Time"], [1, "Correspondence"]],
+          timeControlChosen: 0,
           pieceChosen: -1,
           startingColorText: "Starting Color",
           mode: 0,
@@ -16,6 +19,9 @@ class CreateGame extends Component{
           increment:  5
         }
         this.pieceChanged = this.pieceChanged.bind(this);
+        this.timePerSideChanged = this.timePerSideChanged.bind(this);
+        this.incrementChanged = this.incrementChanged.bind(this);
+        this.timeControlChosen = this.timeControlChosen.bind(this);
       }
       
     pieceChanged(index) {
@@ -39,6 +45,21 @@ class CreateGame extends Component{
         }
     }
 
+    timePerSideChanged(value) {
+        console.log(value);
+        this.setState({timePerSide:value});
+    }
+
+    incrementChanged(value) {
+        console.log(value);
+        this.setState({increment:value});
+    }
+
+    timeControlChosen(index) {
+        console.log(index);
+        this.setState({timeControlChosen:index});
+    }
+
     render(){
         return (
             <div className="CreateGame">
@@ -48,18 +69,25 @@ class CreateGame extends Component{
                 </div>
                 <div className="mainDiv">
                     <div className="box half">
-                    <hr noshade/>
+                    <RadioButtonList defaultIndex="0"
+                            options={this.state.timeControlOptions}
+                            onTimeControlChosen={this.timeControlChosen}/>
+                    <hr noshade="true"/>
                         <h3>Time Per Side</h3>
                         <Slider min="1"
                             max="10"
                             value={this.state.timePerSide}
-                            unit="Minutes"/>
+                            step="0.5"
+                            unit="Minutes"
+                            onValueChanged={this.timePerSideChanged}/>
                         <h3>Increment</h3>
                         <Slider min="1"
                             max="10"
                             value={this.state.increment}
-                            unit="Seconds"/>
-                        <hr noshade/>
+                            step="1"
+                            unit="Seconds"
+                            onValueChanged={this.incrementChanged}/>
+                        <hr noshade="true"/>
                         <h3>{this.state.startingColorText}</h3>
                         <PieceList onPieceChanged={this.pieceChanged}/>
                         <button>Start</button>
