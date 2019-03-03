@@ -12,9 +12,10 @@ class App extends Component {
         <Header title="Welcome to Steem-Chess" />
 
         <Content>
+          <h1>This is a test.</h1>
           <Menubar/>
         </Content>
-
+        
         <Footer />
       </div>
     );
