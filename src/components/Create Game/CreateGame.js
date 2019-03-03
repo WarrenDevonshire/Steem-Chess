@@ -111,12 +111,13 @@ class CreateGame extends Component{
                         <button>Start</button>
                     </div>
                     <div className="box half">
-                    <div>
+                    <div className="horizontal">
                     <label>Filter</label>
                             <ComboBox options={this.state.filterOptions}
                                     onSelectedChanged={this.filterChanged}/>
-                            <label>View</label>
                             <ToggleSwitch checked="false"
+                                falseText="Grid"
+                                trueText="asdf"
                                 onChange={this.joinViewChanged}/>
                     </div>
                             <hr noshade="true"/>
