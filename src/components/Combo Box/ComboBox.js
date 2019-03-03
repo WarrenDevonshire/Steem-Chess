@@ -20,11 +20,10 @@ class ComboBox extends Component {
     render() {
         var options = this.props.options.map(([index, text]) =>
             <option key={index}
-                className="option"
                 value={text}>{text}</option>
             )
         return (
-            <select className="select"
+            <select className="select green rounded"
                 onChange={e => this.optionClicked(e)}>
                 {options}
             </select>

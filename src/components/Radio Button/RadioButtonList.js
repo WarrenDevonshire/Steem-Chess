@@ -2,34 +2,34 @@ import React, {Component} from 'react';
 import './RadioButtonList.css'
 
 //Options should be passed in with the form:
-//[[id, value],[id, value],[id, value]]
+//[value, value, value]
 class RadioButtonList extends Component {
     constructor(props){
         super(props);
         this.state = {
-            indexChosen: this.props.defaultIndex,
+            valueChosen: this.props.defaultValue,
         }
     }
 
     optionClicked(e) {
         console.log(e);
-        this.setState({indexChosen:e.target.id});
+        this.setState({valueChosen:e.target.id});
         this.props.onTimeControlChosen(e.target.id);
     };
 
     render() {
-        var options = this.props.options.map(([index, tag]) =>
+        var options = this.props.options.map((tag) =>
         <span onClick={e => this.optionClicked(e)}>
-            <span key={index}
-                id={index}
+            <span key={tag.toString()}
+                id={tag.toString()}
                 onClick={e => this.optionClicked(e)}
-                className={this.state.indexChosen == index ? "checked" : "unchecked"}
+                className={this.state.valueChosen == tag ? "checked" : "unchecked"}
                 name="Time Control"
                 value={tag}/>
-            <label htmlFor={index} 
+            <label htmlFor={tag.toString()} 
                 className="label"
                 padding-right={this.props.labelPadding}
-                id={index}>{tag}
+                id={tag.toString()}>{tag}
             </label>
         </span>
             )

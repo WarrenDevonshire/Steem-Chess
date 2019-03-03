@@ -6,13 +6,14 @@ import ComboBox from '../Combo Box/ComboBox'
 import WhitePiece from './Images/rook-white.png';
 import MixedPiece from './Images/rook-mixed.png';
 import BlackPiece from './Images/rook-black.png';
+import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 
 class CreateGame extends Component{
     constructor(props) {
         super(props)
         this.state = {
-          timeControlOptions: [[0, "Real Time"], [1, "Correspondence"]],
-          timeControlChosen: 0,
+          timeControlOptions: ["Real Time", "Correspondence"],
+          timeControlChosen: "Real Time",
           pieceChosen: -1,
           startingColorText: "Starting Color",
           mode: 0,
@@ -27,6 +28,7 @@ class CreateGame extends Component{
         this.incrementChanged = this.incrementChanged.bind(this);
         this.timeControlChosen = this.timeControlChosen.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
+        this.joinViewChanged = this.joinViewChanged.bind(this);
       }
       
     pieceChanged(index) {
@@ -60,14 +62,19 @@ class CreateGame extends Component{
         this.setState({increment:value});
     }
 
-    timeControlChosen(index) {
-        console.log(index);
-        this.setState({timeControlChosen:index});
+    timeControlChosen(value) {
+        console.log(value);
+        this.setState({timeControlChosen:value});
     }
 
     filterChanged(value) {
         console.log(value);
         this.setState({filterValue:value});
+    }
+
+    joinViewChanged(e) {
+        console.log(e);
+        //TODO change join view type
     }
 
     render(){
@@ -79,7 +86,7 @@ class CreateGame extends Component{
                 </div>
                 <div className="mainDiv">
                     <div className="box half">
-                    <RadioButtonList defaultIndex="0"
+                    <RadioButtonList defaultValue={this.state.timeControlChosen}
                             options={this.state.timeControlOptions}
                             onTimeControlChosen={this.timeControlChosen}
                             labelPadding="100px"/>
@@ -104,13 +111,16 @@ class CreateGame extends Component{
                         <button>Start</button>
                     </div>
                     <div className="box half">
-                        <span>
-                            <label>Filter</label>
+                    <div>
+                    <label>Filter</label>
                             <ComboBox options={this.state.filterOptions}
                                     onSelectedChanged={this.filterChanged}/>
                             <label>View</label>
+                            <ToggleSwitch checked="false"
+                                onChange={this.joinViewChanged}/>
+                    </div>
                             <hr noshade="true"/>
-                        </span>
+                            <hr noshade="true"/>
                         <button>Join</button>
                     </div>
                 </div>
