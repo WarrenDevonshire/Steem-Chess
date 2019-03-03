@@ -79,6 +79,7 @@
     border-radius: 15px;
     background-repeat: repeat-y;
     padding-top: 20px;
+    //height: 555px;
 }
 
 .half {
@@ -98,10 +99,6 @@
     border: none;
 }
 
-.selectedRadio {
-
-}
-
-.unselectedRadio {
-
+.table {
+    
 }

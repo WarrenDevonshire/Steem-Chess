@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './CreateGame.css'
 import Slider from '../Slider/Slider'
 import RadioButtonList from '../Radio Button/RadioButtonList'
+import ComboBox from '../Combo Box/ComboBox'
 import WhitePiece from './Images/rook-white.png';
 import MixedPiece from './Images/rook-mixed.png';
 import BlackPiece from './Images/rook-black.png';
@@ -16,12 +17,16 @@ class CreateGame extends Component{
           startingColorText: "Starting Color",
           mode: 0,
           timePerSide: 5,
-          increment:  5
+          increment:  5,
+
+          filterOptions: [[0, "Most Recent"],[1, "Least Recent"]],
+          filterValue: ""
         }
         this.pieceChanged = this.pieceChanged.bind(this);
         this.timePerSideChanged = this.timePerSideChanged.bind(this);
         this.incrementChanged = this.incrementChanged.bind(this);
         this.timeControlChosen = this.timeControlChosen.bind(this);
+        this.filterChanged = this.filterChanged.bind(this);
       }
       
     pieceChanged(index) {
@@ -60,6 +65,11 @@ class CreateGame extends Component{
         this.setState({timeControlChosen:index});
     }
 
+    filterChanged(value) {
+        console.log(value);
+        this.setState({filterValue:value});
+    }
+
     render(){
         return (
             <div className="CreateGame">
@@ -71,7 +81,8 @@ class CreateGame extends Component{
                     <div className="box half">
                     <RadioButtonList defaultIndex="0"
                             options={this.state.timeControlOptions}
-                            onTimeControlChosen={this.timeControlChosen}/>
+                            onTimeControlChosen={this.timeControlChosen}
+                            labelPadding="100px"/>
                     <hr noshade="true"/>
                         <h3>Time Per Side</h3>
                         <Slider min="1"
@@ -93,7 +104,13 @@ class CreateGame extends Component{
                         <button>Start</button>
                     </div>
                     <div className="box half">
-                        
+                        <span>
+                            <label>Filter</label>
+                            <ComboBox options={this.state.filterOptions}
+                                    onSelectedChanged={this.filterChanged}/>
+                            <label>View</label>
+                            <hr noshade="true"/>
+                        </span>
                         <button>Join</button>
                     </div>
                 </div>

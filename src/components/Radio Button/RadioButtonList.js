@@ -19,8 +19,7 @@ class RadioButtonList extends Component {
 
     render() {
         var options = this.props.options.map(([index, tag]) =>
-        <div className="horizontal" 
-            onClick={e => this.optionClicked(e)}>
+        <span onClick={e => this.optionClicked(e)}>
             <span key={index}
                 id={index}
                 onClick={e => this.optionClicked(e)}
@@ -29,9 +28,10 @@ class RadioButtonList extends Component {
                 value={tag}/>
             <label htmlFor={index} 
                 className="label"
+                padding-right={this.props.labelPadding}
                 id={index}>{tag}
             </label>
-        </div>
+        </span>
             )
         return (
             <form className="form">
