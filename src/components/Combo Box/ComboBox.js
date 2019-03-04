@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './ComboBox.css'
 
 //Options should be passed in with the form:
-//[[id, text],[id, text],[id, text]]
+//[text, text, text]
 class ComboBox extends Component {
     constructor(props){
         super(props);
@@ -18,9 +18,9 @@ class ComboBox extends Component {
     };
 
     render() {
-        var options = this.props.options.map(([index, text]) =>
-            <option key={index}
-                value={text}>{text}</option>
+        var options = this.props.options.map((text) =>
+            <option key={text.toString()}
+                value={text.toString()}>{text}</option>
             )
         return (
             <select className="select green rounded"

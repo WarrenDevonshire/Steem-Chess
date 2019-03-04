@@ -18,15 +18,16 @@ class RadioButtonList extends Component {
     };
 
     render() {
-        var options = this.props.options.map((tag) =>
-        <span onClick={e => this.optionClicked(e)}>
-            <span key={tag.toString()}
+        var options = this.props.options.map((tag, i) =>
+        <span key={i}
+            onClick={e => this.optionClicked(e)}>
+            <span
                 id={tag.toString()}
                 onClick={e => this.optionClicked(e)}
-                className={this.state.valueChosen == tag ? "checked" : "unchecked"}
+                className={this.state.valueChosen === tag ? "checked" : "unchecked"}
                 name="Time Control"
                 value={tag}/>
-            <label htmlFor={tag.toString()} 
+            <label htmlFor={tag.uniqueId} 
                 className="label"
                 padding-right={this.props.labelPadding}
                 id={tag.toString()}>{tag}

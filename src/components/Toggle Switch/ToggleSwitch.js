@@ -39,8 +39,8 @@ class ToggleSwitch extends Component {
             onColor="#4CAF50"
             offHandleColor="#ffffff"
             onHandleColor="#ffffff"
-            checkedIcon=""
-            uncheckedIcon=""/>
+            checkedIcon={false}
+            uncheckedIcon={false}/>
       </label>
     );
   }
