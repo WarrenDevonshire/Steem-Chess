@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Menubar from '../Menu/Menubar';
 
 // We created a component with a simple arrow function.
 const Header = props => {
@@ -9,9 +10,12 @@ const Header = props => {
     } = props;
 
     return (
+        <div>
         <header className="App-header">
             <h1 className="App-title">{title}</h1>
+            <Menubar/>
         </header>
+        </div>
     );
 };
 

@@ -1,16 +1,20 @@
 import React, {Component} from 'react';
 import './Menubar.css';
+import {Link} from 'react-router-dom';
+
 
 class Menubar extends Component{
     render(){
         return (  
+            
+            
             <div className="Menu">
-                <h1 href="/Home">Steem Chess</h1>
+                <h1>Steem Chess</h1>
                 <ul>
-                    <li href="/Play">Play</li>
-                    <li href="/Trending">Trending</li>
-                    <li href="/New">New</li>
-                    <li href="/Hot">Hot</li>                    
+                    <li> <Link to="/Play">Play</Link></li>
+                    <li> <Link to="/">Trending</Link></li>
+                    <li> <Link to="/New">New</Link></li>
+                    <li> <Link to="/Hot">Hot</Link></li>                    
                 </ul>
             
                 <form>
@@ -18,6 +22,7 @@ class Menubar extends Component{
                     <button type="submit"></button>
                 </form>
             </div>
+            
         )
     }
 }
