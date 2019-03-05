@@ -80,7 +80,7 @@
     border-radius: 15px;
     background-repeat: repeat-y;
     padding-top: 20px;
-    //height: 555px;
+    height: 555px;
 }
 
 .half {
@@ -101,5 +101,6 @@
 }
 
 .table {
-
+    height: 418px;
+    margin-top: -10px;
 }

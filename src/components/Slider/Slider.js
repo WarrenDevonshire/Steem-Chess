@@ -5,7 +5,7 @@ class Slider extends Component{
     constructor(props){
         super(props);
         this.state = {
-            value: this.props.value
+            value: this.props.value ? this.props.value : 0
         }
     }
 
@@ -19,9 +19,9 @@ class Slider extends Component{
             <div className="slidecontainer">
                 <p>{this.state.value} {this.props.unit}</p>
                 <input type="range" 
-                    min={this.props.min} 
-                    max={this.props.max} 
-                    step={this.props.step}
+                    min={this.props.min ? this.props.min : 0} 
+                    max={this.props.max ? this.props.max : 100} 
+                    step={this.props.step ? this.props.step : 1}
                     value={this.state.value} 
                     className="slider" 
                     id="myRange"

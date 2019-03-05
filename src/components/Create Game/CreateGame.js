@@ -7,6 +7,8 @@ import WhitePiece from './Images/rook-white.png';
 import MixedPiece from './Images/rook-mixed.png';
 import BlackPiece from './Images/rook-black.png';
 import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 import Steem from 'steem';
 
 class CreateGame extends Component{
@@ -17,7 +19,6 @@ class CreateGame extends Component{
           timeControlChosen: "Real Time",
           pieceChosen: "",
           startingColorText: "Starting Color",
-          mode: 0,
           timePerSide: 5,
           increment:  5,
 
@@ -31,6 +32,7 @@ class CreateGame extends Component{
         this.filterChanged = this.filterChanged.bind(this);
         this.joinViewChanged = this.joinViewChanged.bind(this);
         this.startGame = this.startGame.bind(this);
+        this.joinGame = this.joinGame.bind(this);
       }
       
     pieceChanged(tag) {
@@ -67,9 +69,31 @@ class CreateGame extends Component{
     startGame(e) {
         console.log(e);
         console.log(Steem.api);
+        //TODO
         // Steem.api.broadcastBlock(e, function(err, response){
         // console.log(err, response);
         // });
+    }
+
+    grabJoinData() {
+        //TODO
+        return [{
+            name: 'John Smith',
+            type: 'Real Time',
+            time: '10-0',
+            posted: '2 minutes'
+        },
+        {
+            name: 'John Smith',
+            type: 'Real Time',
+            time: '10-0',
+            posted: '2 minutes'
+        }];
+    }
+
+    joinGame(e) {
+        console.log(e);
+        //TODO
     }
 
     render(){
@@ -110,12 +134,34 @@ class CreateGame extends Component{
                     <label>Filter</label>
                             <ComboBox options={this.state.filterOptions}
                                     onSelectedChanged={this.filterChanged}/>
-                            <ToggleSwitch checked="false"
+                            <ToggleSwitch checked={false}
                                 falseText="Grid"
-                                trueText="asdf"
+                                trueText="Card"
+                                offColor="#0000ff"
                                 onChange={this.joinViewChanged}/>
                     </div>
                             <hr noshade="true"/>
+                            <ReactTable
+                            data={this.grabJoinData()}
+                            columns={[{
+                                Header: "Name",
+                                accessor: 'name'
+                            },
+                            {
+                                Header: "Type",
+                                accessor: 'type'
+                            },
+                            {
+                                Header: "Time",
+                                accessor: 'time'
+                            },
+                            {
+                                Header: "Posted",
+                                accessor: 'posted'
+                            }]}
+                            showPagination={false}
+                            className="table"
+                            resizable={false}/>
                             <hr noshade="true"/>
                         <button>Join</button>
                     </div>

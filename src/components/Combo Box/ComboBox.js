@@ -7,7 +7,7 @@ class ComboBox extends Component {
     constructor(props){
         super(props);
         this.state = {
-            valueChosen: ""
+            valueChosen: this.props.defaultValue ? this.props.defaultValue : ""
         }
     }
 
@@ -24,8 +24,9 @@ class ComboBox extends Component {
             )
         return (
             <select className="select green rounded"
+                value={this.state.valueChosen}
                 onChange={e => this.optionClicked(e)}>
-                {options}
+                    {options}
             </select>
         );
     }
