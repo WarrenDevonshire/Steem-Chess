@@ -14,10 +14,10 @@ const Content = props => {
         <main>
             <div>
             <Switch>
-                <Route path="/Play" Component={Play}>Play</Route>
-                <Route exact path="/" Component={Trending}>Trending</Route>
-                <Route path="/New" Component={New}>New</Route>
-                <Route path="/Hot" Component={Hot}>Hot</Route>
+                <Route path="/Play" Component={Play}/>
+                <Route exact path="/" Component={Trending}/>
+                <Route path="/New" Component={New}/>
+                <Route path="/Hot" Component={Hot}/>
             </Switch>
             {children}
             </div>
