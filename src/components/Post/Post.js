@@ -6,7 +6,7 @@ const client = new Client('https://api.steemit.com');
 const Remarkable = require('remarkable');
 
 // this will just fetch an article to display until this component gets hooked up to the article feed component
-function openPost() {
+function openPost(postAuthor, postPerm) {
     
     const query = {
         tag: 'chess',
@@ -14,7 +14,7 @@ function openPost() {
     };
     
     client.database
-        .getDiscussions('trending', query) // fetch most recent post and store author/permlink
+        .getDiscussions('trending', query) // fetch top post and store author/permlink
         .then(result => {
 
             const postAuthor = result[0].author;
@@ -32,9 +32,8 @@ function openPost() {
                 document.getElementById('postBody').style.display = 'block';
                 document.getElementById('postBody').innerHTML = content;
 
-                // fetch post comments
             client.database
-            .call('get_content_replies', [postAuthor, postPerm])
+            .call('get_content_replies', [postAuthor, postPerm]) // fetch post comments
             .then(result => {
 
                 const comments = [];
@@ -73,6 +72,12 @@ function openPost() {
         });
 }
 
+function pushComment() {
+
+    alert("This will post a comment eventually.");
+
+}
+
 export default class Post extends Component{
 
     render(){
@@ -81,10 +86,11 @@ export default class Post extends Component{
             <div className="Post">
                 <div id="postBody" styles="display: none;"></div>	
                 <h1>Comments</h1>
+                <div id="composeComment" styles="display: none;">Compose comment:<br /><textarea name="commentText" class="composeComment" /><br /><button onClick={() => pushComment()}> Post Comment </button></div>
                 <div id="postComments" styles="display: none;" class="list-group"></div>
+
                 {openPost()}
             </div>
-            
         )
     }
 }
