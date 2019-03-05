@@ -8,13 +8,15 @@ function fetchBlog(limit, sortMethod) {
     
     const query = {
         tag: 'chess',
-        limit: 10,
+        limit: limit,
     };
     
     client.database
-        .getDiscussions('trending', query)
+        .getDiscussions(sortMethod, query)
         .then(result => {
+
             var posts = [];
+
             result.forEach(post => {
                 const json = JSON.parse(post.json_metadata);
                 const image = json.image ? json.image[0] : '';
@@ -31,18 +33,25 @@ function fetchBlog(limit, sortMethod) {
             document.getElementById('postList').innerHTML = posts.join('');
         
         })
+
         .catch(err => {
+
             alert('Error occured' + err);
+
         });
 }
 
 export default class ArticleFeed extends Component{
+
     render(){
+
         return (  
+
             <div className="ArticleFeed">
                 <div class="list-group" id="postList"></div>
-                {fetchBlog("trending", 10)}
+                {fetchBlog(10, 'trending')}
             </div>
+
         )
     }
 }
