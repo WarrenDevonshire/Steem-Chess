@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import './Post.css';
-import { Client } from 'dsteem';
+import { Client, PrivateKey } from 'dsteem';
 
 const client = new Client('https://api.steemit.com');
+//const postClient = new Client(NetConfig.url, opts);
 const Remarkable = require('remarkable');
 
 // this will just fetch an article to display until this component gets hooked up to the article feed component
@@ -17,8 +18,8 @@ function openPost(postAuthor, postPerm) {
         .getDiscussions('trending', query) // fetch top post and store author/permlink
         .then(result => {
 
-            const postAuthor = result[0].author;
-            const postPerm = result[0].permlink;
+            postAuthor = result[0].author;
+            postPerm = result[0].permlink;
 
             // fetch post content
             client.database.call('get_content', [postAuthor, postPerm]).then(result => {
@@ -86,7 +87,7 @@ export default class Post extends Component{
             <div className="Post">
                 <div id="postBody" styles="display: none;"></div>	
                 <h1>Comments</h1>
-                <div id="composeComment" styles="display: none;">Compose comment:<br /><textarea name="commentText" class="composeComment" /><br /><button onClick={() => pushComment()}> Post Comment </button></div>
+                <div id="composeComment" styles="display: none;">Compose comment:<br /><textarea id="commentText" class="composeComment" /><br /><input id="pushCommentButton" type="button" value="Post Comment" onClick={() => pushComment()} /></div>
                 <div id="postComments" styles="display: none;" class="list-group"></div>
 
                 {openPost()}
