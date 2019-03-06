@@ -8,10 +8,12 @@ import CreateGame from './Create Game/CreateGame';
 import ArticleFeed from './ArticleFeed/ArticleFeed';
 import Post from '../components/Post/Post';
 
+
 class App extends Component {
   render() {
     return (
       <div className="App">
+      
         <Header title="Welcome to Steem-Chess" />
         <ChessGame/>
         <Content>
@@ -19,7 +21,7 @@ class App extends Component {
           <ArticleFeed />
           <Post />
         </Content>
-
+        
         <Footer />
       </div>
     );
