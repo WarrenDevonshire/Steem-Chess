@@ -8,6 +8,19 @@ const Remarkable = require('remarkable');
 
 export default class Post extends Component{
 
+    constructor(props) {
+
+        super(props);
+
+        this.state = {
+
+            author: '',
+            permlink: ''
+
+        };
+
+    }
+
     // this will just fetch an article to display until this component gets hooked up to the article feed component
     openPost(postAuthor, postPerm) {
     

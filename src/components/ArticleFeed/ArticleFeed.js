@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import './ArticleFeed.css';
 import { Client } from 'dsteem';
-import Post from '../Post/Post';
+import PostTitle from './PostPreview/PostPreview';
+import ReactDOM from 'react-dom'
 
 const client = new Client('https://api.steemit.com');
 
@@ -13,7 +14,9 @@ export default class ArticleFeed extends Component {
         
         this.state = {
 
-            pageNumber: 0
+            // this will store page number for browsing further articles in feed
+            pageNumber: 0,
+            posts: []
 
         };
     
@@ -33,19 +36,12 @@ export default class ArticleFeed extends Component {
                 var posts = [];
     
                 result.forEach(post => {
-                    const json = JSON.parse(post.json_metadata);
-                    const image = json.image ? json.image[0] : '';
-                    const title = post.title;
-                    const author = post.author;
-                    const created = new Date(post.created).toDateString();
-                    posts.push(
-                        `<div class="list-group-item""><h4 class="list-group-item-heading" onClick="alert('test')" onmouseover="" style="cursor: pointer;">${title}</h4>
-                        <p>by ${author}</p><center><img src="${image}" class="img-responsive center-block" style="max-width: 450px"/></center>
-                        <p class="list-group-item-text text-right text-nowrap">${created}</p></div>`
-                    );
+                    
+                    ReactDOM.render(`<PostTitle post=post>`);
+
                 });
     
-                document.getElementById('postList').innerHTML = posts.join('');
+                //document.getElementById('postList').innerHTML = posts.join('');
             
             })
     
@@ -82,7 +78,7 @@ export default class ArticleFeed extends Component {
         return (  
 
             <div className="ArticleFeed">
-                <div class="list-group" id="postList"></div>
+                <div class="list-group" id="postList">{this.state.posts.forEach(el => ReactDOM.render(<PostTitle></PostTitle>, el))}</div>
                 {this.fetchBlog(this.props.limit, this.props.sortMethod)}
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
                 {this.state.pageNumber}
