@@ -13,12 +13,12 @@ class App extends Component {
       <Router>
       <div className="App">
         <Header />
+
         <Content>
-        <Route path="/" component={ArticleFeed} exact />
-        <Route path="/Hot" component={ArticleFeed} exact />
-        <Route path="/New" component={ArticleFeed} exact />
-        <Route path="/Play" component={CreateGame} exact/>
-          
+          <Route path='/' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>} exact />
+          <Route path='/Hot' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'hot'}/>} exact />
+          <Route path='/New' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact />
+          <Route path="/Play" component={CreateGame} exact/>          
         </Content>
 
         <Footer />

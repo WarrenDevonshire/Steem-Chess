@@ -41,7 +41,20 @@ function fetchBlog(limit, sortMethod) {
         });
 }
 
-export default class ArticleFeed extends Component{
+export default class ArticleFeed extends Component {
+
+    constructor(props) {
+
+        super(props);
+        
+        this.state = {
+
+            limit: this.props.limit,
+            sortMethod: this.props.sortMethod
+
+        };
+    
+    }
 
     render(){
 
@@ -49,7 +62,7 @@ export default class ArticleFeed extends Component{
 
             <div className="ArticleFeed">
                 <div class="list-group" id="postList"></div>
-                {fetchBlog(10, 'trending')}
+                {fetchBlog(this.state.limit, this.state.sortMethod)}
             </div>
 
         )
