@@ -3,27 +3,28 @@ import './App.css';
 import Header from '../shared/components/layout/Header';
 import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
-import ChessGame from './ChessGame/ChessGame'
-import CreateGame from './Create Game/CreateGame';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import ArticleFeed from './ArticleFeed/ArticleFeed';
-import Post from '../components/Post/Post';
-
+import CreateGame from './Create Game/CreateGame';
 
 class App extends Component {
   render() {
     return (
+      <Router>
       <div className="App">
-      
-        <Header title="Welcome to Steem-Chess" />
-        <ChessGame/>
+        <Header />
         <Content>
-          <CreateGame/>
-          <ArticleFeed />
-          <Post />
+        <Route path="/" component={ArticleFeed} exact />
+        <Route path="/Hot" component={ArticleFeed} exact />
+        <Route path="/New" component={ArticleFeed} exact />
+        <Route path="/Play" component={CreateGame} exact/>
+          
         </Content>
-        
+
         <Footer />
       </div>
+      </Router>
+      
     );
   }
 }
