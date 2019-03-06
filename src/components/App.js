@@ -5,6 +5,7 @@ import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
 import ChessGame from './ChessGame/ChessGame'
 import CreateGame from './Create Game/CreateGame';
+import ArticleFeed from './ArticleFeed/ArticleFeed';
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
         <ChessGame/>
         <Content>
           <CreateGame/>
+          <ArticleFeed />
         </Content>
 
         <Footer />

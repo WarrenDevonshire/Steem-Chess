@@ -5,6 +5,7 @@
   "dependencies": {
     "chess.js": "^0.10.2",
     "chessboardjsx": "^2.3.0",
+    "dsteem": "^0.11.2",
     "install": "^0.12.2",
     "npm": "^6.8.0",
     "prop-types": "^15.6.2",
