@@ -1,16 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Menubar from '../Menu/Menubar';
 
 // We created a component with a simple arrow function.
 const Header = props => {
     const {
-        title = 'Welcome to Steem-Chess',
+        title = '',
         url = 'http://localhost:3000'
     } = props;
 
     return (
         <header className="App-header">
             <h1 className="App-title">{title}</h1>
+            <Menubar />
         </header>
     );
 };
@@ -23,4 +25,3 @@ Header.propTypes = {
 };
 
 export default Header;
-
