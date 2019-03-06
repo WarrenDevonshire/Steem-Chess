@@ -14,6 +14,8 @@ import LiveMatch from '../LiveMatch/LiveMatch';
 
 const dsteem = require('dsteem');
 const client = new Client('https://api.steemit.com');
+
+//Used for testing purposes. Logs incoming blocks
 //const stream = client.blockchain.getBlockStream();
 //stream.on('data', (block) => console.log(block))
 
