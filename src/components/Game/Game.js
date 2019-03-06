@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './CreateGame.css'
+import './Game.css'
 import Slider from '../Slider/Slider'
 import RadioButtonList from '../Radio Button/RadioButtonList'
 import ComboBox from '../Combo Box/ComboBox'
@@ -9,6 +9,41 @@ import BlackPiece from './Images/rook-black.png';
 import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
+import { Client } from 'dsteem';
+import LiveMatch from '../LiveMatch/LiveMatch';
+
+const dsteem = require('dsteem');
+const client = new Client('https://api.steemit.com');
+//const stream = client.blockchain.getBlockStream();
+//stream.on('data', (block) => console.log(block))
+
+const USERNAME = "mdhalloran"//TODO delete username after demo. Replace with current user
+//Not sure why, but this has to be the active key, not the posting key
+const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'active')//TODO delete password after demo. Replace with current user
+
+class Game extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+          gameStarted: false
+        }
+        this.switchToLive = this.switchToLive.bind(this);
+    }
+
+    switchToLive() {
+        this.setState({gameStarted:true});
+    }
+      
+    render(){
+        var visibleComponent = this.state.gameStarted ? <LiveMatch/> : <CreateGame switchToLive={this.switchToLive}/>
+        return (
+            <div>
+                {visibleComponent}
+            </div>
+        );
+    }
+}
+
 
 class CreateGame extends Component{
     constructor(props) {
@@ -65,11 +100,35 @@ class CreateGame extends Component{
         //TODO change join view type
     }
 
-    startGame(e) {
-        //TODO
-        // Steem.api.broadcastBlock(e, function(err, response){
-        // console.log(err, response);
-        // });
+    //TODO
+    startGame() {
+//"7812b2a0b4a3087e9085af20db1384c356729f35"
+        var data = {
+            timeControlChosen: this.state.timeControlChosen,
+            timePerSide: this.state.timePerSide,
+            increment: this.state.increment,
+            startingColor: this.state.pieceChosen
+        }
+
+        client.broadcast.json({ 
+                required_auths: [USERNAME],
+                required_posting_auths: [],
+                id: 'chess-game',
+                json: JSON.stringify(data)
+            }, POSTING_KEY)
+        .then(
+            function(result) {
+                console.log("success!");
+                console.log(result);
+            },
+            function(error) {
+                console.error(error);
+                alert("Something went wrong!")
+            }
+        );
+
+        if(this.props != null)
+            this.props.switchToLive();
     }
 
     grabJoinData() {
@@ -89,8 +148,35 @@ class CreateGame extends Component{
     }
 
     joinGame(e) {
-        console.log(e);
-        //TODO
+        //console.log(e);
+        //TODO 30903911
+
+        client.database.getBlock(30903911)
+        .then(
+            function(result)
+            {
+                console.log(result);
+            },
+            function(error)
+            {
+                console.log(error);
+            }
+        );
+
+        client.database.getBlockHeader(30903911)
+        .then(
+            function(result)
+            {
+                console.log(result);
+            },
+            function(error)
+            {
+                console.log(error);
+            }
+        );
+
+        const joinStream = client.blockchain.getBlockStream({mode: dsteem.BlockchainMode.Latest}, 30903911);
+        joinStream.on('data', (block) => console.log(block));
     }
 
     render(){
@@ -124,7 +210,7 @@ class CreateGame extends Component{
                         <hr noshade="true"/>
                         <h3>{this.state.startingColorText}</h3>
                         <PieceList onPieceChanged={this.pieceChanged}/>
-                        <button onClick={e => this.startGame(e)}>Start</button>
+                        <button onClick={e => this.startGame()}>Start</button>
                     </div>
                     <div className="box half">
                     <div className="horizontal">
@@ -160,7 +246,7 @@ class CreateGame extends Component{
                             className="table"
                             resizable={false}/>
                             <hr noshade="true"/>
-                        <button>Join</button>
+                        <button onClick={e => this.joinGame(e)}>Join</button>
                     </div>
                 </div>
             </div>
@@ -199,4 +285,4 @@ class PieceList extends Component{
     }
 }
 
-export default CreateGame;
+export default Game;
