@@ -9,7 +9,6 @@ import BlackPiece from './Images/rook-black.png';
 import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import Steem from 'steem';
 
 class CreateGame extends Component{
     constructor(props) {
@@ -67,8 +66,6 @@ class CreateGame extends Component{
     }
 
     startGame(e) {
-        console.log(e);
-        console.log(Steem.api);
         //TODO
         // Steem.api.broadcastBlock(e, function(err, response){
         // console.log(err, response);
