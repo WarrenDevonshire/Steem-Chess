@@ -37,7 +37,7 @@ export default class ArticleFeed extends Component {
     
                 result.forEach(post => {
                     
-                    ReactDOM.render(`<PostTitle post=post>`);
+                    ReactDOM.render(<PostTitle post={post}/>, document.getElementById('postList'));
 
                 });
     
