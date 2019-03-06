@@ -1,7 +1,6 @@
-import Timer from '../Timer/Timer';
-import GameInfo from '../GameInfo/GameInfo';
-// import Board from '../Board/Board';
-import ChessGame from 'chess.js';
+
+import React, { Component } from 'react';
+import ChessGame from '../ChessGame/ChessGame';
 
 export default class LiveMatch extends Component {
 
@@ -11,9 +10,6 @@ export default class LiveMatch extends Component {
 
                 <div id="liveMatch">
                 
-                    <Timer />
-                    <GameInfo />
-                    {/* <Board /> */}
                     <ChessGame/>
                 
                 </div>
