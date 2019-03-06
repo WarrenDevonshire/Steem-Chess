@@ -4,6 +4,8 @@ import Header from '../shared/components/layout/Header';
 import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
 import ChessGame from './ChessGame/ChessGame'
+import CreateGame from './Create Game/CreateGame';
+
 class App extends Component {
   render() {
     return (
@@ -11,7 +13,7 @@ class App extends Component {
         <Header title="Welcome to Steem-Chess" />
         <ChessGame/>
         <Content>
-          <h1>This is a test.</h1>
+          <CreateGame/>
         </Content>
 
         <Footer />
