@@ -11,8 +11,6 @@ export default class ArticleFeed extends Component {
     constructor(props) {
 
         super(props);
-
-        this.fetchBlog(this.props.limit, this.props.sortMethod);
         
         this.state = {
 
@@ -21,6 +19,8 @@ export default class ArticleFeed extends Component {
             posts: []
 
         };
+
+        this.fetchBlog(this.props.limit, this.props.sortMethod);
     
     }
 
