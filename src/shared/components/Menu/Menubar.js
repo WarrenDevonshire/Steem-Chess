@@ -14,7 +14,7 @@ class Menubar extends Component{
                     <li> <Link to="/Play">Play</Link></li>
                     <li> <Link to="/">Trending</Link></li>
                     <li> <Link to="/New">New</Link></li>
-                    <li> <Link to="/Hot">Hot</Link></li>                    
+                    <li> <Link to="/Hot">Hot</Link></li>        
                 </ul>
             
                 <form>
