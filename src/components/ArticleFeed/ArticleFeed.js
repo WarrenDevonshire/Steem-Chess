@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './ArticleFeed.css';
 import { Client } from 'dsteem';
 import PostPreview from './PostPreview/PostPreview';
-import ReactDOM from 'react-dom'
+import { Link } from 'react-router-dom';
 
 const client = new Client('https://api.steemit.com');
 
@@ -83,6 +83,7 @@ export default class ArticleFeed extends Component {
         return (  
 
             <div className="ArticleFeed">
+                <Link to="/Compose"><button>Compose New Article</button></Link>
                 <div class="list-group" id="postList">{this.state.posts.map(PostPreview => <div> {PostPreview} </div>)}</div>
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
                 {this.state.pageNumber}
