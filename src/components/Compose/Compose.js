@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 
 /* Import Components */
-import Input from "../Input";
-import TextArea from "../TextArea";
-import Button from "../Button";
+import Input from "../../shared/components/utils/Input";
+import TextArea from "../../shared/components/utils/TextArea";
+import Button from "../../shared/components/utils/Button";
 
-class FormContainer extends Component {
+class Compose extends Component {
   constructor(props) {
     super(props);
 
@@ -123,7 +123,7 @@ class FormContainer extends Component {
   render() {
     return (
       <form className="container-fluid" onSubmit={this.handleFormSubmit}>
-      <h1> Creat a Post </h1>
+      <h1> Create a Post </h1>
         {/* Tags */}
         <Input
           inputType={"text"}
@@ -174,4 +174,4 @@ const buttonStyle = {
   margin: "10px 10px 10px 10px"
 };
 
-export default FormContainer;
+export default Compose;

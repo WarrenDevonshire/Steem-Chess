@@ -3,17 +3,17 @@ import './App.css';
 import Header from '../shared/components/layout/Header';
 import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import ArticleFeed from './ArticleFeed/ArticleFeed';
 import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
+import Compose from './Compose/Compose';
 
 class App extends Component {
   render() {
     return (
       <Router>
-        <Switch>
       <div className="App">
         <Header />
 
@@ -24,11 +24,11 @@ class App extends Component {
           <Route path='/Play' component={Game} exact /> 
           <Route path='/Live' component={LiveMatch} exact />
           <Route path='/Post/@:author/:permlink' component={Post} exact />
+          <Route path='/Compose' component={Compose} exact />
         </Content>
 
         <Footer />
       </div>
-      </Switch>
       </Router>
       
     );

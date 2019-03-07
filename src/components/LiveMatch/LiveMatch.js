@@ -10,9 +10,8 @@ export default class LiveMatch extends Component {
             return (
 
                 <div id="liveMatch">
-                    <Chatbox/>
                     <ChessGame/>
-                
+                    <Chatbox/>                
                 </div>
 
             )
