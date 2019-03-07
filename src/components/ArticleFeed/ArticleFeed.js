@@ -39,8 +39,6 @@ export default class ArticleFeed extends Component {
 
                 });
 
-                this.setState({ pageNumber: 0 });
-
             
             })
     
