@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './ArticleFeed.css';
 import { Client } from 'dsteem';
-import PostTitle from './PostPreview/PostPreview';
+import PostPreview from './PostPreview/PostPreview';
 import ReactDOM from 'react-dom'
 
 const client = new Client('https://api.steemit.com');
@@ -33,13 +33,13 @@ export default class ArticleFeed extends Component {
             .getDiscussions(this.props.sortMethod, query)
             .then(result => {
     
-                var posts = [];
-    
                 result.forEach(post => {
                     
-                    ReactDOM.render(<PostTitle post={post}/>, document.getElementById('postList'));
+                    this.state.posts.push(<PostPreview post={post} />);
 
                 });
+
+                this.setState({ pageNumber: 0 });
 
             
             })
@@ -77,7 +77,7 @@ export default class ArticleFeed extends Component {
         return (  
 
             <div className="ArticleFeed">
-                <div class="list-group" id="postList">{this.state.posts.forEach(el => ReactDOM.render(<PostTitle></PostTitle>, el))}</div>
+                <div class="list-group" id="postList">{this.state.posts.map(PostPreview => <div> {PostPreview} </div>)}</div>
                 {this.fetchBlog(this.props.limit, this.props.sortMethod)}
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
                 {this.state.pageNumber}

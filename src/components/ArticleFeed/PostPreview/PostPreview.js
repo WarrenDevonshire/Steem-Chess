@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Client, PrivateKey } from 'dsteem';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 
 export default class PostPreview extends Component{
@@ -19,8 +18,6 @@ export default class PostPreview extends Component{
 
         };
 
-        alert(this.state.title);
-
     }
 
     render(){
@@ -31,7 +28,7 @@ export default class PostPreview extends Component{
             <div className="PostPreview">
 
                 <Link to={`Post/${this.state.author}/${this.state.title}`}>{this.state.title}</Link>
-                <center><img src={this.state.image} class="img-responsive center-block" styles="max-width: 450px"/></center>
+                <center><img src={this.state.image} class="img-responsive center-block" alt=""/></center>
                 <p>by {this.state.author}</p>
                 <p class="list-group-item-text text-right text-nowrap">{this.state.created}</p>
 

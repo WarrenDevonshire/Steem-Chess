@@ -20,7 +20,7 @@ class App extends Component {
           <Route path='/Hot' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'hot'}/>} exact />
           <Route path='/New' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact />
           <Route path='/Play' component={Game} exact/> 
-          <Route path='/Game' component={LiveMatch} exact/>
+          <Route path='/Live' component={LiveMatch} exact/>
         </Content>
 
         <Footer />
