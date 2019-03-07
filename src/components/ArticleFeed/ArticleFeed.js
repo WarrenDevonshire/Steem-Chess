@@ -41,7 +41,7 @@ export default class ArticleFeed extends Component {
 
                 });
 
-                this.setState({ pageNumber: 0});
+                this.forceUpdate();
             
             })
     
