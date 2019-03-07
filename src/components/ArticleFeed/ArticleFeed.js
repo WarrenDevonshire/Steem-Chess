@@ -40,8 +40,7 @@ export default class ArticleFeed extends Component {
                     ReactDOM.render(<PostTitle post={post}/>, document.getElementById('postList'));
 
                 });
-    
-                //document.getElementById('postList').innerHTML = posts.join('');
+
             
             })
     

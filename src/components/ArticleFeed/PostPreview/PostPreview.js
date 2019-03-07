@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Client, PrivateKey } from 'dsteem';
-import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
 
 export default class PostPreview extends Component{
 
@@ -8,10 +8,11 @@ export default class PostPreview extends Component{
 
         super(props);
 
+        const json = JSON.parse(this.props.post.json_metadata);
+
         this.state = {
 
-            json: JSON.parse(this.props.post.json_metadata),
-            image: this.props.post.json.image ? this.props.post.json.image[0] : '',
+            image: json.image ? json.image[0] : '',
             title: this.props.post.title,
             author: this.props.post.author,
             created: new Date(this.props.post.created).toDateString()
@@ -25,13 +26,17 @@ export default class PostPreview extends Component{
     render(){
 
         return (  
+
+            <Router>
             <div className="PostPreview">
 
                 <Link to={`Post/${this.state.author}/${this.state.title}`}>{this.state.title}</Link>
-                <p>by ${this.state.author}</p>
-                <p class="list-group-item-text text-right text-nowrap">${this.state.created}</p>
+                <center><img src={this.state.image} class="img-responsive center-block" styles="max-width: 450px"/></center>
+                <p>by {this.state.author}</p>
+                <p class="list-group-item-text text-right text-nowrap">{this.state.created}</p>
 
             </div>
+            </Router>
         )
     }
 }
