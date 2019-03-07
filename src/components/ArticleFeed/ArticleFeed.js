@@ -11,6 +11,8 @@ export default class ArticleFeed extends Component {
     constructor(props) {
 
         super(props);
+
+        this.fetchBlog(this.props.limit, this.props.sortMethod);
         
         this.state = {
 
@@ -23,7 +25,7 @@ export default class ArticleFeed extends Component {
     }
 
     fetchBlog() {
-    
+        
         const query = {
             tag: 'chess',
             limit: this.props.limit,
@@ -39,6 +41,7 @@ export default class ArticleFeed extends Component {
 
                 });
 
+                this.setState({ pageNumber: 0});
             
             })
     
@@ -47,6 +50,7 @@ export default class ArticleFeed extends Component {
                 alert('Error occured' + err);
     
             });
+
     }
 
     prevPage() {
@@ -70,13 +74,16 @@ export default class ArticleFeed extends Component {
     
     }
 
+    componentDidMount() {
+        this.setState({ pageNumber: 0});
+      }
+
     render() {
 
         return (  
 
             <div className="ArticleFeed">
                 <div class="list-group" id="postList">{this.state.posts.map(PostPreview => <div> {PostPreview} </div>)}</div>
-                {this.fetchBlog(this.props.limit, this.props.sortMethod)}
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
                 {this.state.pageNumber}
                 <button id="NextPage" onClick={() => this.nextPage()}>Next Page</button>
