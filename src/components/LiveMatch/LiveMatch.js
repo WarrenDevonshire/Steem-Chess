@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
 import ChessGame from '../ChessGame/ChessGame';
+import Chatbox from '../Chatbox/Chatbox'
 
 export default class LiveMatch extends Component {
 
@@ -9,7 +10,7 @@ export default class LiveMatch extends Component {
             return (
 
                 <div id="liveMatch">
-                
+                    <Chatbox/>
                     <ChessGame/>
                 
                 </div>
