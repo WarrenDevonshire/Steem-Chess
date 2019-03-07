@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 
 /* Import Components */
-import Input from "../components/Input";
-import TextArea from "../components/TextArea";
-import Button from "../components/Button";
+import Input from "../Input";
+import TextArea from "../TextArea";
+import Button from "../Button";
 
 class FormContainer extends Component {
   constructor(props) {
