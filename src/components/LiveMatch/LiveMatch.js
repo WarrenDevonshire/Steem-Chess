@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import ChessGame from '../ChessGame/ChessGame';
 import Chatbox from '../Chatbox/Chatbox'
+import Timer from '../Timer/Timer';
 
 export default class LiveMatch extends Component {
 
@@ -11,7 +12,8 @@ export default class LiveMatch extends Component {
 
                 <div id="liveMatch">
                     <ChessGame/>
-                    <Chatbox/>                
+                    <Chatbox/>  
+                    <Timer/>              
                 </div>
 
             )
