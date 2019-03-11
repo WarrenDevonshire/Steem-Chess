@@ -9,13 +9,28 @@ import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
+import setUpConnection from './webrtc/rtc'
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      data: null,
+    };
+  }
+  componentDidMount(){
+    setUpConnection().then(data => this.setState((state) => {
+      return {data: data};
+    }));
+  }
+
   render() {
     return (
       <Router>
       <div className="App">
         <Header />
+        <p>{this.state.data}</p>
 
         <Content>
           <Route path='/' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>} exact />
