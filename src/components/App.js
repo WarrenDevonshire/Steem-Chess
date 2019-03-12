@@ -9,20 +9,22 @@ import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
-import setUpConnection from './webrtc/rtc'
+import Person from './webrtc/rtc'
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: null,
+      offer: null,
+      connection: null
     };
   }
   componentDidMount(){
-    setUpConnection().then(data => this.setState((state) => {
-      return {data: data};
-    }));
+    var p = new Person();
+    p.createOffer().then(offer => this.setState((state)=> {
+      return {offer: offer, connection: p};
+    }))
   }
 
   render() {
@@ -30,7 +32,7 @@ class App extends Component {
       <Router>
       <div className="App">
         <Header />
-        <p>{this.state.data}</p>
+        <p>{this.state.offer}</p>
 
         <Content>
           <Route path='/' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>} exact />
