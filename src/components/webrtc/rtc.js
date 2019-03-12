@@ -1,48 +1,74 @@
 
-export default async function setUpConnection() {
-
-    var iceCFG = {
-        'urls': [
-            {
-                'url': 'stun:stun.l.google.com:19302'
-            },
-            {
-                'url': 'stun:stun1.l.google.com:19302'
-            },
-            {
-                'url': 'stun:stun2.l.google.com:19302'
-            },
-            {
-                'url': 'stun:stun3.l.google.com:19302'
-            },
-            {
-                'url': 'stun:stun4.l.google.com:19302'
-            },
-        ]
+export default class Connection {
+    constructor(){
+        setUpConnection();
     }
-    var localConnection = new RTCPeerConnection(iceCFG);
 
-    var sendChannel = localConnection.createDataChannel("sendChannel");
-    sendChannel.onopen = handleSendChannelStatusChange;
-    sendChannel.onclose = handleSendChannelStatusChange;
+    setUpConnection() {
 
-    // localConnection.createOffer()
-    //     .then(offer => localConnection.setLocalDescription(offer))
-    //     .then(() => console.log(JSON.stringify(localConnection.localDescription)))
-    //     .catch(handleCreateDescriptionError());
-    var response = null;
-    try{
-        response = await localConnection.createOffer();
-    }catch(err){
-        handleCreateDescriptionError(err)
+        var iceCFG = {
+            'urls': [
+                {
+                    'url': 'stun:stun.l.google.com:19302'
+                },
+                {
+                    'url': 'stun:stun1.l.google.com:19302'
+                },
+                {
+                    'url': 'stun:stun2.l.google.com:19302'
+                },
+            ]
+        }
+        this.localConnection = new RTCPeerConnection(iceCFG);
+
+        this.sendChannel = localConnection.createDataChannel("sendChannel");
+        sendChannel.onopen = handleSendChannelStatusChange;
+        sendChannel.onclose = handleSendChannelStatusChange;
     }
-    return JSON.stringify(response);
+
+    async createOffer() {
+        var offer = null;
+        try {
+            offer = await this.localConnection.createOffer();
+            this.localConnection.setLocalDescription(offer);
+        } catch (err) {
+            handleCreateDescriptionError(err)
+        }
+        return JSON.stringify(offer);
+    }
+
+    async acceptAnswer(answer) {
+        this.localConnection.setRemoteDescription(answer);
+    }
+
+    async joinConnection(offer) {
+        this.localConnection.setRemoteDescription(offer);
+        var answer = null;
+        try {
+            answer = await this.localConnection.createAnswer();
+        } catch (err) {
+            handleCreateDescriptionError(err)
+        }
+        return JSON.stringify(answer);
+    }
+
+    handleCreateDescriptionError(err) {
+
+    }
+
+    handleSendChannelStatusChange() {
+
+    }
 }
 
-function handleCreateDescriptionError(err) {
 
-}
 
-function handleSendChannelStatusChange() {
 
-}
+
+
+
+
+
+
+
+
