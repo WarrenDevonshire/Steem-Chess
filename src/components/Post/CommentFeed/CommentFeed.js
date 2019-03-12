@@ -17,8 +17,8 @@ export default class Post extends Component {
 
         this.state = {
 
-            author: this.props.author,
-            permlink: this.props.permlink
+            parentAuthor: this.props.author,
+            parentPermlink: this.props.permlink
 
         };
 
@@ -26,10 +26,11 @@ export default class Post extends Component {
 
     }
 
+    //fetch comments on parent post
     fetchComments() {
 
         fetchClient.database
-            .call('get_content_replies', [this.state.author, this.state.permlink]) // fetch post comments
+            .call('get_content_replies', [this.state.parentAuthor, this.state.parentPermlink]) // fetch post comments
             .then(result => {
 
                 const md = new Remarkable({ html: true, linkify: true });
@@ -71,9 +72,9 @@ export default class Post extends Component {
         //get body
         const body = document.getElementById('body').value;
         //get parent author permalink
-        const parent_author = document.getElementById('parent_author').value;
+        const parent_author = this.state.parentAuthor;
         //get parent author permalink
-        const parent_permlink = document.getElementById('parent_permlink').value;
+        const parent_permlink = this.state.parentPermlink;
 
         //generate random permanent link for post
         const permlink = Math.random()
@@ -93,6 +94,7 @@ export default class Post extends Component {
         console.log('pustCSlient.broadcast.comment payload:', payload);
         pushClient.broadcast.comment(payload, privateKey).then(
             function (result) {
+                alert(result);
                 console.log('client.broadcast.comment response', result);
                 document.getElementById('postLink').style.display = 'block';
                 document.getElementById(
@@ -118,15 +120,15 @@ export default class Post extends Component {
 
         return (
             <div id="CommentFeed" class="container" id="content"><br />
-                <h4>Submit a post to the Steem blockchain</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" /><br />
-                Parent Author: <input id="parent_author" type="text" size="20" /><br />
-                Parent Post Permalink: <input id="parent_permlink" type="text" size="20" /><br />
+                <h4>Submit a comment:</h4>
+                Username: <input id="username" type="text" size="65" class="form-control" value="demo01" /><br />
+                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" value="5KNckabfv4i793ymx4NWrTLDQZMjhgQTJbPSTroeBY4Bh5Eg6Tm" /><br />
                 Comment body:<br />
-                <textarea id="body" class="form-control" rows="3">Content of the comment</textarea><br />
+                <textarea id="body" class="form-control" rows="3">test</textarea><br />
                 <input id="submitPostBtn" type="button" value="Submit comment!" onClick={() => this.pushComment()} class="btn btn-primary" />
                 <input id="clearFieldsBtn" type="button" value="Clear Fields" onClick={() => this.clearFields()} class="btn btn-primary" />
+                <div id="postLink" />
+                <h1>Comments</h1>
                 <div id="postComments" styles="display: none;" class="list-group"></div>
             </div>
         )
