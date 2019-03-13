@@ -11,6 +11,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Client } from 'dsteem';
 import LiveMatch from '../LiveMatch/LiveMatch';
+import Connection from '../webrtc/rtc';
 
 const dsteem = require('dsteem');
 const client = new Client('https://api.steemit.com');
@@ -19,10 +20,13 @@ const client = new Client('https://api.steemit.com');
 //const stream = client.blockchain.getBlockStream();
 //stream.on('data', (block) => console.log(block))
 
-const USERNAME = "mdhalloran"//TODO delete username after demo. Replace with current user
-//Not sure why, but this has to be the active key, not the posting key
-const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'active')//TODO delete password after demo. Replace with current user
+const USERNAME = "mdhalloran"//TODO replace with current user
+const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')//TODO replace with current user
 
+/**
+ * Main game component. Displays either the creating/joining page,
+ * or the actual playing page
+ */
 class Game extends Component {
     constructor(props) {
         super(props)
@@ -59,7 +63,11 @@ class CreateGame extends Component{
           increment:  5,
 
           filterOptions: ["Most Recent", "Least Recent"],
-          filterValue: ""
+          filterValue: "",
+        
+          //testing purposes
+          testString: "",
+          localConnection: null,
         }
         this.pieceChanged = this.pieceChanged.bind(this);
         this.timePerSideChanged = this.timePerSideChanged.bind(this);
@@ -69,8 +77,21 @@ class CreateGame extends Component{
         this.joinViewChanged = this.joinViewChanged.bind(this);
         this.startGame = this.startGame.bind(this);
         this.joinGame = this.joinGame.bind(this);
+
+        //testing purposes
+        this.testChanged = this.testChanged.bind(this);
+        this.testClick = this.testClick.bind(this);
+        this.testAccept = this.testAccept.bind(this);
+        this.localConnection = new Connection();
+        this.localConnection.createOffer().then(offer => {
+            console.log(offer);
+        });
       }
       
+    /**
+     * Called when the starting piece changes
+     * @param {string} tag The new piece chosen
+     */
     pieceChanged(tag) {
         console.log(tag);
         this.setState({pieceChosen:tag});
@@ -102,9 +123,27 @@ class CreateGame extends Component{
         //TODO change join view type
     }
 
+    //test methods
+
+    testChanged(e) {
+        console.log(e.target);
+        this.state.testString = e.target.value;
+    }
+
+    testClick(e) {
+        console.log(this.state.testString);
+        this.localConnection.joinConnection(this.state.testString);
+    }
+
+    testAccept() {
+        console.log("testAccept");
+        this.localConnection.acceptAnswer(this.state.testString);
+    }
+
+    //end test methods
+
     //TODO
     startGame() {
-//"7812b2a0b4a3087e9085af20db1384c356729f35"
         var data = {
             timeControlChosen: this.state.timeControlChosen,
             timePerSide: this.state.timePerSide,
@@ -113,8 +152,8 @@ class CreateGame extends Component{
         }
 
         client.broadcast.json({ 
-                required_auths: [USERNAME],
-                required_posting_auths: [],
+                required_auths: [],
+                required_posting_auths: [USERNAME],
                 id: 'chess-game',
                 json: JSON.stringify(data)
             }, POSTING_KEY)
@@ -150,9 +189,6 @@ class CreateGame extends Component{
     }
 
     joinGame(e) {
-        //console.log(e);
-        //TODO 30903911
-
         client.database.getBlock(30903911)
         .then(
             function(result)
@@ -212,6 +248,9 @@ class CreateGame extends Component{
                         <hr noshade="true"/>
                         <h3>{this.state.startingColorText}</h3>
                         <PieceList onPieceChanged={this.pieceChanged}/>
+                        <textarea onChange={e => this.testChanged(e)}/>
+                        <button onClick={e => this.testClick(e)}>Connect to user (test)</button>
+                        <button onClick={e => this.testAccept()}>Accept offer (test)</button>
                         <button onClick={e => this.startGame()}>Start</button>
                     </div>
                     <div className="box half">

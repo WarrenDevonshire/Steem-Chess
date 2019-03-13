@@ -1,9 +1,14 @@
-
-export default class Connection {
+/**
+ * Connects 2 people through webRTC
+ */
+class Connection {
     constructor(){
         this.setUpConnection();
     }
 
+    /**
+     * Creates a new RTCPeerConnection for webRTC
+     */
     setUpConnection() {
 
         var iceCFG = {
@@ -26,26 +31,40 @@ export default class Connection {
         this.sendChannel.onclose = this.handleSendChannelStatusChange;
     }
 
+    /**
+     * Used by the second person to locate the first
+     * @returns A JSON representation of the offer
+     */
     async createOffer() {
         var offer = null;
         try {
             offer = await this.localConnection.createOffer();
-            this.localConnection.setLocalDescription(offer);
         } catch (err) {
             this.handleCreateDescriptionError(err)
         }
         return JSON.stringify(offer);
     }
 
+    /**
+     * Accepts answer from remote connection
+     * @param {*} answer A JSON representation of the answer
+     */
     async acceptAnswer(answer) {
-        this.localConnection.setRemoteDescription(answer);
+        console.log(answer);
+        await this.localConnection.setRemoteDescription(JSON.parse(answer));
     }
 
+    /**
+     * Accepts inviation to a webRTC connection, and replies with an answer
+     * @param {*} offer A JSON representation of the offer
+     * @returns A JSON representation of an answer
+     */
     async joinConnection(offer) {
-        this.localConnection.setRemoteDescription(offer);
+        this.localConnection.setRemoteDescription(JSON.parse(offer));
         var answer = null;
         try {
-            answer = await this.localConnection.createAnswer();
+            answer = await this.localConnection.createAnswer()
+                                .then(answer => this.localConnection.setLocalDescription(answer));
         } catch (err) {
             this.handleCreateDescriptionError(err)
         }
@@ -61,14 +80,4 @@ export default class Connection {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
+export default Connection;
