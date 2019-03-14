@@ -26,6 +26,8 @@
   }
   #messages-list {
       padding: 5px 0 0 5px;
+      overflow:hidden; 
+      overflow-y:scroll;
   }
   #sidebar {
       grid-area: sidebar;

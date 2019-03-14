@@ -29,6 +29,7 @@ class Connection {
         this.sendChannel = this.localConnection.createDataChannel("sendChannel");
         this.sendChannel.onopen = this.handleSendChannelStatusChange;
         this.sendChannel.onclose = this.handleSendChannelStatusChange;
+        this.sendChannel.ondatachannel = this.receiveChannelCallback;//possibly temp
     }
 
     /**
@@ -78,6 +79,20 @@ class Connection {
     handleSendChannelStatusChange() {
 
     }
+
+    /**
+     * Creates data channel once the peers are connected 
+     * to each other
+     * @param {*} event 
+     */
+    receiveChannelCallback(event) {
+        console.log(event);
+        console.log("ZZZZZZZZZ");
+        // receiveChannel = event.channel;
+        // receiveChannel.onmessage = handleReceiveMessage;
+        // receiveChannel.onopen = handleReceiveChannelStatusChange;
+        // receiveChannel.onclose = handleReceiveChannelStatusChange;
+      }
 }
 
 export default Connection;
