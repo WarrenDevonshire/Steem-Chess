@@ -29,11 +29,12 @@ class Connection {
         this.sendChannel = this.localConnection.createDataChannel("sendChannel");
         this.sendChannel.onopen = this.handleSendChannelStatusChange;
         this.sendChannel.onclose = this.handleSendChannelStatusChange;
-        this.sendChannel.ondatachannel = this.receiveChannelCallback;//possibly temp
+        this.sendChannel.onmessage = this.handleReceiveMessage;
+        //this.sendChannel.ondatachannel = this.receiveChannelCallback;//possibly temp
     }
 
     /**
-     * Used by the second person to locate the first
+     * Used by the second peer to locate the first
      * @returns A JSON representation of the offer
      */
     async createOffer() {
@@ -51,7 +52,6 @@ class Connection {
      * @param {*} answer A JSON representation of the answer
      */
     async acceptAnswer(answer) {
-        console.log(answer);
         await this.localConnection.setRemoteDescription(JSON.parse(answer));
     }
 
@@ -76,23 +76,60 @@ class Connection {
 
     }
 
-    handleSendChannelStatusChange() {
-
+    handleSendChannelStatusChange(event) {
+        console.log(event);
     }
 
     /**
-     * Creates data channel once the peers are connected 
-     * to each other
-     * @param {*} event 
+     * Tries to send a message to the other peer
+     * @param {*} message 
      */
-    receiveChannelCallback(event) {
-        console.log(event);
-        console.log("ZZZZZZZZZ");
-        // receiveChannel = event.channel;
-        // receiveChannel.onmessage = handleReceiveMessage;
-        // receiveChannel.onopen = handleReceiveChannelStatusChange;
-        // receiveChannel.onclose = handleReceiveChannelStatusChange;
-      }
+    sendMessage(message) {
+        if(this.sendChannel.readyState == "connecting")
+        {
+            console.error("sendMessage failed. sendChannel is connecting");
+        }
+        else if(this.sendChannel.readyState == "ready")
+        {
+            try {
+                this.sendChannel.send(message);
+            } catch(err) {
+                console.error(err);
+            }
+        }
+        else
+        {
+            console.error("sendMessage failed");
+        }
+    }
+
+    // /**
+    //  * Creates data channel once the peers are connected 
+    //  * to each other
+    //  * @param {*} event 
+    //  */
+    // receiveChannelCallback(event) {
+    //     console.log(event);
+    //     console.log("ZZZZZZZZZ");
+
+    //     // receiveChannel = event.channel;
+    //     // receiveChannel.onmessage = handleReceiveMessage;
+    //     // receiveChannel.onopen = handleReceiveChannelStatusChange;
+    //     // receiveChannel.onclose = handleReceiveChannelStatusChange;
+    //   }
+
+    handleReceiveMessage(event) {
+        console.log("I received a message!!!!!!!!!!!!");
+        console.log(event.data);
+    }
+
+    /**
+     * Disconnects local peer from the session
+     */
+    disconnect() {
+        this.sendChannel.close();
+        this.sendChannel = null;
+    }
 }
 
 export default Connection;

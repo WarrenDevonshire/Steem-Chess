@@ -14,12 +14,12 @@ class Chatbox extends Component {
   }
 
   updateDraft(area) {
-    this.state.draftedMessage = area.target.value;
+    this.setState({draftedMessage:area.target.value});
   }
 
   sendMessage() {
     console.log(this.state.localConnection);
-    //this.state.localConnection.send(this.state.draftedMessage);
+    this.state.localConnection.sendMessage(this.state.draftedMessage);
     this.state.messageList.push([this.state.draftedMessage, Date.now]);
     this.setState({draftedMessage:""});
     this.refs.draftArea.value = ""

@@ -19,8 +19,8 @@ import Connection from '../webrtc/rtc';
 
 const dsteem = require('dsteem');
 const client = new Client('https://api.steemit.com');
-const USERNAME = "mdhalloran"//TODO replace with current user
-const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')//TODO replace with current user
+//const USERNAME = "mdhalloran"//TODO replace with current user
+//const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')//TODO replace with current user
 
 /**
  * Main game component. Displays either the creating/joining page,
@@ -87,9 +87,7 @@ class CreateGame extends Component{
         this.testChanged = this.testChanged.bind(this);
         this.testClick = this.testClick.bind(this);
         this.testAccept = this.testAccept.bind(this);
-        this.state.localConnection.createOffer().then(offer => {
-            console.log(offer);
-        });
+        this.testOffer = this.testOffer.bind(this);
       }
       
     /**
@@ -131,7 +129,7 @@ class CreateGame extends Component{
 
     testChanged(e) {
         console.log(e.target);
-        this.state.testString = e.target.value;
+        this.setState({testString:e.target.value});
     }
 
     testClick(e) {
@@ -144,16 +142,22 @@ class CreateGame extends Component{
         this.state.localConnection.acceptAnswer(this.state.testString);
     }
 
+    testOffer() {
+        this.state.localConnection.createOffer().then(offer => {
+            console.log(offer);
+        });
+    }
+
     //end test methods--------------------------------------------
 
     //TODO
     startGame() {
-        var data = {
-            timeControlChosen: this.state.timeControlChosen,
-            timePerSide: this.state.timePerSide,
-            increment: this.state.increment,
-            startingColor: this.state.pieceChosen
-        }
+        // var data = {
+        //     timeControlChosen: this.state.timeControlChosen,
+        //     timePerSide: this.state.timePerSide,
+        //     increment: this.state.increment,
+        //     startingColor: this.state.pieceChosen
+        // }
 
         //Sends to blockchain TODO update with webrtc
         // client.broadcast.json({ 
@@ -261,7 +265,8 @@ class CreateGame extends Component{
                         <br/>
                         <textarea onChange={e => this.testChanged(e)}/>
                         <button onClick={e => this.testClick(e)}>Connect to user (test)</button>
-                        <button onClick={e => this.testAccept()}>Accept offer (test)</button>
+                        <button onClick={e => this.testAccept()}>Accept answer (test)</button>
+                        <button onClick={e => this.testOffer()}>Create offer (test)</button>
                     </div>
                     <div className="box half">
                     <div className="horizontal">

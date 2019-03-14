@@ -9,16 +9,8 @@ import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
-import Connection from './webrtc/rtc';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-  componentDidMount(){
-
-  }
-
   render() {
     return (
       <Router>
