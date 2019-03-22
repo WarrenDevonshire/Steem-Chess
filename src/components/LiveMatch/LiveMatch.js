@@ -25,16 +25,11 @@ class LiveMatch extends Component {
         });
 
         this.state.peer.on('signal', (data) => {
-            console.log('SIGNAL', JSON.stringify(data));
+            console.log(JSON.stringify(data));
         });
 
         this.state.peer.on('connect', () => {
             console.log('CONNECT', this.state);
-            this.state.peer.send('whatever' + Math.random())
-        });
-
-        this.state.peer.on('data', (data) => {
-            console.log('data: ' + data);
         });
 
         //Test methods
@@ -65,7 +60,7 @@ class LiveMatch extends Component {
                 <button onClick={e => this.testClick()}>TESTTTT</button>
                 {/* End testing area */}
                 {/* <ChessGame/> */}
-                <Chatbox localConnection={this.props.localConnection} />
+                <Chatbox peer={this.state.peer} />
             </div>
 
         )
