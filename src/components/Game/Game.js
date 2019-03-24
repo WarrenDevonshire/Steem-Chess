@@ -11,23 +11,27 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Client } from 'dsteem';
 import LiveMatch from '../LiveMatch/LiveMatch';
-
-const dsteem = require('dsteem');
-const client = new Client('https://api.steemit.com');
+import Connection from '../webrtc/rtc';
 
 //Used for testing purposes. Logs incoming blocks
 //const stream = client.blockchain.getBlockStream();
 //stream.on('data', (block) => console.log(block))
 
-const USERNAME = "mdhalloran"//TODO delete username after demo. Replace with current user
-//Not sure why, but this has to be the active key, not the posting key
-const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'active')//TODO delete password after demo. Replace with current user
+const dsteem = require('dsteem');
+const client = new Client('https://api.steemit.com');
+//const USERNAME = "mdhalloran"//TODO replace with current user
+//const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')//TODO replace with current user
 
+/**
+ * Main game component. Displays either the creating/joining page,
+ * or the actual playing page
+ */
 class Game extends Component {
     constructor(props) {
         super(props)
         this.state = {
-          gameStarted: false
+            gameStarted: false,
+            localConnection: new Connection()
         };
         console.log(JSON.stringify(this.props.getAccessToken()));
         this.switchToLive = this.switchToLive.bind(this);
@@ -36,9 +40,12 @@ class Game extends Component {
     switchToLive() {
         this.setState({gameStarted:true});
     }
-      
+
     render(){
-        var visibleComponent = this.state.gameStarted ? <LiveMatch/> : <CreateGame switchToLive={this.switchToLive}/>
+        var visibleComponent = this.state.gameStarted ?
+            <LiveMatch localConnection={this.state.localConnection}/> :
+            <CreateGame localConnection={this.state.localConnection}
+                        switchToLive={this.switchToLive}/>
         return (
             <div>
                 {visibleComponent}
@@ -60,7 +67,12 @@ class CreateGame extends Component{
           increment:  5,
 
           filterOptions: ["Most Recent", "Least Recent"],
-          filterValue: ""
+            filterValue: "",
+
+            localConnection: this.props.localConnection,
+
+            //testing purposes
+            testString: "",
         }
         this.pieceChanged = this.pieceChanged.bind(this);
         this.timePerSideChanged = this.timePerSideChanged.bind(this);
@@ -70,8 +82,18 @@ class CreateGame extends Component{
         this.joinViewChanged = this.joinViewChanged.bind(this);
         this.startGame = this.startGame.bind(this);
         this.joinGame = this.joinGame.bind(this);
+
+        //testing purposes
+        this.testChanged = this.testChanged.bind(this);
+        this.testClick = this.testClick.bind(this);
+        this.testAccept = this.testAccept.bind(this);
+        this.testOffer = this.testOffer.bind(this);
       }
-      
+
+    /**
+     * Called when the starting piece changes
+     * @param {string} tag The new piece chosen
+     */
     pieceChanged(tag) {
         console.log(tag);
         this.setState({pieceChosen:tag});
@@ -103,35 +125,63 @@ class CreateGame extends Component{
         //TODO change join view type
     }
 
+    //test methods----------------------------------------------
+
+    testChanged(e) {
+        console.log(e.target);
+        this.setState({testString: e.target.value});
+    }
+
+    testClick(e) {
+        console.log(this.state.testString);
+        this.state.localConnection.joinConnection(this.state.testString);
+    }
+
+    testAccept() {
+        console.log("testAccept");
+        this.state.localConnection.acceptAnswer(this.state.testString);
+    }
+
+    testOffer() {
+        this.state.localConnection.createOffer().then(offer => {
+            console.log(offer);
+        });
+    }
+
+    //end test methods--------------------------------------------
+
     //TODO
     startGame() {
-//"7812b2a0b4a3087e9085af20db1384c356729f35"
-        var data = {
-            timeControlChosen: this.state.timeControlChosen,
-            timePerSide: this.state.timePerSide,
-            increment: this.state.increment,
-            startingColor: this.state.pieceChosen
-        }
+        // var data = {
+        //     timeControlChosen: this.state.timeControlChosen,
+        //     timePerSide: this.state.timePerSide,
+        //     increment: this.state.increment,
+        //     startingColor: this.state.pieceChosen
+        // }
 
-        client.broadcast.json({ 
-                required_auths: [USERNAME],
-                required_posting_auths: [],
-                id: 'chess-game',
-                json: JSON.stringify(data)
-            }, POSTING_KEY)
-        .then(
-            function(result) {
-                console.log("success!");
-                console.log(result);
-            },
-            function(error) {
-                console.error(error);
-                alert("Something went wrong!")
-            }
-        );
+        //Sends to blockchain TODO update with webrtc
+        // client.broadcast.json({
+        //         required_auths: [],
+        //         required_posting_auths: [USERNAME],
+        //         id: 'chess-game',
+        //         json: JSON.stringify(data)
+        //     }, POSTING_KEY)
+        // .then(
+        //     function(result) {
+        //         console.log("success!");
+        //         console.log(result);
+        //     },
+        //     function(error) {
+        //         console.error(error);
+        //         alert("Something went wrong!")
+        //     }
+        // );
 
-        if(this.props != null)
+        //this.state.localConnection.createOffer().then(offer => {
+        //    console.log(offer);
+        if (this.props != null)
             this.props.switchToLive();
+        // });
     }
 
     grabJoinData() {
@@ -151,9 +201,6 @@ class CreateGame extends Component{
     }
 
     joinGame(e) {
-        //console.log(e);
-        //TODO 30903911
-
         client.database.getBlock(30903911)
         .then(
             function(result)
@@ -214,6 +261,12 @@ class CreateGame extends Component{
                         <h3>{this.state.startingColorText}</h3>
                         <PieceList onPieceChanged={this.pieceChanged}/>
                         <button onClick={e => this.startGame()}>Start</button>
+                        {/* for testing purposes */}
+                        <br/>
+                        <textarea onChange={e => this.testChanged(e)}/>
+                        <button onClick={e => this.testClick(e)}>Connect to user (test)</button>
+                        <button onClick={e => this.testAccept()}>Accept answer (test)</button>
+                        <button onClick={e => this.testOffer()}>Create offer (test)</button>
                     </div>
                     <div className="box half">
                     <div className="horizontal">

@@ -14,8 +14,8 @@ export default class LiveMatch extends Component {
             return (
 
                 <div id="liveMatch">
-                    <ChessGame/>
-                    <Chatbox/>                
+                    {/* <ChessGame/> */}
+                    <Chatbox localConnection={this.props.localConnection}/>                
                 </div>
 
             )
