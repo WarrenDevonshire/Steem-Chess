@@ -10,8 +10,22 @@ import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
 import Success from './Success/Success';
+import sc2 from "steemconnect";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    let api = sc2.Initialize({
+      app: 'SteemChess',
+      callbackURL: 'https://localhost:3000/Success',
+      accessToken: 'access_token',
+      scope: ['vote', 'comment']
+    });
+
+    this.state = {
+      api: api
+    };
+  }
   render() {
     return (
       <Router>
@@ -26,7 +40,7 @@ class App extends Component {
           <Route path='/Live' component={LiveMatch} exact />
           <Route path='/Post/@:author/:permlink' component={Post} exact />
           <Route path='/Compose' component={Compose} exact />
-          <Route path='/Success' component={Success}/>
+          <Route path='/Success' render={(props) => <Success {...props} api={this.state.api}/>}/>
         </Content>
 
         <Footer />
