@@ -23,9 +23,10 @@ class Menubar extends Component{
                     <li> <Link to="/">Trending</Link></li>
                     <li> <Link to="/New">New</Link></li>
                     <li> <Link to="/Hot">Hot</Link></li>
-                    <li> <Link to="/Compose">Compose</Link></li>        
+                    <li> <Link to="/Compose">Compose</Link></li> 
+                    <li> <Login api={this.state.api} class='login'/></li>       
                 </ul>
-                <Login api={this.state.api} class='login'/>
+               
                 </div>
                 <form>
                     <input type="text" />

@@ -25,12 +25,12 @@
     list-style: none;
     display: block;
     float: left;
-    margin: 15px 10px 0px 10px;
+    margin: 10px 5px 0px 5px;
+    padding: 10px 12px;
 }
 
 .Menu li:hover {
     background-color: aliceblue;
-    padding: 10px 12px;
 }
 
 .Menu h1{
@@ -44,6 +44,8 @@
     display: inline-flex;
     float: left;
 }
+
+
 
 
 
