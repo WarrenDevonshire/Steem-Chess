@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 import './CommentFeed.css';
 import { Client } from 'dsteem';
+import Comment from './Comment/Comment';
 
 const fetchClient = new Client('https://api.steemit.com');
-const Remarkable = require('remarkable');
 
-export default class Post extends Component {
+export default class CommentFeed extends Component {
 
     constructor(props) {
 
         super(props);
 
         this.state = {
+
             api: this.props.getAPI(),
             parentAuthor: this.props.author,
-            parentPermlink: this.props.permlink
+            parentPermlink: this.props.permlink,
+            comments: []
 
         };
 
@@ -47,30 +49,14 @@ export default class Post extends Component {
         fetchClient.database
             .call('get_content_replies', [this.state.parentAuthor, this.state.parentPermlink]) // fetch post comments
             .then(result => {
-
-                const md = new Remarkable({ html: true, linkify: true });
-                const comments = [];
+                
                 for (var i = 0; i < result.length; i++) {
-                    comments.push(
-                        `<div class="list-group-item list-group-item-action flex-column align-items-start">\
-                    <div class="d-flex w-100 justify-content-between">\
-                      <h5 class="mb-1">@${result[i].author}</h5>\
-                      <small class="text-muted">${new Date(
-                            result[i].created
-                        ).toString()}</small>\
-                    </div>\
-                    <p class="mb-1">${md.render(result[i].body)}</p>\
-                    <small class="text-muted">&#9650; ${
-                        result[i].net_votes
-                        }</small>\
-                  </div>`
-                    );
+
+                    this.state.comments.push(<Comment comment={result[i]} />);
+
                 }
 
-                document.getElementById('postComments').style.display = 'block';
-                document.getElementById(
-                    'postComments'
-                ).innerHTML = comments.join('');
+                this.forceUpdate();
 
             });
 
@@ -108,10 +94,6 @@ export default class Post extends Component {
 
     }
 
-    clearFields() {
-        document.getElementById('body').value = '';
-    };
-
     render() {
 
         return (
@@ -119,12 +101,13 @@ export default class Post extends Component {
                 <h4>Submit a comment:</h4>
                 Comment body:<br />
                 <textarea id="body" class="form-control" rows="3">test</textarea><br />
-                <input id="submitPostBtn" type="button" value="Submit comment!" onClick={() => this.pushComment()} class="btn btn-primary" />
-                <input id="clearFieldsBtn" type="button" value="Clear Fields" onClick={() => this.clearFields()} class="btn btn-primary" />
+                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment()} class="btn btn-primary" />
                 <div id="postLink" />
                 <h1>Comments</h1>
-                <div id="postComments" styles="display: none;" class="list-group"></div>
+                <div class="list-group" id="postComments">{this.state.comments.map(Comment => <div> {Comment} </div>)}</div>
             </div>
         )
     }
 }
+
+//<div class="list-group" id="postComments">{this.state.comments.map(Comment => <div> {(props) => <Comment {...props} pushComment={this.pushComment}/>} </div>)} </div>

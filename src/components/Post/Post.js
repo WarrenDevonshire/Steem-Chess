@@ -15,7 +15,8 @@ export default class Post extends Component{
         this.state = {
 
             author: props.match.params.author,
-            permlink: props.match.params.permlink
+            permlink: props.match.params.permlink,
+            comments: []
 
         };
 
