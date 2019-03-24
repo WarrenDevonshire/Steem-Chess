@@ -1,0 +1,15 @@
+.Play{
+    display: inline-block;
+    margin-top: 100px
+}
+
+.CreateGame{
+    position: relative;
+    float: left;
+}
+
+.JoinGame{
+    position: relative;
+    float: right;
+}
+

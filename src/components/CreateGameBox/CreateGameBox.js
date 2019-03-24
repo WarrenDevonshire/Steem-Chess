@@ -48,8 +48,9 @@ class CreateGameBox extends Component{
 
     render() {
         return (
-            <div className={CreateGameBox}>
+            <div className={CreateGameBox} class='CreateGameBox'>
                 <Title title={'Create Game'}/>
+                <div class='Box'>
                 <RadioButtonList defaultValue={this.state.timeControlChosen}
                                  options={this.state.timeControlOptions}
                                  onTimeControlChosen={this.timeControlChosen}/>
@@ -75,6 +76,7 @@ class CreateGameBox extends Component{
                 {/* for testing purposes */}
                 <br/>
                 <button onClick={e => this.testButton()}>Connect not initiating</button>
+                </div>
             </div>
         );
     }

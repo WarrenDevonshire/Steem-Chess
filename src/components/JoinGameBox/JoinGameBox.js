@@ -43,10 +43,10 @@ class JoinGameBox extends Component{
 
     render() {
         return(
-            <div className={JoinGameBox}>
+            <div className={JoinGameBox} class='JoinGameBox'>
                 <div className="horizontal">
-                    <label>Filter</label>
-                    <ComboBox options={this.state.filterOptions}
+                    <label class="filter">Filter</label>
+                    <ComboBox class='ComboBox' options={this.state.filterOptions}
                               onSelectedChanged={this.filterChanged}/>
                     <ToggleSwitch checked={false}
                                   falseText="Grid"

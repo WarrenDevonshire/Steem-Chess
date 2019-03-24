@@ -12,9 +12,9 @@ class Play extends Component{
 
     render() {
         return(
-            <div className={Play}>
-                <CreateGameBox/>
-                <JoinGameBox/>
+            <div className={Play} class='Play'>
+                <CreateGameBox class='CreateGame'/>
+                <JoinGameBox class='JoinGame'/>
             </div>
         )
     }
