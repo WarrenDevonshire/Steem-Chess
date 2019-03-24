@@ -1,11 +1,21 @@
 .ArticleFeed {
-
     align-items: center;
-
 }
 
 .ArticleFeed img {
-
-    max-width: 450px;
-
+   position: relative;
+   width:  300px;
+   height: auto;
+   background-position: 50% 50%;
+   background-repeat:   no-repeat;
+   background-size:     cover;
+   margin-right: 100px;
+   float: left;
 }
+
+.ArticleFeed .list-group{
+    margin: 10px;
+    padding: 10px;
+    display: table;
+}
+

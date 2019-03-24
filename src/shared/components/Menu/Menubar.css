@@ -1,36 +1,42 @@
 .Menu {
-    margin: 0;
     overflow: hidden;
     align-items: center;
     display: flex;
     padding-left: 30px;
+    padding-right: 500px;
+    float: left;
 }
 
 
 .Menu form{
-    margin: 30;
-    padding-left: 900px;
+    margin-left: 30px;
+    padding-left: 100px;
+    display: inline-block;
+    size: 30px;
 }
 
 .Menu button{ 
     position: absolute;
-    padding-top: 3px;
-    padding-bottom: 20px;
-    padding-right:20px;
+    font-size: 30px;
 }
 
 .Menu input{
-    padding: 4px;
+    padding: 5px;
+    font-size: 20px;
 }
 
 .Menu li{
-    font-size: 20px;
+    font-size: 30px;
     list-style: none;
-    display: inline;
+    display: inline-block;
     padding: 14px 16px;
 }
 
 .Menu li:hover{
     background-color: #ddd;
+}
+
+.Menu h1{
+    margin-right: 50px;
 }
 
