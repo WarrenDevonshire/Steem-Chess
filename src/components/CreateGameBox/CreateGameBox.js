@@ -17,16 +17,12 @@ class CreateGameBox extends Component{
             startingColorText: "Starting Color",
             timePerSide: 5,
             increment: 5,
-
-            filterOptions: ["Most Recent", "Least Recent"],
-            filterValue: ""
         };
 
         this.pieceChanged = this.pieceChanged.bind(this);
         this.timePerSideChanged = this.timePerSideChanged.bind(this);
         this.incrementChanged = this.incrementChanged.bind(this);
         this.timeControlChosen = this.timeControlChosen.bind(this);
-        this.filterChanged = this.filterChanged.bind(this);
     }
 
     pieceChanged(tag) {
@@ -48,11 +44,6 @@ class CreateGameBox extends Component{
     timeControlChosen(value) {
         console.log(value);
         this.setState({timeControlChosen: value});
-    }
-
-    filterChanged(value) {
-        console.log(value);
-        this.setState({filterValue: value});
     }
 
     render() {

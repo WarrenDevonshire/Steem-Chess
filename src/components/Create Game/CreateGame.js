@@ -1,3 +1,10 @@
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DEPRECATED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 import React, {Component} from 'react';
 import './CreateGame.css'
 import Slider from '../Slider/Slider'

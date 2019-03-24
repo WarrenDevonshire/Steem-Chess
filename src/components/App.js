@@ -11,8 +11,7 @@ import Post from './Post/Post';
 import Compose from './Compose/Compose';
 import Success from './Success/Success';
 import sc2 from "steemconnect";
-import CreateGameBox from './CreateGameBox/CreateGameBox';
-
+import Play from './Play/Play';
 class App extends Component {
     constructor(props) {
         super(props);
@@ -55,7 +54,7 @@ class App extends Component {
                                exact/>
                         <Route path='/New'
                                render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact/>
-                        <Route path='/Play' render={(props) => <Game {...props} getAccessToken={this.getAccessToken}/>}
+                        <Route path='/Play' render={(props) => <Play {...props} getAccessToken={this.getAccessToken}/>}
                                exact/>
                         <Route path='/Live'
                                render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
@@ -64,7 +63,7 @@ class App extends Component {
                         <Route path='/Success'
                                render={(props) => <Success {...props} api={this.state.api}
                                                            onAccessToken={this.onAccessToken}/>}/>
-                        <Route path='/Test' component={CreateGameBox}/>
+                        <Route path='/Test' component={Play}/>
                     </Content>
 
                     <Footer/>
