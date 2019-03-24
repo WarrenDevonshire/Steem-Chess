@@ -22,7 +22,7 @@ class LiveMatch extends Component {
             gameType: "Blitz",
             gameTime: 15,
             increment: 5,
-            ranked: false,
+            ranked: 'Casual',
             black: "FishPawn",
             white: "CatPawn"
         }
@@ -64,18 +64,22 @@ class LiveMatch extends Component {
         return (
 
             <div id="liveMatch">
+
                 {/* For testing rtc */}
                 <textarea onChange={e => this.testChanged(e)}/>
                 <button onClick={e => this.testClick()}>TESTTTT</button>
+
+                
                 {/* End testing area */}
                 {/* <ChessGame/> */}
-                <Chatbox peer={this.state.peer}/>
                 <GameInfo gameType={this.state.gameType}
                     gameTime={this.state.gameTime}
                     increment={this.state.increment}
                     ranked={this.state.ranked}
                     black={this.state.black}
                     white={this.state.white}/>
+                <Chatbox peer={this.state.peer}/>
+               
             </div>
 
         )
