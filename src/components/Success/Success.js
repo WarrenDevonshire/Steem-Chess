@@ -5,7 +5,7 @@ class Success extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            api: this.props.api,
+            api: this.props.getAPI(),
             access_token: null
         };
     }

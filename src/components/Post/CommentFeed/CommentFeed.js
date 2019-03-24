@@ -1,17 +1,9 @@
 import React, { Component } from 'react';
 import './CommentFeed.css';
 import { Client } from 'dsteem';
-import sc2 from "steemconnect";
 
 const fetchClient = new Client('https://api.steemit.com');
 const Remarkable = require('remarkable');
-
-const api = sc2.Initialize({
-    app: 'SteemChess',
-    callbackURL: 'https://localhost:3000/Success',
-    accessToken: 'access_token',
-    scope: ['vote', 'comment']
-  });
 
 export default class Post extends Component {
 
@@ -19,24 +11,21 @@ export default class Post extends Component {
 
         super(props);
 
-        api.setAccessToken(this.props.getAccessToken());
-        
-        api.me(this.getUserName.bind(this));
-
         this.state = {
-            
+            api: this.props.getAPI(),
             parentAuthor: this.props.author,
             parentPermlink: this.props.permlink
 
         };
 
+        this.props.getAPI().me(this.getUserName.bind(this));
         this.fetchComments();
-        
     }
 
     getUserName(error, result) {
 
         if (result) {
+            console.log(result);
 
             this.setState( ()=>{
 
@@ -89,7 +78,7 @@ export default class Post extends Component {
 
     pushComment() {
 
-        if (document.getElementById('body').value == '') {
+        if (document.getElementById('body').value === '') {
 
             alert("Can't post an empty comment!");
 
@@ -107,9 +96,12 @@ export default class Post extends Component {
             const jsonMetadata = '';
 
             const body = document.getElementById('body').value;
+            console.log(body);
     
-            api.comment(this.state.parentAuthor, this.state.parentPermlink, author, permlink, title, body, jsonMetadata, function (error, result) {
-                if (error) alert(error);
+            this.state.api.comment(this.state.parentAuthor, this.state.parentPermlink, author, permlink, title, body, jsonMetadata,
+                function (error, result) {
+                console.log(result);
+                console.log(error);
               });
 
         }
