@@ -6,11 +6,23 @@ class Chatbox extends Component {
         super(props);
         this.state = {
             messageList: this.props.messageList ? this.props.messageList : [],
-            localConnection: this.props.localConnection,
+            peer: this.props.peer,
             draftedMessage: ""
         }
         this.updateDraft = this.updateDraft.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+
+        this.state.peer.on('data', (data) => {
+            try {
+                var objectRecieved = JSON.parse(data);
+                if (objectRecieved.hasOwnProperty('type') && objectRecieved.type === 'message') {
+                    this.state.messageList.push([objectRecieved.message, Date.now]);
+                    this.setState({messageList: this.state.messageList});
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
     }
 
     updateDraft(area) {
@@ -18,9 +30,24 @@ class Chatbox extends Component {
     }
 
     sendMessage() {
-        console.log(this.state.localConnection);
-        this.state.localConnection.sendMessage(this.state.draftedMessage);
-        this.state.messageList.push([this.state.draftedMessage, Date.now]);
+        if (this.state.peer == null) {
+            var error = "Peer connection not initiated!";
+            console.err(error);
+            alert(error);
+            return;
+        }
+        if (!this.state.peer.connected) {
+            var error = "Not connected to the other player yet!";
+            console.error(error);
+            alert(error);
+            return;
+        }
+        var data = {
+            type: "message",
+            timeSent: Date.now,
+            message: this.state.draftedMessage,
+        }
+        this.state.peer.send(JSON.stringify(data));
         this.setState({draftedMessage: ""});
         this.refs.draftArea.value = ""
     }
@@ -30,7 +57,7 @@ class Chatbox extends Component {
       if (this.state.messageList != null) {
           messageList = this.state.messageList.map(([message, timeSent], index) =>
               <MessageBubble key={index}
-                             message={message}/>
+                             message={message.toString()}/>
           )
       }
     return (
@@ -68,8 +95,8 @@ class MessageBubble extends Component {
     render() {
         return (
             <span>
-              <h1>{this.state.message}</h1>
-          </span>
+        <h1>{this.state.message}</h1>
+      </span>
         );
     }
 }
