@@ -46,7 +46,7 @@ export default class Post extends Component{
         return (  
             <div className="Post">
                 <div id="postBody" styles="display: none;"></div>	
-                <CommentFeed author={this.state.author} permlink={this.state.permlink} />
+                <CommentFeed author={this.state.author} permlink={this.state.permlink} getAccessToken={this.props.getAccessToken}/>
             </div>
         )
     }

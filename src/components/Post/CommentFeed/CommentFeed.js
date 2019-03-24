@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import './CommentFeed.css';
-import { Client, PrivateKey } from 'dsteem';
-import { Testnet as NetConfig } from '../../../configuration';
-
-let opts = { ...NetConfig.net };
+import { Client } from 'dsteem';
+import sc2 from "steemconnect";
 
 const fetchClient = new Client('https://api.steemit.com');
-const pushClient = new Client(NetConfig.url, opts);
 const Remarkable = require('remarkable');
+
+const api = sc2.Initialize({
+    app: 'SteemChess',
+    callbackURL: 'https://localhost:3000/Success',
+    accessToken: 'access_token',
+    scope: ['vote', 'comment']
+  });
 
 export default class Post extends Component {
 
@@ -15,14 +19,36 @@ export default class Post extends Component {
 
         super(props);
 
-        this.state = {
+        api.setAccessToken(this.props.getAccessToken());
+        
+        api.me(this.getUserName.bind(this));
 
+        this.state = {
+            
             parentAuthor: this.props.author,
             parentPermlink: this.props.permlink
 
         };
 
         this.fetchComments();
+        
+    }
+
+    getUserName(error, result) {
+
+        if (result) {
+
+            this.setState( ()=>{
+
+                return {userName: result.name};
+    
+            })
+
+        } else {
+
+            alert(error);
+
+        }
 
     }
 
@@ -63,50 +89,30 @@ export default class Post extends Component {
 
     pushComment() {
 
-        //get private key
-        const privateKey = PrivateKey.fromString(
-            document.getElementById('postingKey').value
-        );
-        //get account name
-        const account = document.getElementById('username').value;
-        //get body
-        const body = document.getElementById('body').value;
-        //get parent author permalink
-        const parent_author = this.state.parentAuthor;
-        //get parent author permalink
-        const parent_permlink = this.state.parentPermlink;
+        if (document.getElementById('body').value == '') {
 
-        //generate random permanent link for post
-        const permlink = Math.random()
-            .toString(36)
-            .substring(2);
+            alert("Can't post an empty comment!");
 
-        const payload = {
-            author: account,
-            title: '',
-            body: body,
-            parent_author: parent_author,
-            parent_permlink: parent_permlink,
-            permlink: permlink,
-            json_metadata: '',
-        };
+        } else {
 
-        console.log('pustCSlient.broadcast.comment payload:', payload);
-        pushClient.broadcast.comment(payload, privateKey).then(
-            function (result) {
-                alert(result);
-                console.log('client.broadcast.comment response', result);
-                document.getElementById('postLink').style.display = 'block';
-                document.getElementById(
-                    'postLink'
-                ).innerHTML = `<br/><p>Included in block: ${
-                    result.block_num
-                    }</p><br/><br/><a href="http://condenser.steem.vc/@${parent_author}/${parent_permlink}">Check post here</a>`;
-            },
-            function (error) {
-                console.error(error);
-            }
-        );
+            const author = this.state.userName;
+
+            //generate random permanent link for post
+            const permlink = Math.random()
+                .toString(36)
+                .substring(2);
+    
+            const title = '';
+
+            const jsonMetadata = '';
+
+            const body = document.getElementById('body').value;
+    
+            api.comment(this.state.parentAuthor, this.state.parentPermlink, author, permlink, title, body, jsonMetadata, function (error, result) {
+                if (error) alert(error);
+              });
+
+        }
 
     }
 
@@ -119,8 +125,6 @@ export default class Post extends Component {
         return (
             <div id="CommentFeed" class="container" id="content"><br />
                 <h4>Submit a comment:</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" value="demo01" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" value="5KNckabfv4i793ymx4NWrTLDQZMjhgQTJbPSTroeBY4Bh5Eg6Tm" /><br />
                 Comment body:<br />
                 <textarea id="body" class="form-control" rows="3">test</textarea><br />
                 <input id="submitPostBtn" type="button" value="Submit comment!" onClick={() => this.pushComment()} class="btn btn-primary" />

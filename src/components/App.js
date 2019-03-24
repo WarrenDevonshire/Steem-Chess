@@ -52,7 +52,7 @@ class App extends Component {
           <Route path='/New' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact />
           <Route path='/Play' render={(props) => <Game {...props} getAccessToken={this.getAccessToken}/>} exact/>
           <Route path='/Live' render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
-          <Route path='/Post/@:author/:permlink' component={Post} exact />
+          <Route path='/Post/@:author/:permlink' render={(props) => <Post {...props} getAccessToken={this.getAccessToken}/>} exact />
           <Route path='/Compose' component={Compose} exact />
           <Route path='/Success'
                  render={(props) => <Success {...props} api={this.state.api} onAccessToken={this.onAccessToken}/>}/>
