@@ -75,6 +75,7 @@ class CreateGameBox extends Component{
                 <PieceList onPieceChanged={this.pieceChanged}/>
                 <Link to="/Live"><button>Create Game</button></Link>
             </div>
+        </div>
         );
     }
 }

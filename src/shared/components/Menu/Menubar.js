@@ -17,6 +17,7 @@ class Menubar extends Component{
             
             <div className="Menu">
                 <h1>Steem Chess</h1>
+                <div class='links'>
                 <ul>
                     <li> <Link to="/Play">Play</Link></li>
                     <li> <Link to="/">Trending</Link></li>
@@ -24,7 +25,8 @@ class Menubar extends Component{
                     <li> <Link to="/Hot">Hot</Link></li>
                     <li> <Link to="/Compose">Compose</Link></li>        
                 </ul>
-                <Login api={this.state.api}/>
+                <Login api={this.state.api} class='login'/>
+                </div>
                 <form>
                     <input type="text" />
                     <button type="submit">Search</button>

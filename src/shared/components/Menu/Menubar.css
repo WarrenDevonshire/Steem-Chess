@@ -1,22 +1,19 @@
 .Menu {
+    margin: 20px 0px 10px 0px;
     overflow: hidden;
-    align-items: center;
-    display: flex;
-    padding-left: 30px;
-    padding-right: 500px;
+    display: table;
     float: left;
 }
 
-
 .Menu form{
-    margin-left: 30px;
     display: inline-block;
     size: 30px;
+    margin-left: 100px;
 }
 
 .Menu button{ 
     position: absolute;
-    font-size: 30px;
+    font-size: 20px;
 }
 
 .Menu input{
@@ -25,17 +22,29 @@
 }
 
 .Menu li{
-    font-size: 30px;
     list-style: none;
-    display: inline-block;
-    padding: 14px 16px;
+    display: block;
+    float: left;
+    margin: 15px 10px 0px 10px;
 }
 
-.Menu li:hover{
-    background-color: #ddd;
+.Menu li:hover {
+    background-color: aliceblue;
+    padding: 10px 12px;
 }
 
 .Menu h1{
-    margin-right: 50px;
+    display: flex;
+    float: left;
 }
+
+
+.links{
+    font-size:25px;
+    display: inline-flex;
+    float: left;
+}
+
+
+
 
