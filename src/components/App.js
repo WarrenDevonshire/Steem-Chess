@@ -9,6 +9,7 @@ import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
+import Success from './Success/Success';
 
 class App extends Component {
   render() {
@@ -25,6 +26,7 @@ class App extends Component {
           <Route path='/Live' component={LiveMatch} exact />
           <Route path='/Post/@:author/:permlink' component={Post} exact />
           <Route path='/Compose' component={Compose} exact />
+          <Route path='/Success' component={Success}/>
         </Content>
 
         <Footer />
