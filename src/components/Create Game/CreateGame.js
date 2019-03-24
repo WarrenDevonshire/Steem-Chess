@@ -29,7 +29,7 @@ const client = new Client('https://api.steemit.com');
 
 class CreateGame extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             timeControlOptions: ["Real Time", "Correspondence"],
             timeControlChosen: "Real Time",
