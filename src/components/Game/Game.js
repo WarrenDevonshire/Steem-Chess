@@ -28,7 +28,8 @@ class Game extends Component {
         super(props)
         this.state = {
           gameStarted: false
-        }
+        };
+        console.log(JSON.stringify(this.props.getAccessToken()));
         this.switchToLive = this.switchToLive.bind(this);
     }
 

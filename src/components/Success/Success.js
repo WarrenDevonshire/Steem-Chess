@@ -5,7 +5,8 @@ class Success extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            api: this.props.api
+            api: this.props.api,
+            access_token: null
         };
     }
 
@@ -13,6 +14,7 @@ class Success extends Component {
         console.log(this.props.location.search); // "?filter=top&origin=im"
         let token = new URLSearchParams(this.props.location.search).get('access_token');
         console.log(`Token: ${JSON.stringify(token)}`);
+        this.props.onAccessToken(token);
         this.props.history.push('/');
     }
 

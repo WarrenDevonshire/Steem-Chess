@@ -23,7 +23,7 @@ class Login extends Component {
     render() {
         return (
             <div className={Login}>
-                <a href={this.state.link}>{this.state.link}</a>
+                <a href={this.state.link}>Login</a>
             </div>
         )
     }
