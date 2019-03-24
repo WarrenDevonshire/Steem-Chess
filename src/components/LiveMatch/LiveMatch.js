@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
+import GameInfo from '../GameInfo/GameInfo'
 
 /**
  * Component for playing a live chess match. Must
@@ -15,7 +16,15 @@ class LiveMatch extends Component {
             peer: new Peer({initiator: this.props.isInitiating, trickle: false}),
 
             //test data
-            rtcText: ""
+            rtcText: "",
+
+            //gameinfo
+            gameType: "Blitz",
+            gameTime: 15,
+            increment: 5,
+            ranked: false,
+            black: "FishPawn",
+            white: "CatPawn"
         }
 
         console.log(this.props.isInitiating);
@@ -61,6 +70,12 @@ class LiveMatch extends Component {
                 {/* End testing area */}
                 {/* <ChessGame/> */}
                 <Chatbox peer={this.state.peer}/>
+                <GameInfo gameType={this.state.gameType}
+                    gameTime={this.state.gameTime}
+                    increment={this.state.increment}
+                    ranked={this.state.ranked}
+                    black={this.state.black}
+                    white={this.state.white}/>
             </div>
 
         )
