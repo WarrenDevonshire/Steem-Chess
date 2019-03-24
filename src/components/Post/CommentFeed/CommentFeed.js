@@ -112,8 +112,6 @@ export default class Post extends Component {
 
     clearFields() {
         document.getElementById('body').value = '';
-        document.getElementById('parent_author').value = '';
-        document.getElementById('parent_permlink').value = '';
     };
 
     render() {
