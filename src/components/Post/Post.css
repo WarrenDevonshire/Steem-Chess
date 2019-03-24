@@ -4,3 +4,78 @@ textarea.composeComment {
     width: 75%;
 
 }
+
+.Post .p{
+    font-size: 30px;
+    display: inline-block;
+}
+
+.title{
+    margin: 20px;
+    display: inline-block;
+    font-size:40px;
+    border-bottom: 10px;
+    border-bottom-color: black;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 800px;
+    align-items: flex-start;
+}
+
+h2{
+    display: table;
+}
+
+.Post{
+    margin: 20px 200px 20px 200px;
+    align-items: flex-start;
+    display: table;
+}
+
+.Post .postBody{
+    margin: 20px 200px 50px;
+    float: left;
+}
+
+img{
+    max-width: 600px;
+}
+
+.Post .list-group{
+    display: inline-block;
+    word-wrap: break-word;
+    align-items: center;
+}
+
+
+
+.Post .votes{
+    display: block;
+    margin: 10px;
+    position: relative;
+}
+
+
+.Post .list-group .Content{
+    display: table;
+    float: left;
+    word-wrap: break-word;
+    word-break: break-all;
+    font-size: 15px;
+}
+
+.Post .author-date{
+    display: block;
+    font-size: 15px;
+    margin: 10px;
+}
+
+.Post .author{
+    display: inline;
+    margin: 10px;
+}
+
+
+
+
+

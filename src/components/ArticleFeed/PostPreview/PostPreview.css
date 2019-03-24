@@ -4,7 +4,6 @@
     float: left;
     display: table;
     font-size: 30px;
-    white-space: pre;
 }
 
 .PostPreview .crop{
@@ -16,10 +15,10 @@
 }
 
 .PostPreview .link{
-    display: table;
     display: inline-block;
-    border: 1px;
-    white-space: nowrap;
+    color: black;
+    text-decoration: none;
+    white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 700px;
@@ -29,4 +28,8 @@
 .PostPreview p{
     display: table;
     white-space: pre;
+    color: black;
 }
+
+
+

@@ -30,7 +30,7 @@ export default class Post extends Component{
     
                 const md = new Remarkable({ html: true, linkify: true });
                 const body = md.render(result.body);
-                const content = `<div class='pull-right'></div><br><h2>${
+                const content = `<div class='pull-right'></div><br><h2 class='title'>${
                     result.title
                 }</h2><br>${body}<br>`;
         
@@ -44,15 +44,15 @@ export default class Post extends Component{
                 const comments = [];
                 for (var i = 0; i < result.length; i++) {
                     comments.push(
-                        `<div class="list-group-item list-group-item-action flex-column align-items-start">\
-                    <div class="d-flex w-100 justify-content-between">\
-                      <h5 class="mb-1">@${result[i].author}</h5>\
-                      <small class="text-muted">${new Date(
+                        `<div class="Comment">\
+                    <div class="author-date">\
+                      <h5 class="author">@${result[i].author}</h5>\
+                      <small class="date">${new Date(
                           result[i].created
                       ).toString()}</small>\
                     </div>\
-                    <p class="mb-1">${md.render(result[i].body)}</p>\
-                    <small class="text-muted">&#9650; ${
+                    <p class="Content">${md.render(result[i].body)}</p><br/>\
+                    <small class="votes">&#9650; ${
                         result[i].net_votes
                     }</small>\
                   </div>`
@@ -79,7 +79,7 @@ export default class Post extends Component{
 
         return (  
             <div className="Post">
-                <div id="postBody" styles="display: none;"></div>	
+                <div id="postBody" class='postBody' styles="display: none;"></div>	
                 <h1>Comments</h1>
                 <div id="composeComment" styles="display: none;">Compose comment:<br /><textarea id="commentText" class="composeComment" /><br /><input id="pushCommentButton" type="button" value="Post Comment" onClick={() => this.pushComment()} /></div>
                 <div id="postComments" styles="display: none;" class="list-group"></div>

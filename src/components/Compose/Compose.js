@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import Input from "../../shared/components/utils/Input";
 import TextArea from "../../shared/components/utils/TextArea";
 import Button from "../../shared/components/utils/Button";
+import './Compose.css';
 
 class Compose extends Component {
   constructor(props) {
@@ -124,17 +125,9 @@ class Compose extends Component {
     return (
       <form className="container-fluid" onSubmit={this.handleFormSubmit}>
       <h1> Create a Post </h1>
-        {/* Tags */}
-        <Input
-          inputType={"text"}
-          name={"tag"}
-          title={"Tags"}
-          value={this.state.newUser.age}
-          placeholder={"Enter a tag here"}
-          handleChange={this.handleTag}
-        />{" "}
         {/* Title of Post */}
         <Input
+          class='title'
           inputType={"text"}
           title={"Title"}
           name={"name"}   //adjusting this to title prevents input
@@ -144,11 +137,22 @@ class Compose extends Component {
         />{" "}
         {/* Post text */}
         <TextArea
+          class='text'
           rows={10}
           value={this.state.newUser.about}
           name={"currentPostInfo"}
           handleChange={this.handleTextArea}
           placeholder={"Enter post text here"}
+        />{" "}
+         {/* Tags */}
+         <Input
+          class='tag'
+          inputType={"text"}
+          name={"tag"}
+          title={"Tags"}
+          value={this.state.newUser.age}
+          placeholder={"Enter a tag here"}
+          handleChange={this.handleTag}
         />
         {/* Post */}
         <Button
