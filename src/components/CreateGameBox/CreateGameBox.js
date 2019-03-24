@@ -5,6 +5,7 @@ import Slider from '../Slider/Slider'
 import BlackPiece from "../Create Game/Images/rook-black.png";
 import MixedPiece from "../Create Game/Images/rook-mixed.png";
 import WhitePiece from "../Create Game/Images/rook-white.png";
+import { Link } from 'react-router-dom';
 
 
 class CreateGameBox extends Component{
@@ -72,11 +73,7 @@ class CreateGameBox extends Component{
                 <hr noshade="true"/>
                 <h3>{this.state.startingColorText}</h3>
                 <PieceList onPieceChanged={this.pieceChanged}/>
-                <button onClick={e => this.startGame()}>Start</button>
-                {/* for testing purposes */}
-                <br/>
-                <button onClick={e => this.testButton()}>Connect not initiating</button>
-                </div>
+                <Link to="/Live"><button>Create Game</button></Link>
             </div>
         );
     }
