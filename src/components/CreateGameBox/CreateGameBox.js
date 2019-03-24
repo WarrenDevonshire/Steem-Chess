@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
 import './CreateGameBox.css';
+import RadioButtonList from "../Radio Button/RadioButtonList";
+import Slider from '../Slider/Slider'
+import BlackPiece from "../Create Game/Images/rook-black.png";
+import MixedPiece from "../Create Game/Images/rook-mixed.png";
+import WhitePiece from "../Create Game/Images/rook-white.png";
+
 
 class CreateGameBox extends Component{
     constructor(props) {
@@ -15,6 +21,12 @@ class CreateGameBox extends Component{
             filterOptions: ["Most Recent", "Least Recent"],
             filterValue: ""
         };
+
+        this.pieceChanged = this.pieceChanged.bind(this);
+        this.timePerSideChanged = this.timePerSideChanged.bind(this);
+        this.incrementChanged = this.incrementChanged.bind(this);
+        this.timeControlChosen = this.timeControlChosen.bind(this);
+        this.filterChanged = this.filterChanged.bind(this);
     }
 
     pieceChanged(tag) {
@@ -47,11 +59,37 @@ class CreateGameBox extends Component{
         return (
             <div className={CreateGameBox}>
                 <Title title={'Create Game'}/>
+                <RadioButtonList defaultValue={this.state.timeControlChosen}
+                                 options={this.state.timeControlOptions}
+                                 onTimeControlChosen={this.timeControlChosen}/>
+                <hr noshade="true"/>
+                <h3>Time Per Side</h3>
+                <Slider min="1"
+                        max="10"
+                        value={this.state.timePerSide}
+                        step="0.5"
+                        unit="Minutes"
+                        onValueChanged={this.timePerSideChanged}/>
+                <h3>Increment</h3>
+                <Slider min="1"
+                        max="10"
+                        value={this.state.increment}
+                        step="1"
+                        unit="Seconds"
+                        onValueChanged={this.incrementChanged}/>
+                <hr noshade="true"/>
+                <h3>{this.state.startingColorText}</h3>
+                <PieceList onPieceChanged={this.pieceChanged}/>
+                <button onClick={e => this.startGame()}>Start</button>
+                {/* for testing purposes */}
+                <br/>
+                <button onClick={e => this.testButton()}>Connect not initiating</button>
             </div>
         );
     }
 }
 export default CreateGameBox;
+
 
 function Title(props){
     return <h1>{props.title}</h1>
@@ -59,3 +97,34 @@ function Title(props){
 Title.defaultProps = {
     title: "Title"
 };
+
+class PieceList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            pieceChosen: "",
+            colorChoices: [[BlackPiece, "Black"], [MixedPiece, "Random"], [WhitePiece, "White"]]
+        }
+    }
+
+    pieceClicked(e) {
+        this.setState({pieceChosen: e.target.id});
+        this.props.onPieceChanged(e.target.id);
+    };
+
+    render() {
+        var pieces = this.state.colorChoices.map(([file, tag], index) =>
+            <img key={index}
+                 id={tag}
+                 onClick={e => this.pieceClicked(e)}
+                 className={tag === this.state.pieceChosen ? "selectedPiece" : "chessPiece"}
+                 src={file}
+                 alt={tag}/>
+        )
+        return (
+            <span>
+                {pieces}
+            </span>
+        );
+    }
+}
