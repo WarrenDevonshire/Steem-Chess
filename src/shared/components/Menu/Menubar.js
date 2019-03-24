@@ -1,9 +1,16 @@
 import React, {Component} from 'react';
 import './Menubar.css';
 import {Link} from 'react-router-dom';
+import Login from '../Login/Login';
 
 
 class Menubar extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            api: this.props.api
+        }
+    }
     render(){
         return (  
             
@@ -17,7 +24,7 @@ class Menubar extends Component{
                     <li> <Link to="/Hot">Hot</Link></li>
                     <li> <Link to="/Compose">Compose</Link></li>        
                 </ul>
-            
+                <Login api={this.state.api}/>
                 <form>
                     <input type="text" />
                     <button type="submit">Search</button>
