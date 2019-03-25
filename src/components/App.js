@@ -5,7 +5,6 @@ import Footer from '../shared/components/layout/Footer';
 import Content from '../shared/components/layout/Content';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import ArticleFeed from './ArticleFeed/ArticleFeed';
-import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';

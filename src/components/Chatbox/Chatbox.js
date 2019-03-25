@@ -11,18 +11,15 @@ class Chatbox extends Component {
         }
         this.updateDraft = this.updateDraft.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+    }
 
-        this.state.peer.on('data', (data) => {
-            try {
-                var objectRecieved = JSON.parse(data);
-                if (objectRecieved.hasOwnProperty('type') && objectRecieved.type === 'message') {
-                    this.state.messageList.push([objectRecieved.message, Date.now]);
-                    this.setState({messageList: this.state.messageList});
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        });
+    /**
+     * Called when LiveMatch notifies Chatbox of a new message
+     * @param {*} message 
+     */
+    onReceiveMessage(data) {
+        this.state.messageList.push([data.message, Date.now]);
+        this.setState({messageList: this.state.messageList});
     }
 
     updateDraft(area) {
