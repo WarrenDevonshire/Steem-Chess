@@ -4,7 +4,8 @@ import './Comment.css';
 const Remarkable = require('remarkable');
 const md = new Remarkable({ html: true, linkify: true });
 
-//TODO: pass pushComment as callback from commentfeed and use to post replies on comment via onclick
+// TODO: pass pushComment as callback from commentfeed and use to post replies on comment via onclick
+// TODO: fix comment body not parsing correctly
 
 export default class Comment extends Component {
 
@@ -14,8 +15,9 @@ export default class Comment extends Component {
 
         this.state = {
 
-            author: this.props.comment.author,
-            permlink: this.props.comment.permlink
+            commentAuthor: this.props.comment.author,
+            commentPermlink: this.props.comment.permlink,
+            commentBodyId: "commentBody" + this.props.id // this will give each reply box a unique id to pass to the pushComment callback function
 
         };
 
@@ -27,10 +29,9 @@ export default class Comment extends Component {
             
             <div className="Comment">
 
-                <h4>{this.state.commentAuthor}</h4>
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">@${this.props.comment.author}</h5>
+                <h5 class="mb-1">@{this.state.commentAuthor}</h5>
                 <small class="text-muted">{new Date(
                     this.props.comment.created
                 ).toString()}</small>
@@ -41,8 +42,8 @@ export default class Comment extends Component {
                     }</small>
                 </div>
 
-                <textarea id="body" class="form-control" rows="3">Reply to this comment...</textarea><br />
-                <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.props.pushComment()} class="btn btn-primary" />
+                <textarea id={this.state.commentBodyId} class="form-control" rows="3">Reply to this comment...</textarea><br />
+                <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.props.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
             </div>
 

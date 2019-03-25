@@ -7,6 +7,7 @@ export default class PostPreview extends Component{
 
         super(props);
 
+        // parse and extract contents of post for preview
         const json = JSON.parse(this.props.post.json_metadata);
 
         this.state = {

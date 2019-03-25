@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 
 const client = new Client('https://api.steemit.com');
 
+// TODO: figure out how to grab more articles for next page
+
 export default class ArticleFeed extends Component {
 
     constructor(props) {
@@ -26,13 +28,14 @@ export default class ArticleFeed extends Component {
 
     fetchBlog() {
         
+        // set up query
         const query = {
             tag: 'chess',
             limit: this.props.limit,
         };
         
         client.database
-            .getDiscussions(this.props.sortMethod, query)
+            .getDiscussions(this.props.sortMethod, query) // fetch posts
             .then(result => {
     
                 result.forEach(post => {
@@ -55,6 +58,7 @@ export default class ArticleFeed extends Component {
 
     prevPage() {
 
+        // go back to previous page of posts
         if (this.state.pageNumber > 0) {
 
             this.setState({ pageNumber: this.state.pageNumber - 1 });
@@ -70,12 +74,16 @@ export default class ArticleFeed extends Component {
 
     nextPage() {
 
+        // go to next page of posts
         this.setState({ pageNumber: this.state.pageNumber + 1 })
     
     }
 
     componentDidMount() {
+
+        //set default page to 0 (1 for user)
         this.setState({ pageNumber: 0});
+
       }
 
     render() {
