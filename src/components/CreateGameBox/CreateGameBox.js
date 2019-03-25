@@ -73,9 +73,9 @@ class CreateGameBox extends Component {
      * @param {*} gameData 
      */
     async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game, and continually throws exceptions
-        console.log("starting findWaitingPlayer");
-        return null;
+        console.log("starting findWaitingPlayer", this.props.findBlockHead);
         var headBlockNumber = await this.props.findBlockHead(client);
+        console.log("aaaaaaaaaaaaaa", headBlockNumber);
         var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, GAME_ID);
         try {
             processor.on('request-open', function (json, from) {

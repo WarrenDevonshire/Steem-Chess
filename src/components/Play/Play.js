@@ -18,18 +18,21 @@ class Play extends Component{
      */
     async findBlockHead(client) { //TODO specify id
         console.log("starting findBlockHead");
-        if(client == null)
-        {
-            return Promise.reject("client is null");
-        }
-        try{
-            client.database.getDynamicGlobalProperties().then(function (result) {
-                return result.head_block_number;
-            });
-        } catch(err) {
-            console.error(err);
-            return Promise.reject("Failed to find block head");
-        }
+        return new Promise((resolve, reject) => {
+            if(client == null)
+            {
+                return reject("client is null");
+            }
+            try{
+                client.database.getDynamicGlobalProperties().then(function (result) {
+                    console.log("findblockheadresult: ", result.head_block_number);
+                    resolve(result.head_block_number);
+                });
+            } catch(err) {
+                console.error(err);
+                return reject("Failed to find block head");
+            }
+        });
     }
 
     render() {
