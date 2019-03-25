@@ -4,15 +4,15 @@ import ComboBox from '../Combo Box/ComboBox'
 import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import { Client } from 'dsteem';
 import { Link } from 'react-router-dom';
 import LiveMatch from '../LiveMatch/LiveMatch'
 
 //TEMP unitl local data storage
+const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const steemTransact = require('steem-transact');
-const client = new Client('https://api.steemit.com');
+const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
 const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
 
@@ -42,7 +42,7 @@ class JoinGameBox extends Component{
         var openRequests = new Map();
         var closedRequests = new Map();
         var headBlockNumber = await this.props.findBlockHead(this.client);
-        var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, 'steem-chess');
+        var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, GAME_ID);
         processor.on('request-open', function (json, from) {
             openRequests.set(json.userId, [from, json]);
         });

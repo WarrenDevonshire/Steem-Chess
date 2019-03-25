@@ -2,13 +2,13 @@
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
-import { Client } from 'dsteem';
 
 //TEMP unitl local data storage
+const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const steemTransact = require('steem-transact');
-const client = new Client('https://api.steemit.com');
+const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
 const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
 
@@ -28,21 +28,26 @@ class LiveMatch extends Component {
     }
 
     async componentDidMount() {
+        if(this.props.location.waitingPlayer == null)
+        {
+            console.error("No data was passed in!");
+            return;
+        }
         console.log(this.state.gameData);
         var waiting = await this.props.location.waitingPlayer();
         this.setState({waitingPlayer:waiting});
-        console.log("penis", this.state.waitingPlayer);
+        console.log("waiting player: " + this.state.waitingPlayer);
         if (this.state.gameData == null) {
             console.error("LiveMatch not passed any game data!");
 
         }
         else {
-            if (this.state.waitingPlayer) {
-                this.sendGameRequest(this.state.waitingPlayer, this.state.gameData);
-            }
-            else {
+            if (this.state.waitingPlayer == null) {
                 console.log(this.state.gameData);
                 this.postGameRequest(this.state.gameData);
+            }
+            else {
+                this.sendGameRequest(this.state.waitingPlayer, this.state.gameData);
             }
         }
     }
@@ -54,7 +59,7 @@ class LiveMatch extends Component {
      */
     sendGameRequest(username, gameData) {
         console.log("starting sendGameRequest");
-        var transactor = steemTransact(client, dsteem, 'steem-chess');
+        var transactor = steemTransact(client, dsteem, GAME_ID);
         transactor.json(USERNAME, POSTING_KEY, 'request-join', {
             data: gameData,
             sendingTo: username
@@ -76,8 +81,8 @@ class LiveMatch extends Component {
      */
     postGameRequest(gameData) {
         console.log("starting postGameRequest");
-        var transactor = steemTransact(client, dsteem, 'steem-chess');
-        transactor.json(USERNAME, POSTING_KEY, 'request-open', {
+        var transactor = steemTransact(client, dsteem, GAME_ID);
+        transactor.json(USERNAME, POSTING_KEY.toString(), 'request-open', {
             data: gameData
         }, function (err, result) {
             if (err) {
@@ -85,8 +90,8 @@ class LiveMatch extends Component {
                 alert("Failed to request game");
             }
             else if (result) {
-                console.log("send request", gameData);
-                var processor = steemState(client, dsteem, result.head_block_number, 100, 'steem-chess');
+                console.log("send request", result);
+                var processor = steemState(client, dsteem, result.head_block_number, 100, GAME_ID);
                 try{
                     processor.on('request-join', function (json, from) {
                         if (json.userID === gameData.userID) {
@@ -127,7 +132,7 @@ class LiveMatch extends Component {
 
         this.state.peer.on('connect', () => {
             if (initializingConnection === true) {
-                var transactor = steemTransact(client, dsteem, 'steem-chess');
+                var transactor = steemTransact(client, dsteem, GAME_ID);
                 transactor.json(USERNAME, POSTING_KEY, 'request-closed', {
                     data: gameData
                 }, function (err, result) {
@@ -143,7 +148,7 @@ class LiveMatch extends Component {
         });
 
         var headerBlock = await this.props.findBlockHead(client);
-        var processor = steemState(client, dsteem, headerBlock, 100, 'steem-chess');
+        var processor = steemState(client, dsteem, headerBlock, 100, GAME_ID);
         processor.on('join-signal', function (signal) {
             this.state.peer.signal(JSON.parse(signal.data));
         });
@@ -156,8 +161,9 @@ class LiveMatch extends Component {
      * @param {*} signal 
      */
     sendSignalToUser(username, signal) {
+        return;
         console.log("starting sendSignalToUser");
-        var transactor = steemTransact(client, dsteem, 'steem-chess');
+        var transactor = steemTransact(client, dsteem, GAME_ID);
         transactor.json(USERNAME, POSTING_KEY, 'join-signal', {
             signal: signal
         }, function (err, result) {
