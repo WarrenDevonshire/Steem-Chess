@@ -12,13 +12,30 @@ export default class Comment extends Component {
 
         super(props);
 
+        this.fetchComments = this.props.fetchComments.bind(this);
+
         this.state = {
 
+            expanded: false,
+            comments: [], // this will hold all replies to this comment
             commentAuthor: this.props.comment.author,
             commentPermlink: this.props.comment.permlink,
             commentBodyId: "commentBody" + this.props.id // this will give each reply box a unique id to pass to the pushComment callback function
 
         };
+
+    }
+
+    expandDropdown(fetchComments) {
+
+        fetchComments(this.state.commentAuthor, this.state.commentPermlink);
+        this.setState( {expanded: true} );
+
+    }
+
+    closeDropdown() {
+
+        this.setState( {expanded: false} );
 
     }
 
@@ -43,6 +60,15 @@ export default class Comment extends Component {
 
                 <textarea id={this.state.commentBodyId} class="form-control" rows="3">Reply to this comment...</textarea><br />
                 <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.props.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
+
+                <button onClick={this.setState( {expanded: true })}>Open replies</button>
+                <div class="list-group" id="postComments">{this.state.comments.map(id => {
+                    return this.state.expanded ?
+                        <h1>test</h1>
+                    :
+                        null
+                })}}</div>
+                { this.state.expanded ? <button onClick={this.closeDropdown()}>Close replies</button> : null }
 
             </div>
 

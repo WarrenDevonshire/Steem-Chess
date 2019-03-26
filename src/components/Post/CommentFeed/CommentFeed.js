@@ -26,25 +26,26 @@ export default class CommentFeed extends Component {
 
         };
 
-        this.fetchComments();
+        this.fetchComments(this.state.parentAuthor, this.state.parentPermlink);
+        //this.forceUpdate();
     }
 
     // fetch comments on parent post
-    fetchComments() {
+    fetchComments(parentAuthor, parentPermlink) {
 
         fetchClient.database
-            .call('get_content_replies', [this.state.parentAuthor, this.state.parentPermlink]) // fetch post comments
+            .call('get_content_replies', [parentAuthor, parentPermlink]) // fetch post comments
             .then(result => {
                 
                 // push all post comments to state
                 for (var i = 0; i < result.length; i++) {
 
-                    this.state.comments.push(<Comment comment={result[i]} pushComment={this.pushComment} id={i}/>);
+                    this.state.comments.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={this.fetchComments} id={i}/>);
 
                 }
-
+                
                 // update commentFeed to show all comments
-                this.forceUpdate();
+                //this.forceUpdate();
 
             });
 
@@ -113,6 +114,7 @@ export default class CommentFeed extends Component {
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, Document.getElementById('body'))} class="btn btn-primary" />
                 <div id="postLink" />
 
+                {alert(this.state.comments.size)}
                 <h1>Comments</h1>
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => <div> {Comment} </div>)}</div>
 
