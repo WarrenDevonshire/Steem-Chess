@@ -65,12 +65,12 @@ class LiveMatch extends Component {
         return (
 
             <div id="liveMatch" class='Match'>
-
-                {/* For testing rtc */}
+                {/*
+                 For testing rtc 
                 <textarea onChange={e => this.testChanged(e)}/>
                 <button onClick={e => this.testClick()}>TESTTTT</button>
 
-                
+                */}
                 {/* End testing area */}
                 
                 <GameInfo gameType={this.state.gameType}
@@ -80,7 +80,7 @@ class LiveMatch extends Component {
                     black={this.state.black}
                     white={this.state.white}/>
                 <Chatbox peer={this.state.peer}/>
-                <ChessGame/>
+                <ChessGame class='Board'/>
             </div>
 
         )

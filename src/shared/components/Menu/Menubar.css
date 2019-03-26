@@ -1,19 +1,20 @@
 .Menu {
-    margin: 20px 0px 10px 0px;
     overflow: hidden;
-    display: table;
+    display: flex;
     float: left;
+    text-decoration: none;
 }
 
 .Menu form{
-    display: inline-block;
-    size: 30px;
-    margin-left: 100px;
+    top: 50px;
+    left: 80px;
+    position: relative;
 }
 
-.Menu button{ 
+.Menu .search{ 
     position: absolute;
     font-size: 20px;
+    width: 80px;
 }
 
 .Menu input{

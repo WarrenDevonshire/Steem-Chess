@@ -59,7 +59,6 @@ export default class ArticleFeed extends Component {
             this.setState({ pageNumber: this.state.pageNumber - 1 });
 
         } else {
-
             alert("Already at first page!");
 
         }

@@ -19,3 +19,20 @@
     display: table;
 }
 
+#PrevPage{
+    outline: none;
+    right: 1000px;
+    border-style: none;
+    background: none;
+    width: 100px;
+    color: blue;
+}
+
+#NextPage{
+    outline: none;
+    left: 1000px;
+    border-style: none;
+    background: none;
+    width: 100px;
+    color: blue;
+}

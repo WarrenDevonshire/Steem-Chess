@@ -2,6 +2,7 @@
     height:80px;
     width:200px;
     display: table;
+    position: relative;
 }
 
 h4{

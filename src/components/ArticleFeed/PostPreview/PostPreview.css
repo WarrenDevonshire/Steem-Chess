@@ -29,6 +29,7 @@
     display: table;
     white-space: pre;
     color: black;
+    text-decoration: none!important;
 }
 
 

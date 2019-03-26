@@ -1,10 +1,11 @@
   .messages-list {
       height:400px;
-      width: 350px;
+      width:200px;
       border: 2px solid black;
       padding: 5px 0 0 5px;
       overflow: hidden;
       overflow-y: scroll;
+      position: relative;
   }
   .users {
       padding: 5px 0 0 5px;
@@ -20,11 +21,12 @@
 
   .msg{
       height: 40px;
-      width: 290px;
+      width: 140px;
+      resize: none;
   }
 
   button{
-      height: 50px;
+      height: 40px;
       width: 60px;
       position:absolute;
   }

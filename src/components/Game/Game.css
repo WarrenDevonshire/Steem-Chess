@@ -1,6 +1,7 @@
 .CreateGame{
     margin: 0 auto;
     width: 960px;
+    text-decoration: none;
 }
 
 .CreateGame h1{

@@ -30,7 +30,7 @@ class Menubar extends Component{
                 </div>
                 <form>
                     <input type="text" />
-                    <button type="submit">Search</button>
+                    <button type="submit" class='search'>Search</button>
                 </form>
             </div>
             
