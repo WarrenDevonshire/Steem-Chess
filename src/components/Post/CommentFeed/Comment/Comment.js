@@ -13,6 +13,8 @@ export default class Comment extends Component {
         super(props);
 
         this.fetchComments = this.props.fetchComments.bind(this);
+        this.expandDropdown = this.expandDropdown.bind(this);
+        this.closeDropdown = this.closeDropdown.bind(this);
 
         this.state = {
 
@@ -61,17 +63,24 @@ export default class Comment extends Component {
                 <textarea id={this.state.commentBodyId} class="form-control" rows="3">Reply to this comment...</textarea><br />
                 <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.props.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
-                <button onClick={this.setState( {expanded: true })}>Open replies</button>
-                <div class="list-group" id="postComments">{this.state.comments.map(id => {
+                <button onClick={() => this.expandDropdown(this.fetchComments)}>Open replies</button>
+                <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
                     return this.state.expanded ?
-                        <h1>test</h1>
-                    :
+                    <div> {Comment} </div>
+                        :
                         null
-                })}}</div>
-                { this.state.expanded ? <button onClick={this.closeDropdown()}>Close replies</button> : null }
+                })} </div>
+                { this.state.expanded ? <button onClick={this.closeDropdown}>Close replies</button> : null }
 
             </div>
 
         )
     }
+
+   /*  <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
+        return this.state.expanded ?
+            <h1>test</h1>
+        :
+            null
+    })} </div> */
 }
