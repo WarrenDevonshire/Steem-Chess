@@ -5,6 +5,8 @@ import Input from "../../shared/components/utils/Input";
 import TextArea from "../../shared/components/utils/TextArea";
 import Button from "../../shared/components/utils/Button";
 
+var steem = require('steem');
+
 class Compose extends Component {
   constructor(props) {
     super(props);
@@ -13,13 +15,17 @@ class Compose extends Component {
       newUser: {
         name: "", //change to post_title
         age: "", //change to post_tags
-        about: "" //change to post_text
+        about: "", //change to post_text
+        pk: "", //posting key
+        userName: "" //username of poster
       },
     };
     this.handleTextArea = this.handleTextArea.bind(this);
     this.handleTag = this.handleTag.bind(this);
     this.handleTitle = this.handleTitle.bind(this);
-    //this.handleFormSubmit = this.handleFormSubmit.bind(this); **rework for posting**
+    this.handlePostingKey = this.handlePostingKey.bind(this);
+    this.handleUserName = this.handleUserName.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this); //**rework for posting**
     this.handleClearForm = this.handleClearForm.bind(this);
     this.handleInput = this.handleInput.bind(this);
   }
@@ -42,6 +48,32 @@ class Compose extends Component {
 //This is going to need a rework to create actual tag icons,
 //still trying to figure out how these can be generate, oriented, and 
 //if desired deleted, after the user presses enter.
+  handlePostingKey(e) {
+    let value = e.target.value;
+    this.setState(
+      prevState => ({
+        newUser: {
+          ...prevState.newUser,
+          pk: value
+        }
+      }),
+      () => console.log(this.state.newUser)
+    );
+  }
+
+  handleUserName(e) {
+    let value = e.target.value;
+    this.setState(
+      prevState => ({
+        newUser: {
+          ...prevState.newUser,
+          userName: value
+        }
+      }),
+      () => console.log(this.state.newUser)
+    );
+  }
+
   handleTag(e) {
     let value = e.target.value;
     this.setState(
@@ -82,38 +114,37 @@ class Compose extends Component {
       () => console.log(this.state.newUser)
     );
   }
-/*
-  Still trying to understand how sumbit works and how we can structure it
-  to create an actual post on the blockchain. At the moment commenting out,
-  page will just refresh, otherwise itll show a fetch error which I figure
-  wouldnt be good for the demo, obv just exlude that hitting create post will
-  create the post...
 
   handleFormSubmit(e) {
     e.preventDefault();
-    let userData = this.state.newUser;
+    
+    var permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
 
-    fetch("http://example.com", {
-      method: "POST",
-      body: JSON.stringify(userData),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+    steem.broadcast.comment(
+      this.state.newUser.pk, //posting wif (key)
+      '', //author, leave blank for new post
+      this.state.newUser.age, //first tage
+      this.state.newUser.userName, //user name of poster
+      permlink + '-post', //permlink, could allow user to specify
+      this.state.newUser.name, // Title
+      this.state.newUser.about, //Post text
+      //json meta data
+      { tags: ['secondtag'], app: 'steemjs-test!' }, //rework for additional tags, temp**
+      function (err, result){
+        console.log(err, result);
       }
-    }).then(response => {
-      response.json().then(data => {
-        console.log("Successful" + data);
-      });
-    });
+    );  
   }
-*/
+
   handleClearForm(e) {
     e.preventDefault();
     this.setState({
       newUser: {
         name: "", //fields have to be changed to appropriate names
         age: "",
-        about: ""
+        about: "",
+        pk: "",
+        userName: ""
       }
     });
   }
@@ -124,6 +155,24 @@ class Compose extends Component {
     return (
       <form className="container-fluid" onSubmit={this.handleFormSubmit}>
       <h1> Create a Post </h1>
+        {/* Posting Wif (Key) */}
+        <Input
+          inputType={"text"}
+          name={"pk"}
+          title={"Posting Key"}
+          value={this.state.newUser.pk}
+          placeholder={"Enter posting key here"}
+          handleChange={this.handlePostingKey}
+        />{" "}
+        {/* Username */}
+        <Input
+          inputType={"text"}
+          name={"userName"}
+          title={"Username"}
+          value={this.state.newUser.userName}
+          placeholder={"Enter your username here"}
+          handleChange={this.handleUsername}
+        />{" "}
         {/* Tags */}
         <Input
           inputType={"text"}
