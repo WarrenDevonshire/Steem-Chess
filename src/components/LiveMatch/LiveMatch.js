@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
-import GameInfo from '../GameInfo/GameInfo'
+import GameInfo from '../GameInfo/GameInfo';
+import ChessGame from '../ChessGame/ChessGame';
 
 /**
  * Component for playing a live chess match. Must
@@ -63,7 +64,7 @@ class LiveMatch extends Component {
 
         return (
 
-            <div id="liveMatch">
+            <div id="liveMatch" class='Match'>
 
                 {/* For testing rtc */}
                 <textarea onChange={e => this.testChanged(e)}/>
@@ -71,7 +72,7 @@ class LiveMatch extends Component {
 
                 
                 {/* End testing area */}
-                {/* <ChessGame/> */}
+                
                 <GameInfo gameType={this.state.gameType}
                     gameTime={this.state.gameTime}
                     increment={this.state.increment}
@@ -79,7 +80,7 @@ class LiveMatch extends Component {
                     black={this.state.black}
                     white={this.state.white}/>
                 <Chatbox peer={this.state.peer}/>
-               
+                <ChessGame/>
             </div>
 
         )

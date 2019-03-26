@@ -1,5 +1,3 @@
-
- 
   .messages-list {
       height:400px;
       width: 350px;
@@ -21,7 +19,7 @@
   }
 
   .msg{
-      height: 50px;
+      height: 40px;
       width: 290px;
   }
 
