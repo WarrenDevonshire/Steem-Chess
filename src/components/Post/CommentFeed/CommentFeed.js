@@ -9,6 +9,7 @@ const fetchClient = new Client('https://api.steemit.com');
 const pushClient = new Client(NetConfig.url, opts);
 
 // TODO: open replies to comments recusively the same way that a post is opened
+// TODO: refresh page when comment or reply is posted
 
 export default class CommentFeed extends Component {
 
@@ -42,7 +43,7 @@ export default class CommentFeed extends Component {
 
                 }
 
-                // update commentfeed to show all comments
+                // update commentFeed to show all comments
                 this.forceUpdate();
 
             });

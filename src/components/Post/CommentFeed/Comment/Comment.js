@@ -4,7 +4,6 @@ import './Comment.css';
 const Remarkable = require('remarkable');
 const md = new Remarkable({ html: true, linkify: true });
 
-// TODO: pass pushComment as callback from commentfeed and use to post replies on comment via onclick
 // TODO: fix comment body not parsing correctly
 
 export default class Comment extends Component {
