@@ -111,8 +111,8 @@ export default class CommentFeed extends Component {
             <div id="CommentFeed" class="container" id="content"><br />
 
                 <h4>Submit a comment:</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" value="redgf8" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" value="5JUEV6q6VHEFKrGdamsahTSURe7W5AKp1BTQMmL2WnNkhEq2f6c" /><br />
+                Username: <input id="username" type="text" size="65" class="form-control" defaultValue="" /><br />
+                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" defaultValue="" /><br />
                 Comment body:<br />
                 <textarea id="body" class="form-control" rows="3">Reply to this post...</textarea><br />
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
