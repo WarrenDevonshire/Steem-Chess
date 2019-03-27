@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import './Comment.css';
+import ReactHtmlParser from 'react-html-parser';
 
 const Remarkable = require('remarkable');
 const md = new Remarkable({ html: true, linkify: true });
 
-// TODO: fix comment body not parsing correctly
+// TODO: fix opening replies on replies closing all replies
+// TODO: fix not being able to reply to a reply
 
 export default class Comment extends Component {
 
@@ -22,7 +24,7 @@ export default class Comment extends Component {
             comments: [], // this will hold all replies to this comment
             commentAuthor: this.props.comment.author,
             commentPermlink: this.props.comment.permlink,
-            commentBodyId: "commentBody" + this.props.id // this will give each reply box a unique id to pass to the pushComment callback function
+            commentBodyId: this.props.id // this will give each reply box a unique id to pass to the pushComment callback function
 
         };
 
@@ -30,7 +32,10 @@ export default class Comment extends Component {
 
     expandDropdown(fetchComments) {
 
-        fetchComments(this.state.commentAuthor, this.state.commentPermlink);
+        // extract id number from commentBodyId
+        let bodyId= this.state.commentBodyId.replace( /^\D+/g, '');
+
+        fetchComments(this.state.commentAuthor, this.state.commentPermlink, bodyId);
         this.setState( {expanded: true} );
 
     }
@@ -43,6 +48,8 @@ export default class Comment extends Component {
 
     render() {
 
+        const body = md.render(this.props.comment.body);
+
         return (
             
             <div className="Comment">
@@ -54,7 +61,7 @@ export default class Comment extends Component {
                     this.props.comment.created
                 ).toString()}</small>
                 </div>
-                <p class="mb-1">{md.render(this.props.comment.body)}</p>
+                <p class="mb-1">{ ReactHtmlParser(body) }</p>
                 <small class="text-muted">&#9650; ${
                     this.props.comment.net_votes
                     }</small>
@@ -76,11 +83,4 @@ export default class Comment extends Component {
 
         )
     }
-
-   /*  <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
-        return this.state.expanded ?
-            <h1>test</h1>
-        :
-            null
-    })} </div> */
 }

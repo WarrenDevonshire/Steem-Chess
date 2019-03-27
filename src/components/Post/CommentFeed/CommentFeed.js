@@ -8,7 +8,6 @@ let opts = { ...NetConfig.net };
 const fetchClient = new Client('https://api.steemit.com');
 const pushClient = new Client(NetConfig.url, opts);
 
-// TODO: open replies to comments recusively the same way that a post is opened
 // TODO: refresh page when comment or reply is posted
 
 export default class CommentFeed extends Component {
@@ -26,13 +25,13 @@ export default class CommentFeed extends Component {
 
         };
 
-        this.fetchComments(this.state.parentAuthor, this.state.parentPermlink);
-        this.forceUpdate();
+        this.pushComment = this.pushComment.bind(this);
+        this.fetchComments(this.state.parentAuthor, this.state.parentPermlink, -1);
         
     }
 
     // fetch comments on parent post
-    fetchComments(parentAuthor, parentPermlink) {
+    fetchComments(parentAuthor, parentPermlink, bodyId) {
 
         let commentList = [];
 
@@ -43,19 +42,25 @@ export default class CommentFeed extends Component {
                 // push all post comments to state
                 for (var i = 0; i < result.length; i++) {
 
-                    commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={this.fetchComments} id={i} />);
+                    if (bodyId == -1) {
 
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={this.fetchComments} id={"commentBody" + i} />);
+
+                    } else {
+
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={this.fetchComments} id={"commentBody" + bodyId + "-" + i} />);
+
+                    }
+                
                 }
 
                 this.setState( {comments: commentList} );
-                
-                // update commentFeed to show all comments
-                //this.forceUpdate();
 
             });
 
     }
 
+    // push new comment to blockchain
     pushComment(parentAuthor, parentPermlink, bodyId) {
 
         // get private key
@@ -92,12 +97,6 @@ export default class CommentFeed extends Component {
             function (result) {
                 alert(result);
                 console.log('client.broadcast.comment response', result);
-                document.getElementById('postLink').style.display = 'block';
-                document.getElementById(
-                    'postLink'
-                ).innerHTML = `<br/><p>Included in block: ${
-                    result.block_num
-                    }</p><br/><br/><a href="http://condenser.steem.vc/@${parent_author}/${parent_permlink}">Check post here</a>`;
             },
             function (error) {
                 console.error(error);
@@ -112,11 +111,11 @@ export default class CommentFeed extends Component {
             <div id="CommentFeed" class="container" id="content"><br />
 
                 <h4>Submit a comment:</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" value="" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" value="" /><br />
+                Username: <input id="username" type="text" size="65" class="form-control" value="redgf8" /><br />
+                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" value="5JUEV6q6VHEFKrGdamsahTSURe7W5AKp1BTQMmL2WnNkhEq2f6c" /><br />
                 Comment body:<br />
-                <textarea id="body" class="form-control" rows="3">test</textarea><br />
-                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, Document.getElementById('body'))} class="btn btn-primary" />
+                <textarea id="body" class="form-control" rows="3">Reply to this post...</textarea><br />
+                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
                 <div id="postLink" />
 
                 <h1>Comments</h1>
