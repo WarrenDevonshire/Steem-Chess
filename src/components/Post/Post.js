@@ -20,7 +20,7 @@ export default class Post extends Component{
 
         };
 
-        {this.openPost()};
+        this.openPost();
 
     }
 

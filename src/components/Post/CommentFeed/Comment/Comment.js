@@ -50,7 +50,7 @@ export default class Comment extends Component {
 
         return (
             
-            <div className="Comment">
+            <div id="Comment" className="Comment">
 
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">

@@ -55,9 +55,9 @@ class App extends Component {
         <Header />
         <p>{this.state.access_token}</p>
         <Content>
-          <Route path='/' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>} exact />
-          <Route path='/Hot' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'hot'}/>} exact />
-          <Route path='/New' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact />
+          <Route path='/' render={(props) => <ArticleFeed {...props} limit={'100'} sortMethod={'trending'}/>} exact />
+          <Route path='/Hot' render={(props) => <ArticleFeed {...props} limit={'100'} sortMethod={'hot'}/>} exact />
+          <Route path='/New' render={(props) => <ArticleFeed {...props} limit={'100'} sortMethod={'created'}/>} exact />
           <Route path='/Play' render={(props) => <Game {...props} getAccessToken={this.getAccessToken}/>} exact/>
           <Route path='/Live' render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
           <Route path='/Post/@:author/:permlink' render={(props) => <Post {...props} getAccessToken={this.getAccessToken} getAPI={this.getAPI}/>} exact />

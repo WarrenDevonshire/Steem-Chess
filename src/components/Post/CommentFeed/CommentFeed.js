@@ -42,7 +42,7 @@ export default class CommentFeed extends Component {
                 // push all post comments to state
                 for (var i = 0; i < result.length; i++) {
 
-                    if (bodyId == -1) {
+                    if (bodyId === -1) {
 
                         commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + i} />);
 
@@ -108,12 +108,12 @@ export default class CommentFeed extends Component {
     render() {
 
         return (
-            <div id="CommentFeed" class="container" id="content"><br />
+            <div id="CommentFeed" class="container"><br />
 
                 <hr />
                 <h4>Submit a comment:</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" defaultValue="redgf8" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" defaultValue="5Jy3gN1SEeVWwirmQPBwA9A6SUyjAa1fQTWCDBoNSuvNoLu7RNM" /><br />
+                Username: <input id="username" type="text" size="65" class="form-control" defaultValue="" /><br />
+                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" defaultValue="" /><br />
                 Comment body:<br />
                 <textarea id="body" class="form-control" rows="3">Reply to this post...</textarea><br />
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
