@@ -1,11 +1,21 @@
-import React, { Component } from "react";
-
 /* Import Components */
+import React, { Component } from "react";
 import Input from "../../shared/components/utils/Input";
 import TextArea from "../../shared/components/utils/TextArea";
 import Button from "../../shared/components/utils/Button";
+import {Client, PrivateKey} from 'dsteem';
+import { Mainnet as NetConfig } from '../../configuration';
 
-var steem = require('steem');
+const dsteem = require('dsteem');
+//test
+let opts = { ...Netconfig.net };
+//connect to community testnet
+/*opts.addressPrefix = 'STX';
+opts.chainId =
+    '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673';
+//connect to server which is connected to the network/testnet
+*/
+const client = new Client(NetConfig.url, opts);
 
 class Compose extends Component {
   constructor(props) {
@@ -118,9 +128,71 @@ class Compose extends Component {
   handleFormSubmit(e) {
     e.preventDefault();
     
-    var permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
+    const permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
 
-    steem.broadcast.comment(
+    const privateKey = dsteem.PrivateKey.fromString(
+      this.state.newUser.pk
+  );
+  //get account name
+  const account = this.state.newUser.userName;
+  //get title
+  const title = this.state.newUser.name;
+  //get body
+  const body = this.state.newUser.about;
+  //get tags and convert to array list
+  const tags = this.state.newUser.age;
+  const taglist = tags.split(' ');
+  //make simple json metadata including only tags
+  const json_metadata = JSON.stringify({ tags: taglist });
+  //generate random permanent link for post
+  //const permlink = Math.random()
+    //  .toString(36)
+    //  .substring(2);
+    
+    client.broadcast
+    .comment(
+        {
+            author: account,
+            body: body,
+            json_metadata: json_metadata,
+            parent_author: '',
+            parent_permlink: taglist[0],
+            permlink: permlink,
+            title: title,
+        },
+        privateKey
+    )
+    .then(
+      this.setState({
+        newUser: {
+          name: "", //fields have to be changed to appropriate names
+          age: "",
+          about: "",
+          pk: "",
+          userName: ""
+        }
+      })
+        /*function(result) {
+            this.state.newUser.name = '';
+            this.state.newUser.about = '';
+            this.state.newUser.tags = '';
+            document.getElementById('postLink').style.display = 'block';
+            document.getElementById(
+                'postLink'
+            ).innerHTML = `<br/><p>Included in block: ${
+                result.block_num
+            }</p><br/><br/><a href="http://condenser.steem.vc/${
+                taglist[0]
+            }/@${account}/${permlink}">Check post here</a>`;
+        },
+        function(error) {
+            console.error(error);
+        }*/
+    ); 
+    
+    
+    
+    /*steem.broadcast.comment(
       this.state.newUser.pk, //posting wif (key)
       '', //author, leave blank for new post
       this.state.newUser.age, //first tage
@@ -133,7 +205,7 @@ class Compose extends Component {
       function (err, result){
         console.log(err, result);
       }
-    );  
+    ); */ 
   }
 
   handleClearForm(e) {
@@ -160,25 +232,25 @@ class Compose extends Component {
           inputType={"text"}
           name={"pk"}
           title={"Posting Key"}
-          value={this.state.newUser.pk}
+          defaultValue={this.state.newUser.pk}
           placeholder={"Enter posting key here"}
           handleChange={this.handlePostingKey}
         />{" "}
         {/* Username */}
         <Input
           inputType={"text"}
-          name={"userName"}
+          name={"username"}
           title={"Username"}
-          value={this.state.newUser.userName}
+          defaultValue={this.state.newUser.userName}
           placeholder={"Enter your username here"}
-          handleChange={this.handleUsername}
+          handleChange={this.handleUserName}
         />{" "}
         {/* Tags */}
         <Input
           inputType={"text"}
           name={"tag"}
           title={"Tags"}
-          value={this.state.newUser.age}
+          defaultValue={this.state.newUser.age}
           placeholder={"Enter a tag here"}
           handleChange={this.handleTag}
         />{" "}
@@ -187,14 +259,14 @@ class Compose extends Component {
           inputType={"text"}
           title={"Title"}
           name={"name"}   //adjusting this to title prevents input
-          value={this.state.newUser.name} //something to do with .name, gotta
+          defaultValue={this.state.newUser.name} //something to do with .name, gotta
           placeholder={"Enter title here"} //figure out
           handleChange={this.handleInput}
         />{" "}
         {/* Post text */}
         <TextArea
           rows={10}
-          value={this.state.newUser.about}
+          defaultValue={this.state.newUser.about}
           name={"currentPostInfo"}
           handleChange={this.handleTextArea}
           placeholder={"Enter post text here"}
