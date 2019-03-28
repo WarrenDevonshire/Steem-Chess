@@ -33,6 +33,8 @@ export default class ArticleFeed extends Component {
             tag: 'chess',
             limit: this.props.limit,
         };
+
+        let postList = [];
         
         client.database
             .getDiscussions(this.props.sortMethod, query) // fetch posts
@@ -40,10 +42,11 @@ export default class ArticleFeed extends Component {
     
                 result.forEach(post => {
                     
-                    this.state.posts.push(<PostPreview post={post} />);
+                    postList.push(<PostPreview post={post} />);
 
                 });
 
+                this.setState( {posts: postList} );
                 this.forceUpdate();
             
             })
@@ -92,7 +95,8 @@ export default class ArticleFeed extends Component {
 
             <div className="ArticleFeed">
                 <Link to="/Compose"><button>Compose New Article</button></Link>
-                <div class="list-group" id="postList">{this.state.posts.map(PostPreview => <div> {PostPreview} </div>)}</div>
+                <hr />
+                <div class="list-group" id="postList">{this.state.posts.map(PostPreview => <div> {PostPreview} <hr /></div>)}</div>
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
                 {this.state.pageNumber}
                 <button id="NextPage" onClick={() => this.nextPage()}>Next Page</button>

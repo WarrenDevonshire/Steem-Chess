@@ -8,7 +8,7 @@ let opts = { ...NetConfig.net };
 const fetchClient = new Client('https://api.steemit.com');
 const pushClient = new Client(NetConfig.url, opts);
 
-// TODO: refresh page when comment or reply is posted
+// TODO: refresh page when comment or reply is posted, may not be viable due to blockchain delays
 
 export default class CommentFeed extends Component {
 
@@ -26,12 +26,12 @@ export default class CommentFeed extends Component {
         };
 
         this.pushComment = this.pushComment.bind(this);
-        this.fetchComments(this.state.parentAuthor, this.state.parentPermlink, -1);
+        this.fetchComments(this.state.parentAuthor, this.state.parentPermlink, -1, this.fetchComments);
         
     }
 
     // fetch comments on parent post
-    fetchComments(parentAuthor, parentPermlink, bodyId) {
+    fetchComments(parentAuthor, parentPermlink, bodyId, fetchCallback) {
 
         let commentList = [];
 
@@ -44,11 +44,11 @@ export default class CommentFeed extends Component {
 
                     if (bodyId == -1) {
 
-                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={this.fetchComments} id={"commentBody" + i} />);
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + i} />);
 
                     } else {
 
-                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={this.fetchComments} id={"commentBody" + bodyId + "-" + i} />);
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + bodyId + "-" + i} />);
 
                     }
                 
@@ -95,8 +95,8 @@ export default class CommentFeed extends Component {
         console.log('pustCSlient.broadcast.comment payload:', payload);
         pushClient.broadcast.comment(payload, privateKey).then(
             function (result) {
-                alert(result);
                 console.log('client.broadcast.comment response', result);
+                alert("Success.")
             },
             function (error) {
                 console.error(error);
@@ -110,15 +110,17 @@ export default class CommentFeed extends Component {
         return (
             <div id="CommentFeed" class="container" id="content"><br />
 
+                <hr />
                 <h4>Submit a comment:</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" defaultValue="" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" defaultValue="" /><br />
+                Username: <input id="username" type="text" size="65" class="form-control" defaultValue="redgf8" /><br />
+                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" defaultValue="5Jy3gN1SEeVWwirmQPBwA9A6SUyjAa1fQTWCDBoNSuvNoLu7RNM" /><br />
                 Comment body:<br />
                 <textarea id="body" class="form-control" rows="3">Reply to this post...</textarea><br />
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
                 <div id="postLink" />
 
                 <h1>Comments</h1>
+                <hr />
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => <div> {Comment} </div>)}</div>
 
             </div>

@@ -5,9 +5,6 @@ import ReactHtmlParser from 'react-html-parser';
 const Remarkable = require('remarkable');
 const md = new Remarkable({ html: true, linkify: true });
 
-// TODO: fix opening replies on replies closing all replies
-// TODO: fix not being able to reply to a reply
-
 export default class Comment extends Component {
 
     constructor(props) {
@@ -15,6 +12,7 @@ export default class Comment extends Component {
         super(props);
 
         this.fetchComments = this.props.fetchComments.bind(this);
+        this.pushComment = this.props.pushComment.bind(this);
         this.expandDropdown = this.expandDropdown.bind(this);
         this.closeDropdown = this.closeDropdown.bind(this);
 
@@ -30,12 +28,12 @@ export default class Comment extends Component {
 
     }
 
-    expandDropdown(fetchComments) {
+    expandDropdown() {
 
         // extract id number from commentBodyId
         let bodyId= this.state.commentBodyId.replace( /^\D+/g, '');
 
-        fetchComments(this.state.commentAuthor, this.state.commentPermlink, bodyId);
+        this.fetchComments(this.state.commentAuthor, this.state.commentPermlink, bodyId, this.props.fetchComments);
         this.setState( {expanded: true} );
 
     }
@@ -68,14 +66,11 @@ export default class Comment extends Component {
                 </div>
 
                 <textarea id={this.state.commentBodyId} class="form-control" rows="3">Reply to this comment...</textarea><br />
-                <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.props.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
+                <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
-                <button onClick={() => this.expandDropdown(this.fetchComments)}>Open replies</button>
+                <button onClick={() => this.expandDropdown()}>Open replies</button>
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
-                    return this.state.expanded ?
-                    <div> {Comment} </div>
-                        :
-                        null
+                    return this.state.expanded ?  <div> {Comment} </div> : null
                 })} </div>
                 { this.state.expanded ? <button onClick={this.closeDropdown}>Close replies</button> : null }
 
