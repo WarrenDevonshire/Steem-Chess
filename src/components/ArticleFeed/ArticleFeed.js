@@ -3,11 +3,11 @@ import './ArticleFeed.css';
 import { Client } from 'dsteem';
 import PostPreview from './PostPreview/PostPreview';
 import { Link } from 'react-router-dom';
-import { allSettled } from 'q';
 
 const client = new Client('https://api.steemit.com');
 
 // TODO: figure out how to grab more articles for next page and add routing/url for pages, add page number in props
+// does not update unless activePosts becomes empty, can only fetch 28 posts at a time?
 
 export default class ArticleFeed extends Component {
 
@@ -47,9 +47,10 @@ export default class ArticleFeed extends Component {
 
                 });
 
+                alert(result.length + " posts retrieved.");
+
                 this.setState( { posts: postList } );
-                this.setState( { activePosts: postList.slice(0, 9) })
-                this.forceUpdate();
+                this.setState( { activePosts: postList.slice((this.state.pageNumber * 10), ((this.state.pageNumber + 1) * 10)) })
             
             })
     
@@ -67,9 +68,17 @@ export default class ArticleFeed extends Component {
         if (direction) {
 
             // go forward a page
-            if (this.state.pageNumber < 10) {
+            if (this.state.pageNumber < 9) {
 
-                this.setState({ pageNumber: this.state.pageNumber + 1 } );
+                this.setState({ pageNumber: this.state.pageNumber + 1 }, () => {
+
+                    this.setState({ activePosts: this.state.posts.slice((this.state.pageNumber * 10), ((this.state.pageNumber + 1) * 10)) }, () => {
+
+                        alert("Switching to page: " + (this.state.pageNumber + 1) + ". activePosts for new page contains: " + this.state.activePosts.length + " posts.");
+
+                    });
+                     
+                });
     
             } else {
     
@@ -83,7 +92,15 @@ export default class ArticleFeed extends Component {
             //go back a page
             if (this.state.pageNumber > 0) {
 
-                this.setState({ pageNumber: this.state.pageNumber - 1 } );
+                this.setState({ pageNumber: this.state.pageNumber - 1 }, () => {
+
+                    this.setState({ activePosts: this.state.posts.slice((this.state.pageNumber * 10), ((this.state.pageNumber + 1) * 10)) }, () => {
+
+                        alert("Switching to page: " + (this.state.pageNumber + 1) + ". activePosts for new page contains: " + this.state.activePosts.length + " posts.");
+
+                    });
+                     
+                });
     
             } else {
     
@@ -92,7 +109,21 @@ export default class ArticleFeed extends Component {
     
             }
 
-            this.setState({ activePosts: this.state.posts.slice((this.state.pageNumber * 10), (((this.state.pageNumber + 1) * 10) - 1)) });
+        }
+
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+
+        if (this.state.activePosts === nextState.activePosts) {
+
+            alert("not updating");
+            return false;
+
+        } else {
+
+            alert("updating");
+            return true;
 
         }
 
@@ -106,9 +137,9 @@ export default class ArticleFeed extends Component {
 
                 <Link to="/Compose"><button>Compose New Article</button></Link>
                 <hr />
-                <button id="PrevPage" onClick={() => this.updatePage(false)}>Previous Page</button>
+                <button id="PrevPageBtn" onClick={() => this.updatePage(false)}>Previous Page</button>
                 <p>Page {this.state.pageNumber + 1}</p>
-                <button id="NextPage" onClick={() => this.updatePage(true)}>Next Page</button>
+                <button id="NextPageBtn" onClick={() => this.updatePage(true)}>Next Page</button>
                 <hr />
                 <div class="list-group" id="postList">{this.state.activePosts.map(PostPreview => <div> {PostPreview} <hr /></div>)}</div>
                 <p>Page {this.state.pageNumber + 1}</p>    
