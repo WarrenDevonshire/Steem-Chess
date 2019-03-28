@@ -8,6 +8,7 @@ import ArticleFeed from './ArticleFeed/ArticleFeed';
 import Game from './Game/Game';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
+import UpVote from './UpVote/UpVote';
 import Compose from './Compose/Compose';
 import Success from './Success/Success';
 import sc2 from "steemconnect";
@@ -59,6 +60,7 @@ class App extends Component {
                         <Route path='/Live'
                                render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
+                        <Route path= '/UpVote/' component={UpVote} exact/>
                         <Route path='/Compose' component={Compose} exact/>
                         <Route path='/Success'
                                render={(props) => <Success {...props} api={this.state.api}

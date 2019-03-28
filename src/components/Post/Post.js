@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './Post.css';
 import { Client, PrivateKey } from 'dsteem';
+import UpVote from '../UpVote/UpVote';
 
 const client = new Client('https://api.steemit.com');
 //const postClient = new Client(NetConfig.url, opts);
@@ -81,9 +82,10 @@ export default class Post extends Component{
             <div className="Post">
                 <div id="postBody" styles="display: none;"></div>	
                 <h1>Comments</h1>
+                <div class = "UpVote"><UpVote author = {this.state.author} permlink = {this.state.permlink} ></UpVote></div>
                 <div id="composeComment" styles="display: none;">Compose comment:<br /><textarea id="commentText" class="composeComment" /><br /><input id="pushCommentButton" type="button" value="Post Comment" onClick={() => this.pushComment()} /></div>
                 <div id="postComments" styles="display: none;" class="list-group"></div>
             </div>
         )
     }
-}
+} 
