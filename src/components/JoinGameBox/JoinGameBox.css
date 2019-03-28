@@ -1,5 +1,5 @@
 .JoinGameBox{
-   height: 600px;
+   height: 700px;
    width: 550px;
    float: right;
    margin-left: 100px;
@@ -16,9 +16,22 @@
 
 .filter{
     margin-right:5px;
-    font-size: 20px;
+    font-size: inherit;
 }
 
 .ComboBox{
     margin-right: 10px;
+}
+
+.Button{
+    display: table;
+    position: relative;
+    align-items: center;
+    margin-left:170px;
+    width: 200px;
+    border-radius: 10px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: inherit;
+    text-decoration: none!important;
 }

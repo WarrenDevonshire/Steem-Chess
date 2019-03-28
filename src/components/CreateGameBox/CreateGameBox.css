@@ -15,9 +15,13 @@
     align-items: center;
     margin-left:170px;
     width: 200px;
-    border-radius: 10px;
+    border-radius: 20px;
     background-color: #4CAF50;
+    border:none;
     color: white;
     font-size: 20px;
-    text-decoration: none!important;
+}
+
+.link{
+    text-decoration: none;
 }

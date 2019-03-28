@@ -30,7 +30,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 20px;
+    font-size:inherit;
     margin: 10px;
     border-radius: 15px;
     width: 200px;

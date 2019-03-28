@@ -77,7 +77,7 @@ class JoinGameBox extends Component{
                     className="table"
                     resizable={false}/>
                 <hr noshade="true"/>
-                <button onClick={e => this.joinGame(e)}>Join</button>
+                <button onClick={e => this.joinGame(e)} class='Button'>Join</button>
             </div>
             );
     }

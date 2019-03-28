@@ -73,7 +73,7 @@ class CreateGameBox extends Component{
                 <hr noshade="true"/>
                 <h3>{this.state.startingColorText}</h3>
                 <PieceList onPieceChanged={this.pieceChanged}/>
-                <Link to="/Live"><button class='Button'>Create Game</button></Link>
+                <Link to="/Live" class='link'><button class='Button'>Create Game</button></Link>
             </div>
         </div>
         );

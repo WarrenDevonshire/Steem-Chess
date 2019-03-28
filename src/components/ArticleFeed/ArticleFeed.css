@@ -1,5 +1,6 @@
 .ArticleFeed {
     align-items: center;
+    display: inline-block;
 }
 
 .ArticleFeed img {

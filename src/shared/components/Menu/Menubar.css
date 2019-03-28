@@ -13,13 +13,13 @@
 
 .Menu .search{ 
     position: absolute;
-    font-size: 20px;
+    font-size: inherit;
     width: 80px;
 }
 
 .Menu input{
     padding: 5px;
-    font-size: 20px;
+    font-size:inherit;
 }
 
 .Menu li{
@@ -41,7 +41,7 @@
 
 
 .links{
-    font-size:25px;
+    font-size:inherit;
     display: inline-flex;
     float: left;
 }
