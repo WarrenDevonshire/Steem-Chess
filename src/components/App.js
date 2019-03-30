@@ -18,6 +18,7 @@ class App extends Component {
             <Router>
                 <div className="App">
                     <Header/>
+                    <p>{this.state.access_token}</p>
                     <Content>
                         <Route path='/'
                                render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>}
@@ -26,12 +27,17 @@ class App extends Component {
                                exact/>
                         <Route path='/New'
                                render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact/>
-                        <Route path='/Play' render={(props) => <Play {...props} />} exact/>
-                        <Route path='/Live' render={(props) => <LiveMatch {...props} />} exact/>
+                        <Route path='/Play' render={(props) => <Play {...props} getAccessToken={this.getAccessToken}/>}
+                               exact/>
+                        <Route path='/Live'
+                               render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
                         <Route path='/Compose' component={Compose} exact/>
+
                         <Route path='/Login' component={Login} exact/>
+
                     </Content>
+
                     <Footer/>
                 </div>
             </Router>
