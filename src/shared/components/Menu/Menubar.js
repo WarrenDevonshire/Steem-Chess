@@ -24,7 +24,6 @@ class Menubar extends Component {
                     <li><Link to="/New">New</Link></li>
                     <li><Link to="/Hot">Hot</Link></li>
                 </ul>
-                <Login api={this.state.api}/>
                 <form>
                     <input type="text" placeholder="Search"/>
                     <button type="submit"></button>

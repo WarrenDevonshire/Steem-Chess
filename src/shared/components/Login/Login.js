@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './Login.css';
+import {PrivateKey} from 'dsteem';
 import {loadState, saveState} from "../../../components/localStorage";
 
 
@@ -10,24 +11,42 @@ class Login extends Component {
             account: "",
             password: ""
         };
-
-
+        this.handleAccountChange = this.handleAccountChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
     }
 
+    async handleAccountChange(e){
+        await this.setState({account: e.target.value});
+        console.log(this.state.account);
+    }
+
+    async handlePasswordChange(e){
+        await this.setState({password: e.target.value});
+        console.log(this.state.password);
+    }
+
+    handleLogin(e){
+        const pKey = PrivateKey.fromLogin(this.state.account, this.state.password, 'posting');
+        saveState(pKey);
+    }
 
     render() {
         return (
-            <div className={Login}>
+            <div className="Auth">
                 <form>
+                    <label>
+                        Account:
+                        <input type="text" value={this.state.account}  onChange={this.handleAccountChange}/>
+                    </label>
 
-                    <label>account</label>
-                    <input type="text" name="account" onChange={this.handleAccountChange}/>
-
-                    <label>Password</label>
-                    <input type="password" name="password" onChange={this.handlePasswordChange}/>
-
+                    <label>
+                        Password:
+                        <input type="password" value={this.state.password}  onChange={this.handlePasswordChange}/>
+                    </label>
+                    <button onClick={this.handleLogin}>Login</button>
                 </form>
-            </div>
+        </div>
         )
     }
 }

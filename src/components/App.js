@@ -12,11 +12,6 @@ import Play from './Play/Play';
 import Login from "../shared/components/Login/Login";
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-
-    }
-
 
     render() {
         return (
