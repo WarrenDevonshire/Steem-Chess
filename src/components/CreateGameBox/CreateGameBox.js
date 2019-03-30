@@ -6,15 +6,10 @@ import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
 import { Link } from 'react-router-dom';
+import { reject } from 'q';
 
 //TEMP unitl local data storage
-const GAME_ID = 'steem-chess'
-const dsteem = require('dsteem');
-const steemState = require('steem-state');
-const steemTransact = require('steem-transact');
-const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
-const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
 
 class CreateGameBox extends Component {
     constructor(props) {
@@ -33,7 +28,6 @@ class CreateGameBox extends Component {
         this.incrementChanged = this.incrementChanged.bind(this);
         this.timeControlChosen = this.timeControlChosen.bind(this);
         this.grabGameData = this.grabGameData.bind(this);
-        this.findWaitingPlayer = this.findWaitingPlayer.bind(this);
     }
 
     pieceChanged(tag) {
@@ -68,44 +62,6 @@ class CreateGameBox extends Component {
         }
     }
 
-    /**
-     * Checks if a game has recently been requested with the same data
-     * @param {*} gameData 
-     */
-    async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game, and continually throws exceptions
-        console.log("starting findWaitingPlayer", this.props.findBlockHead);
-        var headBlockNumber = await this.props.findBlockHead(client);
-        console.log("aaaaaaaaaaaaaa", headBlockNumber);
-        var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, GAME_ID);
-        try {
-            processor.on('request-open', function (json, from) {
-                if (this.matchableGames(gameData, json.data)) {
-                    return from;
-                }
-                else {
-                    console.error("Opponent tried to connect with incorrect game data", json.data, gameData);
-                }
-            });
-            processor.start();
-        } catch (err) {
-            console.error(err)
-            processor.stop();
-        }
-    }
-
-    /**
-     * Checks if two games are compatable
-     * @param {*} first 
-     * @param {*} second 
-     */
-    matchableGames(first, second) {
-        if (first.startingColor === "Random" || first.startingColor !== second.startingColor)
-            return true;
-        return first.timeControlChosen === second.timeControlChosen &&
-            first.timePerSide === second.timePerSide &&
-            first.increment === second.increment;
-    }
-
     render() {
         return (
             <div className={CreateGameBox}>
@@ -131,7 +87,7 @@ class CreateGameBox extends Component {
                 <hr noshade="true" />
                 <h3>{this.state.startingColorText}</h3>
                 <PieceList onPieceChanged={this.pieceChanged} />
-                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), waitingPlayer: this.findWaitingPlayer }}><button>Create Game</button></Link>
+                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }}><button>Create Game</button></Link>
             </div>
         );
     }

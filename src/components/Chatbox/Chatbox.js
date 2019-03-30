@@ -29,7 +29,7 @@ class Chatbox extends Component {
     sendMessage() {
         if (this.state.peer == null) {
             var error = "Peer connection not initiated!";
-            console.err(error);
+            console.error(error);
             alert(error);
             return;
         }

@@ -22,34 +22,76 @@ class LiveMatch extends Component {
         super(props);
         this.state = {
             gameData: this.props.location.gameData,
-            waitingPlayer: null
+            waitingPlayer: null,
+            processor: null,
+            transactor: steemTransact(client, dsteem, GAME_ID),
         }
-        
     }
 
     async componentDidMount() {
-        if(this.props.location.waitingPlayer == null)
-        {
-            console.error("No data was passed in!");
-            return;
-        }
         console.log(this.state.gameData);
-        var waiting = await this.props.location.waitingPlayer();
-        this.setState({waitingPlayer:waiting});
+        this.setState({waitingPlayer:this.props.location.waitingPlayer});
         console.log("waiting player: " + this.state.waitingPlayer);
         if (this.state.gameData == null) {
             console.error("LiveMatch not passed any game data!");
-
+            return;
+        }
+        //didn't select a match to join
+        if(this.props.location.waitingPlayer == null) {
+            var opponent = await this.findWaitingPlayer(this.state.gameData);
+            console.log("OPPONENT", opponent);
+            this.setState({waitingPlayer:opponent});
+        }
+        //didn't find an existing game to join
+        if (this.state.waitingPlayer == null) {
+            this.postGameRequest(this.state.gameData);
         }
         else {
-            if (this.state.waitingPlayer == null) {
-                console.log(this.state.gameData);
-                this.postGameRequest(this.state.gameData);
-            }
-            else {
-                this.sendGameRequest(this.state.waitingPlayer, this.state.gameData);
-            }
+            this.sendGameRequest(this.state.waitingPlayer, this.state.gameData);
         }
+    }
+
+    /**
+     * Checks if a game has recently been requested with the same data
+     * @param {*} gameData 
+     */
+    async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
+        var headBlockNumber = await this.props.location.findBlockHead(client);
+        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 5, GAME_ID, 'latest')});
+        return new Promise((resolve, reject) => {
+            try {
+                console.log("asdf");
+                this.state.processor.on('request-open', (json, from) => {
+                    console.log("request-open block found!!!!!!!!!!!!!!!!!!!!!!", json);
+                    if (this.matchableGames(gameData, json.data)) {
+                        console.log("Found an opponent!!!", from);
+                        this.state.processor.stop();
+                        resolve(from);
+                    }
+                });
+                this.state.processor.start();
+                console.log("findwaitingplayer pro");
+            } catch (err) {
+                console.error(err)
+                this.state.processor.stop();
+                return reject("Failed to check for waiting players");
+            }
+            console.log("ending findWaitingplayer without finding a player");
+            resolve(null);//Didn't find any players
+        });
+    }
+
+        /**
+     * Checks if two games are compatable
+     * @param {*} first 
+     * @param {*} second 
+     */
+    matchableGames(first, second) {
+        if (first.startingColor === "Random" || first.startingColor !== second.startingColor)
+            return true;
+        return first.timeControlChosen === second.timeControlChosen &&
+            first.timePerSide === second.timePerSide &&
+            first.increment === second.increment;
     }
 
     /**
@@ -59,11 +101,10 @@ class LiveMatch extends Component {
      */
     sendGameRequest(username, gameData) {
         console.log("starting sendGameRequest");
-        var transactor = steemTransact(client, dsteem, GAME_ID);
-        transactor.json(USERNAME, POSTING_KEY, 'request-join', {
+        this.state.transactor.json(USERNAME, POSTING_KEY, 'request-join', {
             data: gameData,
             sendingTo: username
-        }, function (err, result) {
+        }, (err, result) => {
             if (err) {
                 console.error(err);
                 alert("Failed to send game request");
@@ -81,19 +122,18 @@ class LiveMatch extends Component {
      */
     postGameRequest(gameData) {
         console.log("starting postGameRequest");
-        var transactor = steemTransact(client, dsteem, GAME_ID);
-        transactor.json(USERNAME, POSTING_KEY.toString(), 'request-open', {
+        this.state.transactor.json(USERNAME, POSTING_KEY.toString(), 'request-open', {
             data: gameData
-        }, function (err, result) {
+        }, (err, result) => {
             if (err) {
                 console.error(err);
                 alert("Failed to request game");
             }
             else if (result) {
-                console.log("send request", result);
-                var processor = steemState(client, dsteem, result.head_block_number, 100, GAME_ID);
-                try{
-                    processor.on('request-join', function (json, from) {
+                console.log("posted game request", result);
+                this.state.processor = steemState(client, dsteem, result.block_num, 100, GAME_ID);
+                try {
+                    this.state.processor.on('request-join', (json, from) => {
                         if (json.userID === gameData.userID) {
                             this.initializePeer(true, from, gameData);
                         }
@@ -101,10 +141,10 @@ class LiveMatch extends Component {
                             console.error("Opponent tried to connect with incorrect game data", json.data, gameData);
                         }
                     });
-                    processor.start();
+                    this.state.processor.start();
                 } catch(err) {
                     console.error(err);
-                    processor.stop();
+                    this.state.processor.stop();
                     alert("Game request failed");
                 }
             }
@@ -119,10 +159,9 @@ class LiveMatch extends Component {
      */
     async initializePeer(initializingConnection, otherUsername, gameData) {
         console.log("starting initializePeer");
-        this.state.peer = new Peer({ initiator: initializingConnection, trickle: false });
-
+        await this.setState({peer:new Peer({ initiator: initializingConnection, trickle: false })});
         this.state.peer.on('error', (err) => {
-            console.log('error', err)
+            console.error('error', err)
         });
 
         this.state.peer.on('signal', (data) => {
@@ -132,10 +171,9 @@ class LiveMatch extends Component {
 
         this.state.peer.on('connect', () => {
             if (initializingConnection === true) {
-                var transactor = steemTransact(client, dsteem, GAME_ID);
-                transactor.json(USERNAME, POSTING_KEY, 'request-closed', {
+                this.state.transactor.json(USERNAME, POSTING_KEY, 'request-closed', {
                     data: gameData
-                }, function (err, result) {
+                }, (err, result) => {
                     if (err) {
                         console.error(err);
                         alert("Failed opponent connection process");
@@ -148,11 +186,11 @@ class LiveMatch extends Component {
         });
 
         var headerBlock = await this.props.findBlockHead(client);
-        var processor = steemState(client, dsteem, headerBlock, 100, GAME_ID);
-        processor.on('join-signal', function (signal) {
+        await this.setState({processor:steemState(client, dsteem, headerBlock, 100, GAME_ID)});
+        this.state.processor.on('join-signal', (signal) => {
             this.state.peer.signal(JSON.parse(signal.data));
         });
-        processor.start();
+        this.state.processor.start();
     }
 
     /**
@@ -163,10 +201,9 @@ class LiveMatch extends Component {
     sendSignalToUser(username, signal) {
         return;
         console.log("starting sendSignalToUser");
-        var transactor = steemTransact(client, dsteem, GAME_ID);
-        transactor.json(USERNAME, POSTING_KEY, 'join-signal', {
+        this.state.transactor.json(USERNAME, POSTING_KEY, 'join-signal', {
             signal: signal
-        }, function (err, result) {
+        }, (err, result) => {
             if (err) {
                 console.error(err);
                 alert("Failed opponent connection process");

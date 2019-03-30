@@ -21,16 +21,16 @@ class Play extends Component{
         return new Promise((resolve, reject) => {
             if(client == null)
             {
-                return reject("client is null");
+                reject("client is null");
             }
             try{
-                client.database.getDynamicGlobalProperties().then(function (result) {
+                client.database.getDynamicGlobalProperties().then((result) => {
                     console.log("findblockheadresult: ", result.head_block_number);
                     resolve(result.head_block_number);
                 });
             } catch(err) {
                 console.error(err);
-                return reject("Failed to find block head");
+                reject("Failed to find block head");
             }
         });
     }
