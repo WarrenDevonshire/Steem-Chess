@@ -60,7 +60,6 @@ class LiveMatch extends Component {
         await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 5, GAME_ID, 'latest')});
         return new Promise((resolve, reject) => {
             try {
-                console.log("asdf");
                 this.state.processor.on('request-open', (json, from) => {
                     console.log("request-open block found!!!!!!!!!!!!!!!!!!!!!!", json);
                     if (this.matchableGames(gameData, json.data)) {
@@ -69,15 +68,20 @@ class LiveMatch extends Component {
                         resolve(from);
                     }
                 });
+                this.state.processor.onBlock((block) => {
+                    //Finish processing
+                    if(block === headBlockNumber) {
+                        this.state.processor.stop();
+                        console.log("Didn't find a waiting opponent:(");
+                        resolve(null);//Didn't find any players
+                    }
+                });
                 this.state.processor.start();
-                console.log("findwaitingplayer pro");
             } catch (err) {
                 console.error(err)
                 this.state.processor.stop();
                 return reject("Failed to check for waiting players");
             }
-            console.log("ending findWaitingplayer without finding a player");
-            resolve(null);//Didn't find any players
         });
     }
 
@@ -101,7 +105,7 @@ class LiveMatch extends Component {
      */
     sendGameRequest(username, gameData) {
         console.log("starting sendGameRequest");
-        this.state.transactor.json(USERNAME, POSTING_KEY, 'request-join', {
+        this.state.transactor.json(USERNAME, POSTING_KEY.toString(), 'request-join', {
             data: gameData,
             sendingTo: username
         }, (err, result) => {
@@ -171,7 +175,7 @@ class LiveMatch extends Component {
 
         this.state.peer.on('connect', () => {
             if (initializingConnection === true) {
-                this.state.transactor.json(USERNAME, POSTING_KEY, 'request-closed', {
+                this.state.transactor.json(USERNAME, POSTING_KEY.toString(), 'request-closed', {
                     data: gameData
                 }, (err, result) => {
                     if (err) {
@@ -185,8 +189,8 @@ class LiveMatch extends Component {
             }
         });
 
-        var headerBlock = await this.props.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, headerBlock, 100, GAME_ID)});
+        var headerBlockNumber = await this.props.location.findBlockHead(client);
+        await this.setState({processor:steemState(client, dsteem, headerBlockNumber, 100, GAME_ID)});
         this.state.processor.on('join-signal', (signal) => {
             this.state.peer.signal(JSON.parse(signal.data));
         });
@@ -201,7 +205,7 @@ class LiveMatch extends Component {
     sendSignalToUser(username, signal) {
         return;
         console.log("starting sendSignalToUser");
-        this.state.transactor.json(USERNAME, POSTING_KEY, 'join-signal', {
+        this.state.transactor.json(USERNAME, POSTING_KEY.toString(), 'join-signal', {
             signal: signal
         }, (err, result) => {
             if (err) {
