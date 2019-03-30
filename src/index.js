@@ -6,9 +6,19 @@ import {BrowserRouter as Router} from 'react-router-dom'
 import * as serviceWorker from './serviceWorker';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
-import {auth} from './Reducers/auth';
+import {loadState, saveState} from "./components/localStorage";
 
-const store = createStore(auth);
+const persistedState = loadState();
+
+const store = createStore(
+    persistedState
+);
+
+store.subcribe(()=>{
+    saveState({
+        pKey: store.getState().pKey
+    });
+});
 
 ReactDOM.render(
     (
