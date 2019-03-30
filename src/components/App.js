@@ -9,6 +9,7 @@ import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
 import Play from './Play/Play';
+import Login from "../shared/components/Login/Login";
 
 class App extends Component {
     constructor(props) {
@@ -34,6 +35,7 @@ class App extends Component {
                         <Route path='/Live' render={(props) => <LiveMatch {...props} />} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
                         <Route path='/Compose' component={Compose} exact/>
+                        <Route path='/Login' component={Login} exact/>
                     </Content>
                     <Footer/>
                 </div>
