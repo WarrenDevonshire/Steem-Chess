@@ -7,9 +7,10 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: "",
+            account: "",
             password: ""
         };
+
 
     }
 
@@ -17,7 +18,15 @@ class Login extends Component {
     render() {
         return (
             <div className={Login}>
-                <a href={this.state.link}>Login</a>
+                <form>
+
+                    <label>account</label>
+                    <input type="text" name="account" onChange={this.handleAccountChange} />
+
+                    <label>Password</label>
+                    <input type="password" name="password" onChange={this.handlePasswordChange} />
+
+                </form>
             </div>
         )
     }
