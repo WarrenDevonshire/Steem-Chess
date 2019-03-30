@@ -1,20 +1,20 @@
-export const loadState = () =>{
-    try{
+export const loadState = () => {
+    try {
         const serializedState = localStorage.getItem('pKey');
-        if(serializedState === null){
+        if (serializedState === null) {
             return null;
         }
         return JSON.parse(serializedState);
-    }catch(err){
+    } catch (err) {
         return null;
     }
 };
 
 export const saveState = (pKey) => {
-    try{
+    try {
         const serializedState = JSON.stringify(pKey);
         localStorage.setItem('pKey', serializedState);
-    }catch(err){
+    } catch (err) {
         //Write to log
     }
 };

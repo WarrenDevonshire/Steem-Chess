@@ -1,24 +1,24 @@
-.CreateGame{
+.CreateGame {
     margin: 0 auto;
     width: 960px;
 }
 
-.CreateGame h1{
+.CreateGame h1 {
     font-size: 32px;
     color: #333;
 }
 
-.CreateGame p{
+.CreateGame p {
     color: #333;
     text-align: center;
 }
 
-.CreateGame a{
+.CreateGame a {
     color: #56D5FA;
     text-decoration: none;
 }
 
-.CreateGame a:hover{
+.CreateGame a:hover {
     color: #333;
 }
 

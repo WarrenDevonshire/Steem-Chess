@@ -21,10 +21,10 @@ class Login extends Component {
                 <form>
 
                     <label>account</label>
-                    <input type="text" name="account" onChange={this.handleAccountChange} />
+                    <input type="text" name="account" onChange={this.handleAccountChange}/>
 
                     <label>Password</label>
-                    <input type="password" name="password" onChange={this.handlePasswordChange} />
+                    <input type="password" name="password" onChange={this.handlePasswordChange}/>
 
                 </form>
             </div>
