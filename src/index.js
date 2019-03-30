@@ -4,7 +4,9 @@ import './index.css';
 import App from './components/App';
 import {BrowserRouter as Router} from 'react-router-dom'
 import * as serviceWorker from './serviceWorker';
-import Provider from "react-redux/es/components/Provider";
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import {auth} from './Reducers/auth';
 
 const store = createStore(auth);
 

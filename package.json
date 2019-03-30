@@ -16,6 +16,7 @@
     "react-scripts": "^2.1.8",
     "react-switch": "^4.1.0",
     "react-table": "^6.9.2",
+    "redux": "^4.0.1",
     "remarkable": "^1.7.1",
     "simple-peer": "^9.2.1",
     "steemconnect": "^2.0.1"
