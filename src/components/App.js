@@ -18,7 +18,6 @@ class App extends Component {
             <Router>
                 <div className="App">
                     <Header/>
-                    <p>{this.state.access_token}</p>
                     <Content>
                         <Route path='/'
                                render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>}
