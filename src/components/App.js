@@ -8,7 +8,6 @@ import ArticleFeed from './ArticleFeed/ArticleFeed';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
-import Success from './Success/Success';
 import Play from './Play/Play';
 
 class App extends Component {
@@ -35,7 +34,6 @@ class App extends Component {
                         <Route path='/Live' render={(props) => <LiveMatch {...props} />} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
                         <Route path='/Compose' component={Compose} exact/>
-                        <Route path='/Success' render={(props) => <Success {...props} api={this.state.api}/>}/>
                     </Content>
                     <Footer/>
                 </div>
