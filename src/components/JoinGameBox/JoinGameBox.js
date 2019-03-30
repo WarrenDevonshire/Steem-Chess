@@ -5,7 +5,7 @@ import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
-class JoinGameBox extends Component{
+class JoinGameBox extends Component {
     constructor(props) {
         super(props);
 
@@ -37,12 +37,12 @@ class JoinGameBox extends Component{
     }
 
     //TODO
-    grabJoinData(e){
+    grabJoinData(e) {
 
     }
 
     render() {
-        return(
+        return (
             <div className={JoinGameBox}>
                 <div className="horizontal">
                     <label>Filter</label>
@@ -79,7 +79,7 @@ class JoinGameBox extends Component{
                 <hr noshade="true"/>
                 <button onClick={e => this.joinGame(e)}>Join</button>
             </div>
-            );
+        );
     }
 }
 

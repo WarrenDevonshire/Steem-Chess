@@ -5,10 +5,10 @@ import Slider from '../Slider/Slider'
 import BlackPiece from "../Create Game/Images/rook-black.png";
 import MixedPiece from "../Create Game/Images/rook-mixed.png";
 import WhitePiece from "../Create Game/Images/rook-white.png";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 
-class CreateGameBox extends Component{
+class CreateGameBox extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -72,17 +72,21 @@ class CreateGameBox extends Component{
                 <hr noshade="true"/>
                 <h3>{this.state.startingColorText}</h3>
                 <PieceList onPieceChanged={this.pieceChanged}/>
-                <Link to="/Live"><button>Create Game</button></Link>
+                <Link to="/Live">
+                    <button>Create Game</button>
+                </Link>
             </div>
         );
     }
 }
+
 export default CreateGameBox;
 
 
-function Title(props){
+function Title(props) {
     return <h1>{props.title}</h1>
 }
+
 Title.defaultProps = {
     title: "Title"
 };

@@ -1,5 +1,4 @@
-
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
 
