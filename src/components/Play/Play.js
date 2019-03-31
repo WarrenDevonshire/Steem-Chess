@@ -3,7 +3,7 @@ import './Play.css';
 import JoinGameBox from '../JoinGameBox/JoinGameBox';
 import CreateGameBox from "../CreateGameBox/CreateGameBox";
 
-class Play extends Component{
+class Play extends Component {
     constructor(props) {
         super(props);
 
@@ -35,7 +35,7 @@ class Play extends Component{
     }
 
     render() {
-        return(
+        return (
             <div className={Play}>
                 <CreateGameBox findBlockHead={this.findBlockHead}/>
                 <JoinGameBox findBlockHead={this.findBlockHead}/>

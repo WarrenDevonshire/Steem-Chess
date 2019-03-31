@@ -92,12 +92,14 @@ class CreateGameBox extends Component {
         );
     }
 }
+
 export default CreateGameBox;
 
 
 function Title(props) {
     return <h1>{props.title}</h1>
 }
+
 Title.defaultProps = {
     title: "Title"
 };

@@ -16,7 +16,7 @@ const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
 const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
 
-class JoinGameBox extends Component{
+class JoinGameBox extends Component {
     constructor(props) {
         super(props);
 
@@ -84,7 +84,7 @@ class JoinGameBox extends Component{
     }
 
     render() {
-        return(
+        return (
             <div className={JoinGameBox}>
                 <div className="horizontal">
                     <label>Filter</label>
@@ -121,7 +121,7 @@ class JoinGameBox extends Component{
                 <hr noshade="true"/>
                 <Link to="/Live" params={{gameData: this.grabGameData, waitingPlayer: this.state.selectedUser}}><button>Join Game</button></Link>
             </div>
-            );
+        );
     }
 }
 

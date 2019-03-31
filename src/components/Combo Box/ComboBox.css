@@ -1,20 +1,22 @@
 select {
 
-  width: 150px;
-  padding: 5px 35px 5px 5px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  height: 26px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background: url(./select-arrow.png) 96% / 15% no-repeat #eee;
- }
+    width: 150px;
+    padding: 5px 35px 5px 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    height: 26px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url(./select-arrow.png) 96% / 15% no-repeat #eee;
+}
 
- .rounded {
+.rounded {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
- }
+}
 
- .green   { background-color: #4CAF50; }
+.green {
+    background-color: #4CAF50;
+}

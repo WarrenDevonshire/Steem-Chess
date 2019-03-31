@@ -8,43 +8,16 @@ import ArticleFeed from './ArticleFeed/ArticleFeed';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
 import Compose from './Compose/Compose';
-import Success from './Success/Success';
-import sc2 from "steemconnect";
 import Play from './Play/Play';
+import Login from "../shared/components/Login/Login";
+
 class App extends Component {
-    constructor(props) {
-        super(props);
-        let api = sc2.Initialize({
-            app: 'SteemChess',
-            callbackURL: 'https://localhost:3000/Success',
-            accessToken: 'access_token',
-            scope: ['vote', 'comment']
-        });
-
-        this.onAccessToken = this.onAccessToken.bind(this);
-        this.getAccessToken = this.getAccessToken.bind(this);
-        this.state = {
-            api: api,
-            access_token: null
-        };
-    }
-
-    onAccessToken(token) {
-        this.setState(() => {
-            return {access_token: token};
-        });
-    }
-
-    getAccessToken() {
-        return this.state.access_token;
-    }
 
     render() {
         return (
             <Router>
                 <div className="App">
                     <Header/>
-                    <p>{this.state.access_token}</p>
                     <Content>
                         <Route path='/'
                                render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'trending'}/>}
@@ -59,10 +32,9 @@ class App extends Component {
                                render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
                         <Route path='/Compose' component={Compose} exact/>
-                        <Route path='/Success'
-                               render={(props) => <Success {...props} api={this.state.api}
-                                                           onAccessToken={this.onAccessToken}/>}/>
-                        <Route path='/Test' component={Play}/>
+
+                        <Route path='/Login' component={Login} exact/>
+
                     </Content>
 
                     <Footer/>

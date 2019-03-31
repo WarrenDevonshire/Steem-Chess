@@ -7,30 +7,30 @@
 }
 
 
-.Menu form{
+.Menu form {
     margin: 30;
     padding-left: 900px;
 }
 
-.Menu button{ 
+.Menu button {
     position: absolute;
     padding-top: 3px;
     padding-bottom: 20px;
-    padding-right:20px;
+    padding-right: 20px;
 }
 
-.Menu input{
+.Menu input {
     padding: 4px;
 }
 
-.Menu li{
+.Menu li {
     font-size: 20px;
     list-style: none;
     display: inline;
     padding: 14px 16px;
 }
 
-.Menu li:hover{
+.Menu li:hover {
     background-color: #ddd;
 }
 
