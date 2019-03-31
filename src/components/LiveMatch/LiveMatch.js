@@ -1,4 +1,5 @@
-import React, {Component} from 'react';
+
+import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
 
@@ -189,14 +190,6 @@ class LiveMatch extends Component {
         });
 
         this.state.peer.on('signal', (data) => {
-            // if(initializingConnection !== true || data.type !== "offer")
-            // {
-            //     console.log("Not an offer");
-            //     this.state.peer.signal(data);
-            // }
-            // else{
-            //     console.log("An offer");
-            // }
             this.sendSignalToUser(sendingTag, data);
             console.log("received a signal", JSON.stringify(data));
         });
