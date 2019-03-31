@@ -10,10 +10,13 @@ export const loadState = () => {
     }
 };
 
-export const saveState = (pKey) => {
+export const saveState = (account, pKey) => {
     try {
-        const serializedState = JSON.stringify(pKey);
-        localStorage.setItem('pKey', serializedState);
+        const serializedState = {
+            account: account,
+            key: pKey
+        }
+        localStorage.setItem('pKey', JSON.stringify(serializedState));
     } catch (err) {
         //Write to log
     }
