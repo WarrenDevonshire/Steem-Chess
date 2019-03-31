@@ -14,7 +14,7 @@ export const saveState = (account, pKey) => {
     try {
         const serializedState = {
             account: account,
-            key: pKey
+            key: JSON.stringify(pKey)
         }
         localStorage.setItem('pKey', JSON.stringify(serializedState));
     } catch (err) {
