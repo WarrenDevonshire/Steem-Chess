@@ -11,18 +11,16 @@ class Chatbox extends Component {
         }
         this.updateDraft = this.updateDraft.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+    }
 
-        this.state.peer.on('data', (data) => {
-            try {
-                var objectRecieved = JSON.parse(data);
-                if (objectRecieved.hasOwnProperty('type') && objectRecieved.type === 'message') {
-                    this.state.messageList.push([objectRecieved.message, Date.now]);
-                    this.setState({messageList: this.state.messageList});
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        });
+    /**
+     * Called when LiveMatch notifies Chatbox of a new message
+     * @param {*} message 
+     */
+    onReceiveMessage(data) {
+        console.log("Received data from peer!!!!!!!!!!!!!!!!!!!");
+        this.state.messageList.push([data.message, Date.now]);
+        this.setState({messageList: this.state.messageList});
     }
 
     updateDraft(area) {
@@ -30,13 +28,17 @@ class Chatbox extends Component {
     }
 
     sendMessage() {
-        if (this.state.peer == null) {
+        console.log("-----------------------------------------------------------");
+        console.log(this.state.peer);
+        console.log(this.props.peer);
+        console.log("-----------------------------------------------------------");
+        if (this.props.peer == null) {
             var error = "Peer connection not initiated!";
-            console.err(error);
+            console.error(error);
             alert(error);
             return;
         }
-        if (!this.state.peer.connected) {
+        if (!this.props.peer.connected) {
             var error = "Not connected to the other player yet!";
             console.error(error);
             alert(error);
@@ -47,7 +49,7 @@ class Chatbox extends Component {
             timeSent: Date.now,
             message: this.state.draftedMessage,
         }
-        this.state.peer.send(JSON.stringify(data));
+        this.props.peer.send(JSON.stringify(data));
         this.setState({draftedMessage: ""});
         this.refs.draftArea.value = ""
     }
