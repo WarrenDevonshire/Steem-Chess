@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 
 const client = new Client('https://api.steemit.com');
 
-// TODO: figure out how to grab more articles for next page and add routing/url for pages, add page number in props
-// does not update unless activePosts becomes empty, can only fetch 28 posts at a time?
+// TODO: figure out how to add routing/url for pages, add page number in props
+// TODO: component does not update unless activePosts becomes empty?
 
 export default class ArticleFeed extends Component {
 
@@ -48,7 +48,9 @@ export default class ArticleFeed extends Component {
                 });
 
                 alert(result.length + " posts retrieved.");
+                alert("pageLimit: " + (Math.ceil(result.length / 10)));
 
+                this.setState( { pageLimit: Math.ceil(result.length / 10) } );
                 this.setState( { posts: postList } );
                 this.setState( { activePosts: postList.slice((this.state.pageNumber * 10), ((this.state.pageNumber + 1) * 10)) })
             
