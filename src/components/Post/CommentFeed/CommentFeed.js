@@ -3,7 +3,7 @@ import './CommentFeed.css';
 import { Client, PrivateKey } from 'dsteem';
 import Comment from './Comment/Comment';
 import { Mainnet as NetConfig } from '../../../configuration';
-import {loadState} from "../../../components/localStorage";
+import { loadState } from "../../../components/localStorage";
 
 let opts = { ...NetConfig.net };
 const fetchClient = new Client('https://api.steemit.com');
@@ -11,6 +11,7 @@ const pushClient = new Client(NetConfig.url, opts);
 
 // TODO: refresh page when comment or reply is posted, may not be viable due to blockchain delays
 // TODO: use client from post component passed as callback?
+// TODO: redirect back to page when sent to login gate?
 
 export default class CommentFeed extends Component {
 
@@ -19,7 +20,18 @@ export default class CommentFeed extends Component {
         super(props);
 
         const localDB = loadState();
-        const pKey = PrivateKey.fromString(localDB.key);
+        var pKey;
+
+        // check if user is logged in before attempting to gen privateKey object
+        if (localDB.account == null) {
+
+            pKey = null;
+
+        } else {
+
+            pKey = PrivateKey.fromString(localDB.key);
+            
+        }
 
         this.state = {
 
@@ -71,9 +83,18 @@ export default class CommentFeed extends Component {
     // push new comment to blockchain
     pushComment(parentAuthor, parentPermlink, bodyId) {
 
-        if(this.state.account == null) {
+        // check if user is logged in before attempting to post a comment
+        if (this.state.account == null) {
 
             this.props.history.push('/Login');
+            return;
+
+        }
+
+        // check that comment body field is populated
+        if (document.getElementById('body').value === "") {
+
+            alert("Please fill out all fields.");
             return;
 
         }
@@ -109,6 +130,7 @@ export default class CommentFeed extends Component {
             },
             function (error) {
                 console.error(error);
+                alert("An error occurred when broadcasting. See console for details.");
             }
         );
 
@@ -121,8 +143,6 @@ export default class CommentFeed extends Component {
 
                 <hr />
                 <h4>Submit a comment:</h4>
-                Username: <input id="username" type="text" size="65" class="form-control" defaultValue="" /><br />
-                Posting private key: <input id="postingKey" type="password" size="65" class="form-control" defaultValue="" /><br />
                 Comment body:<br />
                 <textarea id="body" class="form-control" rows="3">Reply to this post...</textarea><br />
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
