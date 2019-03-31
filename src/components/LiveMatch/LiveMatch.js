@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import Chatbox from '../Chatbox/Chatbox'
+import Chatbox from '../Chatbox/Chatbox';
+import ChessGame from '../ChessGame/ChessGame';
 import Peer from 'simple-peer';
-import {loadState, saveState} from "../../components/localStorage";
+import { loadState } from "../../components/localStorage";
 import {withRouter} from 'react-router-dom';
 
 const GAME_ID = 'steem-chess'
@@ -32,6 +33,9 @@ class LiveMatch extends Component {
         }
 
         this.chatboxComponent = React.createRef();
+        this.chessGameComponent = React.createRef();
+
+        this.sendPeerData = this.sendPeerData.bind(this);
     }
 
     componentWillUnmount() {
@@ -76,6 +80,7 @@ class LiveMatch extends Component {
      * @param {*} gameData 
      */
     async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
+    return;
         var headBlockNumber = await this.props.location.findBlockHead(client);
         await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 25), 1, GAME_ID, 'latest')});
         return new Promise((resolve, reject) => {
@@ -124,6 +129,7 @@ class LiveMatch extends Component {
      * @param {*} gameData
      */
     sendGameRequest(username, gameData) {
+        return;
         console.log("sending request to existing game");
         this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-join', {
             data: gameData,
@@ -145,6 +151,7 @@ class LiveMatch extends Component {
      * @param {*} gameData 
      */
     postGameRequest(gameData) {
+        return;
         console.log("posting a new game request");
         this.state.transactor.json(this.state.username, this.state.posting_key.toString(), gameData.typeID, {
             data: gameData
@@ -207,11 +214,10 @@ class LiveMatch extends Component {
         this.state.peer.on('data', (data) => {
             var parsedData = JSON.parse(data);
             if(parsedData.type === 'message') {
-                console.log("bloop");
                 this.chatboxComponent.current.onReceiveMessage(parsedData);
             }
             else if(data.type === 'move') {
-
+                this.chessGameComponent.current.onReceiveMove(parsedData);
             }
         });
 
@@ -244,6 +250,7 @@ class LiveMatch extends Component {
      * @param {*} signal 
      */
     sendSignalToUser(sendingTag, signal) {
+        return;
         console.log("starting sendSignalToUser");
         this.state.transactor.json(this.state.username, this.state.posting_key.toString(), sendingTag, {
             signal: signal,
@@ -256,11 +263,27 @@ class LiveMatch extends Component {
         });
     }
 
+    sendPeerData(data) {
+        if (this.props.peer == null) {
+            var error = "Peer connection not initiated!";
+            console.error(error);
+            alert(error);
+            return;
+        }
+        if (!this.props.peer.connected) {
+            var error = "Not connected to the other player yet!";
+            console.error(error);
+            alert(error);
+            return;
+        }
+        this.props.peer.send(JSON.stringify(data));
+    }
+
     render() {
         return (
             <div id="liveMatch">
-                {/* <ChessGame/> */}
-                <Chatbox peer={this.state.peer} ref={this.chatboxComponent} />
+                <ChessGame peer={this.state.peer} sendData={this.sendPeerData} ref={this.chessGameComponent}/>
+                <Chatbox peer={this.state.peer} sendData={this.sendPeerData} ref={this.chatboxComponent} />
             </div>
         )
     }

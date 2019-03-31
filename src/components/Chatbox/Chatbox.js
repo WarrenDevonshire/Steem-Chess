@@ -28,28 +28,12 @@ class Chatbox extends Component {
     }
 
     sendMessage() {
-        console.log("-----------------------------------------------------------");
-        console.log(this.state.peer);
-        console.log(this.props.peer);
-        console.log("-----------------------------------------------------------");
-        if (this.props.peer == null) {
-            var error = "Peer connection not initiated!";
-            console.error(error);
-            alert(error);
-            return;
-        }
-        if (!this.props.peer.connected) {
-            var error = "Not connected to the other player yet!";
-            console.error(error);
-            alert(error);
-            return;
-        }
-        var data = {
+        this.props.sendData({
             type: "message",
             timeSent: Date.now,
             message: this.state.draftedMessage,
-        }
-        this.props.peer.send(JSON.stringify(data));
+        });
+
         this.setState({draftedMessage: ""});
         this.refs.draftArea.value = ""
     }

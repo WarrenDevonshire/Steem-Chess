@@ -5,25 +5,26 @@ import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Link } from 'react-router-dom';
+import { loadState } from "../../components/localStorage";
 import LiveMatch from '../LiveMatch/LiveMatch'
 
 //TEMP unitl local data storage
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
-const steemTransact = require('steem-transact');
 const client = new dsteem.Client('https://api.steemit.com');
-const USERNAME = "mdhalloran"
-const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
 
 class JoinGameBox extends Component {
     constructor(props) {
         super(props);
 
+        var localDB = loadState();
+
         this.state = {
             filterOptions: ["Most Recent", "Least Recent"],
             filterValue: "",
-            selectedUser: ""//TODO
+            selectedUser: "",//TODO
+            username: localDB.account
         };
 
 
@@ -78,7 +79,7 @@ class JoinGameBox extends Component {
             timePerSide: "",
             increment: "",
             startingColor: "",
-            userId: USERNAME + Date.now(),
+            userId: this.state.username + Date.now(),
             typeID: "" + "|" + "" + "|" + ""
         }
     }

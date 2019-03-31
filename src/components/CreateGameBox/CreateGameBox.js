@@ -6,14 +6,16 @@ import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
 import { Link } from 'react-router-dom';
+import { loadState } from "../../components/localStorage";
 import { reject } from 'q';
 
-//TEMP unitl local data storage
-const USERNAME = "mdhalloran"
 
 class CreateGameBox extends Component {
     constructor(props) {
         super(props);
+
+        var localDB = loadState();
+
         this.state = {
             timeControlOptions: ["Real Time", "Correspondence"],
             timeControlChosen: "Real Time",
@@ -21,6 +23,7 @@ class CreateGameBox extends Component {
             startingColorText: "Starting Color",
             timePerSide: 5,
             increment: 5,
+            username: localDB.account
         };
 
         this.pieceChanged = this.pieceChanged.bind(this);
@@ -30,10 +33,14 @@ class CreateGameBox extends Component {
         this.grabGameData = this.grabGameData.bind(this);
     }
 
+    componentWillMount() {
+        this.pieceChanged("Random");
+    }
+
     pieceChanged(tag) {
         console.log(tag);
-        this.setState({ pieceChosen: tag });
-        this.setState({ startingColorText: "Starting Color: " + tag });
+        this.setState({ pieceChosen: tag,
+                        startingColorText: "Starting Color: " + tag });
     }
 
     timePerSideChanged(value) {
@@ -57,7 +64,7 @@ class CreateGameBox extends Component {
             timePerSide: this.state.timePerSide,
             increment: this.state.increment,
             startingColor: this.state.pieceChosen,
-            userId: USERNAME + Date.now(),
+            userId: this.state.username + Date.now(),
             typeID: this.state.timeControlChosen + "|" + this.state.timePerSide + "|" + this.state.increment
         }
     }
@@ -86,7 +93,7 @@ class CreateGameBox extends Component {
                     onValueChanged={this.incrementChanged} />
                 <hr noshade="true" />
                 <h3>{this.state.startingColorText}</h3>
-                <PieceList onPieceChanged={this.pieceChanged} />
+                <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
                 <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }}><button>Create Game</button></Link>
             </div>
         );
@@ -108,7 +115,7 @@ class PieceList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pieceChosen: "",
+            pieceChosen: this.props.pieceChosen ? this.props.pieceChosen : "",
             colorChoices: [[BlackPiece, "Black"], [MixedPiece, "Random"], [WhitePiece, "White"]]
         }
     }
