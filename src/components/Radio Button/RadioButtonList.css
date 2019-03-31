@@ -1,6 +1,6 @@
 .form {
-    white-space:nowrap;
-    overflow:hidden;
+    white-space: nowrap;
+    overflow: hidden;
     display: inline-block;
     align-content: center;
     width: 400px;
@@ -36,8 +36,7 @@
     margin-left: 50px;
 }
 
-.label
-{
+.label {
     position: relative;
     padding-left: 10px;
     padding-right: 50px;

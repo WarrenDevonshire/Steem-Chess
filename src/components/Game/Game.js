@@ -27,10 +27,10 @@ class Game extends Component {
     switchToLive(gameData, initiating) {
         this.setState({gameData: gameData});
         this.setState({isInitiating: initiating});
-        this.setState({gameStarted:true});
+        this.setState({gameStarted: true});
     }
 
-    render(){
+    render() {
         var visibleComponent = this.state.gameStarted ?
             <LiveMatch gameData={this.state.gameData}
                        isInitiating={this.state.isInitiating}/> :

@@ -6,7 +6,7 @@ import CommentFeed from './CommentFeed/CommentFeed';
 const client = new Client('https://api.steemit.com');
 const Remarkable = require('remarkable');
 
-export default class Post extends Component{
+export default class Post extends Component {
 
     constructor(props) {
 
@@ -25,18 +25,18 @@ export default class Post extends Component{
     }
 
     openPost() {
-    
-            // fetch post content
-            client.database.call('get_content', [this.state.author, this.state.permlink]).then(result => {
-    
-                const md = new Remarkable({ html: true, linkify: true });
-                const body = md.render(result.body);
-                const content = `<div class='pull-right'></div><br><h2>${
-                    result.title
+
+        // fetch post content
+        client.database.call('get_content', [this.state.author, this.state.permlink]).then(result => {
+
+            const md = new Remarkable({html: true, linkify: true});
+            const body = md.render(result.body);
+            const content = `<div class='pull-right'></div><br><h2>${
+                result.title
                 }</h2><br>${body}<br>`;
-        
-                document.getElementById('postBody').style.display = 'block';
-                document.getElementById('postBody').innerHTML = content;
+
+            document.getElementById('postBody').style.display = 'block';
+            document.getElementById('postBody').innerHTML = content;
 
             });
 
@@ -44,7 +44,7 @@ export default class Post extends Component{
 
     render(){
 
-        return (  
+        return (
             <div className="Post">
 
                 <div id="postBody" styles="display: none;"></div>	
