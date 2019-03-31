@@ -28,7 +28,7 @@ class LiveMatch extends Component {
             transactor: steemTransact(client, dsteem, GAME_ID),
             peer: null,
             username: localDB.account,
-            posting_key: localDB.key.toString()
+            posting_key: JSON.parse(localDB.key)
         }
     }
 
