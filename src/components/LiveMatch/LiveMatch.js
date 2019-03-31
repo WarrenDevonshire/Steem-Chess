@@ -31,7 +31,7 @@ class LiveMatch extends Component {
             posting_key: localDB.key
         }
 
-
+        this.chatboxComponent = React.createRef();
     }
 
     componentWillUnmount() {
@@ -204,6 +204,17 @@ class LiveMatch extends Component {
             console.log("received a signal", JSON.stringify(data));
         });
 
+        this.state.peer.on('data', (data) => {
+            var parsedData = JSON.parse(data);
+            if(parsedData.type === 'message') {
+                console.log("bloop");
+                this.chatboxComponent.current.onReceiveMessage(parsedData);
+            }
+            else if(data.type === 'move') {
+
+            }
+        });
+
         this.state.peer.on('connect', () => {
             if (initializingConnection === true) {
                 this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-closed', {
@@ -249,7 +260,7 @@ class LiveMatch extends Component {
         return (
             <div id="liveMatch">
                 {/* <ChessGame/> */}
-                <Chatbox peer={this.state.peer} />
+                <Chatbox peer={this.state.peer} ref={this.chatboxComponent} />
             </div>
         )
     }

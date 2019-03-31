@@ -18,6 +18,7 @@ class Chatbox extends Component {
      * @param {*} message 
      */
     onReceiveMessage(data) {
+        console.log("Received data from peer!!!!!!!!!!!!!!!!!!!");
         this.state.messageList.push([data.message, Date.now]);
         this.setState({messageList: this.state.messageList});
     }
@@ -27,8 +28,10 @@ class Chatbox extends Component {
     }
 
     sendMessage() {
+        console.log("-----------------------------------------------------------");
         console.log(this.state.peer);
         console.log(this.props.peer);
+        console.log("-----------------------------------------------------------");
         if (this.props.peer == null) {
             var error = "Peer connection not initiated!";
             console.error(error);
