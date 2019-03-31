@@ -20,7 +20,7 @@ export default class CommentFeed extends Component {
         super(props);
 
         const localDB = loadState();
-        const pKey = PrivateKey.fromLogin(localDB.account, localDB.key, 'posting');
+        const pKey = PrivateKey.from(localDB.key);
 
         this.state = {
 
@@ -72,6 +72,13 @@ export default class CommentFeed extends Component {
     // push new comment to blockchain
     pushComment(parentAuthor, parentPermlink, bodyId) {
 
+        if(this.state.account == null) {
+
+            this.props.history.push('/Login');
+            return;
+
+        }
+
         // get body
         const body = document.getElementById(bodyId).value;
         // get parent author permalink
@@ -107,17 +114,6 @@ export default class CommentFeed extends Component {
         );
 
     }
-
-    /* async componentDidMount() {
-
-        if(this.state.account == null) {
-
-            this.props.history.push("/Login");
-            return;
-
-        }
-        
-    } */
 
     render() {
 
