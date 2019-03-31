@@ -4,7 +4,6 @@ import { Client, PrivateKey } from 'dsteem';
 import Comment from './Comment/Comment';
 import { Mainnet as NetConfig } from '../../../configuration';
 import {loadState} from "../../../components/localStorage";
-import {withRouter} from 'react-router-dom';
 
 let opts = { ...NetConfig.net };
 const fetchClient = new Client('https://api.steemit.com');
@@ -20,7 +19,7 @@ export default class CommentFeed extends Component {
         super(props);
 
         const localDB = loadState();
-        const pKey = PrivateKey.from(localDB.key);
+        const pKey = PrivateKey.fromString(localDB.key);
 
         this.state = {
 
