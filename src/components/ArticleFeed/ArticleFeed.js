@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import './ArticleFeed.css';
 import { Client } from 'dsteem';
-import Post from '../Post/Post';
+import PostPreview from './PostPreview/PostPreview';
+import { Link } from 'react-router-dom';
 
 const client = new Client('https://api.steemit.com');
 
@@ -13,14 +14,18 @@ export default class ArticleFeed extends Component {
         
         this.state = {
 
-            pageNumber: 0
+            // this will store page number for browsing further articles in feed
+            pageNumber: 0,
+            posts: []
 
         };
+
+        this.fetchBlog(this.props.limit, this.props.sortMethod);
     
     }
 
     fetchBlog() {
-    
+        
         const query = {
             tag: 'chess',
             limit: this.props.limit,
@@ -30,22 +35,13 @@ export default class ArticleFeed extends Component {
             .getDiscussions(this.props.sortMethod, query)
             .then(result => {
     
-                var posts = [];
-    
                 result.forEach(post => {
-                    const json = JSON.parse(post.json_metadata);
-                    const image = json.image ? json.image[0] : '';
-                    const title = post.title;
-                    const author = post.author;
-                    const created = new Date(post.created).toDateString();
-                    posts.push(
-                        `<div class="list-group-item""><h4 class="list-group-item-heading" onClick="alert('test')" onmouseover="" style="cursor: pointer;">${title}</h4>
-                        <p>by ${author}</p><center><img src="${image}" class="img-responsive center-block" style="max-width: 450px"/></center>
-                        <p class="list-group-item-text text-right text-nowrap">${created}</p></div>`
-                    );
+                    
+                    this.state.posts.push(<PostPreview post={post} />);
+
                 });
-    
-                document.getElementById('postList').innerHTML = posts.join('');
+
+                this.forceUpdate();
             
             })
     
@@ -54,6 +50,7 @@ export default class ArticleFeed extends Component {
                 alert('Error occured' + err);
     
             });
+
     }
 
     prevPage() {
@@ -77,13 +74,17 @@ export default class ArticleFeed extends Component {
     
     }
 
+    componentDidMount() {
+        this.setState({ pageNumber: 0});
+      }
+
     render() {
 
         return (  
 
             <div className="ArticleFeed">
-                <div class="list-group" id="postList"></div>
-                {this.fetchBlog(this.props.limit, this.props.sortMethod)}
+                <Link to="/Compose"><button>Compose New Article</button></Link>
+                <div class="list-group" id="postList">{this.state.posts.map(PostPreview => <div> {PostPreview} </div>)}</div>
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
                 {this.state.pageNumber}
                 <button id="NextPage" onClick={() => this.nextPage()}>Next Page</button>
