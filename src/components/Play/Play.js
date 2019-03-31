@@ -34,9 +34,9 @@ class Play extends Component {
 
     render() {
         return (
-            <div className={Play}>
-                <CreateGameBox findBlockHead={this.findBlockHead}/>
-                <JoinGameBox findBlockHead={this.findBlockHead}/>
+            <div className="horizontal">
+                <CreateGameBox findBlockHead={this.findBlockHead} className="box"/>
+                <JoinGameBox findBlockHead={this.findBlockHead} className="box"/>
             </div>
         )
     }
