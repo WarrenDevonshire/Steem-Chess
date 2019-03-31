@@ -67,7 +67,7 @@ class LiveMatch extends Component {
      */
     async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
         var headBlockNumber = await this.props.location.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 250), 1, GAME_ID, 'latest')});
+        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 25), 1, GAME_ID, 'latest')});
         return new Promise((resolve, reject) => {
             try {
                 this.state.processor.on(gameData.typeID, (json, from) => {
@@ -239,9 +239,6 @@ class LiveMatch extends Component {
             if (err) {
                 console.error(err);
                 alert("Failed opponent connection process");
-            }
-            if(success) {
-                //this.state.peer.signal(signal);//temp
             }
         });
     }
