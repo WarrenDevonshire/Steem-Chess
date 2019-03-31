@@ -78,7 +78,8 @@ class JoinGameBox extends Component{
             timePerSide: "",
             increment: "",
             startingColor: "",
-            userId: USERNAME + Date.now()
+            userId: USERNAME + Date.now(),
+            typeID: "" + "|" + "" + "|" + ""
         }
     }
 

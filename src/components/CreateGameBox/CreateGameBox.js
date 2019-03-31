@@ -52,13 +52,13 @@ class CreateGameBox extends Component {
     }
 
     grabGameData() {
-        console.log("Trying to grab game data");
         return {
             timeControlChosen: this.state.timeControlChosen,
             timePerSide: this.state.timePerSide,
             increment: this.state.increment,
             startingColor: this.state.pieceChosen,
-            userId: USERNAME + Date.now()
+            userId: USERNAME + Date.now(),
+            typeID: this.state.timeControlChosen + "|" + this.state.timePerSide + "|" + this.state.increment
         }
     }
 

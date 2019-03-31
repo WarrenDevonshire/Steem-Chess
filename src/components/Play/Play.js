@@ -16,8 +16,7 @@ class Play extends Component{
      * Finds the most recent block number
      * @param {*} client The dsteem client
      */
-    async findBlockHead(client) { //TODO specify id
-        console.log("starting findBlockHead");
+    async findBlockHead(client) { //TODO specify game_id somehow
         return new Promise((resolve, reject) => {
             if(client == null)
             {
@@ -25,7 +24,7 @@ class Play extends Component{
             }
             try{
                 client.database.getDynamicGlobalProperties().then((result) => {
-                    console.log("findblockheadresult: ", result.head_block_number);
+                    console.log("current block head: ", result.head_block_number);
                     resolve(result.head_block_number);
                 });
             } catch(err) {
