@@ -8,8 +8,6 @@ class Play extends Component {
         super(props);
 
         this.findBlockHead = this.findBlockHead.bind(this);
-
-        console.log(`Play Component Token: ${JSON.stringify(this.props.getAccessToken())}`);
     }
 
     /**

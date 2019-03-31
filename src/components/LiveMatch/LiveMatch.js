@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
+import {loadState, saveState} from "../../components/localStorage";
 
 //TEMP unitl local data storage
 const GAME_ID = 'steem-chess'
@@ -11,6 +12,8 @@ const steemTransact = require('steem-transact');
 const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
 const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
+
+const localDB = loadState();
 
 /**
  * Component for playing a live chess match. Must
@@ -39,6 +42,7 @@ class LiveMatch extends Component {
     }
 
     async componentDidMount() {
+        console.log(loadState());
         console.log(this.state.gameData);
         this.setState({waitingPlayer:this.props.location.waitingPlayer});
         console.log("waiting player: " + this.state.waitingPlayer);
