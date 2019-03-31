@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './ArticleFeed.css';
-import {Client} from 'dsteem';
+import { Client } from 'dsteem';
 import PostPreview from './PostPreview/PostPreview';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const client = new Client('https://api.steemit.com');
 
@@ -81,7 +81,7 @@ export default class ArticleFeed extends Component {
     render() {
 
         return (
-
+            
             <div className="ArticleFeed">
                 <Link to="/Compose">
                     <button>Compose New Article</button>
