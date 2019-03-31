@@ -1,10 +1,11 @@
 export const loadState = () => {
     try {
-        const serializedState = localStorage.getItem('pKey');
-        if (serializedState === null) {
-            return null;
-        }
-        return JSON.parse(serializedState);
+        const serializedState = {
+            account: localStorage.getItem('account'),
+            key: localStorage.getItem('pKey')
+        };
+        console.log(serializedState);
+        return serializedState;
     } catch (err) {
         return null;
     }
@@ -12,11 +13,8 @@ export const loadState = () => {
 
 export const saveState = (account, pKey) => {
     try {
-        const serializedState = {
-            account: account,
-            key: JSON.stringify(pKey)
-        }
-        localStorage.setItem('pKey', JSON.stringify(serializedState));
+        localStorage.setItem('account', account);
+        localStorage.setItem('pKey', pKey);
     } catch (err) {
         //Write to log
     }
