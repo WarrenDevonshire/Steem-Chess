@@ -1,8 +1,8 @@
-
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
 import {loadState, saveState} from "../../components/localStorage";
+import {withRouter} from 'react-router-dom';
 
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
@@ -28,8 +28,10 @@ class LiveMatch extends Component {
             transactor: steemTransact(client, dsteem, GAME_ID),
             peer: null,
             username: localDB.account,
-            posting_key: JSON.parse(localDB.key)
+            posting_key: localDB.key
         }
+
+
     }
 
     componentWillUnmount() {
@@ -42,14 +44,18 @@ class LiveMatch extends Component {
     }
 
     async componentDidMount() {
-        console.log(loadState());
-        console.log(this.state.gameData);
-        this.setState({waitingPlayer:this.props.location.waitingPlayer});
-        console.log("waiting player: " + this.state.waitingPlayer);
+        if(this.state.username == null) {
+            this.props.history.push("/Login");
+            return;
+        }
         if (this.state.gameData == null) {
+            this.props.history.push("/Play");
             console.error("LiveMatch not passed any game data!");
             return;
         }
+        console.log(this.state.gameData);
+        this.setState({waitingPlayer:this.props.location.waitingPlayer});
+        console.log("waiting player: " + this.state.waitingPlayer);
         //didn't select a match to join
         if(this.props.location.waitingPlayer == null) {
             var opponent = await this.findWaitingPlayer(this.state.gameData);
@@ -114,12 +120,12 @@ class LiveMatch extends Component {
 
     /**
      * Requests to start RTC with a user
-     * @param {*} username The opponent's username
+     * @param {string} username The opponent's username
      * @param {*} gameData
      */
     sendGameRequest(username, gameData) {
         console.log("sending request to existing game");
-        this.state.transactor.json(this.state.username, this.state.posting_key, 'request-join', {
+        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-join', {
             data: gameData,
             sendingTo: username
         }, (err, result) => {
@@ -140,7 +146,7 @@ class LiveMatch extends Component {
      */
     postGameRequest(gameData) {
         console.log("posting a new game request");
-        this.state.transactor.json(this.state.username, this.state.posting_key, gameData.typeID, {
+        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), gameData.typeID, {
             data: gameData
         }, (err, result) => {
             if (err) {
@@ -200,7 +206,7 @@ class LiveMatch extends Component {
 
         this.state.peer.on('connect', () => {
             if (initializingConnection === true) {
-                this.state.transactor.json(this.state.username, this.state.posting_key, 'request-closed', {
+                this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-closed', {
                     data: gameData
                 }, (err) => {
                     if (err) {
@@ -228,7 +234,7 @@ class LiveMatch extends Component {
      */
     sendSignalToUser(sendingTag, signal) {
         console.log("starting sendSignalToUser");
-        this.state.transactor.json(this.state.username, this.state.posting_key, sendingTag, {
+        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), sendingTag, {
             signal: signal,
             from: this.state.username
         }, (err, success) => {
