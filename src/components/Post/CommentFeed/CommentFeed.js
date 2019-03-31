@@ -3,12 +3,15 @@ import './CommentFeed.css';
 import { Client, PrivateKey } from 'dsteem';
 import Comment from './Comment/Comment';
 import { Mainnet as NetConfig } from '../../../configuration';
+import {loadState} from "../../../components/localStorage";
+import {withRouter} from 'react-router-dom';
 
 let opts = { ...NetConfig.net };
 const fetchClient = new Client('https://api.steemit.com');
 const pushClient = new Client(NetConfig.url, opts);
 
 // TODO: refresh page when comment or reply is posted, may not be viable due to blockchain delays
+// TODO: use client from post component passed as callback?
 
 export default class CommentFeed extends Component {
 
@@ -16,15 +19,21 @@ export default class CommentFeed extends Component {
 
         super(props);
 
+        const localDB = loadState();
+        const pKey = PrivateKey.fromLogin(localDB.account, localDB.key, 'posting');
+
         this.state = {
 
             // the post whose comments are being loaded in this commentFeed component is referred to as the parent post
             parentAuthor: this.props.author,
             parentPermlink: this.props.permlink,
-            comments: []
+            comments: [],
+            account: localDB.account,
+            privateKey: pKey
 
         };
 
+        console.log(this.state.privateKey);
         this.pushComment = this.pushComment.bind(this);
         this.fetchComments(this.state.parentAuthor, this.state.parentPermlink, -1, this.fetchComments);
         
@@ -63,12 +72,6 @@ export default class CommentFeed extends Component {
     // push new comment to blockchain
     pushComment(parentAuthor, parentPermlink, bodyId) {
 
-        // get private key
-        const privateKey = PrivateKey.fromString(
-            document.getElementById('postingKey').value
-        );
-        // get account name
-        const account = document.getElementById('username').value;
         // get body
         const body = document.getElementById(bodyId).value;
         // get parent author permalink
@@ -82,7 +85,7 @@ export default class CommentFeed extends Component {
             .substring(2);
 
         const payload = {
-            author: account,
+            author: this.state.account,
             title: '',
             body: body,
             parent_author: parent_author,
@@ -93,7 +96,7 @@ export default class CommentFeed extends Component {
 
         // push comment to blockchain
         console.log('pustCSlient.broadcast.comment payload:', payload);
-        pushClient.broadcast.comment(payload, privateKey).then(
+        pushClient.broadcast.comment(payload, this.state.privateKey).then(
             function (result) {
                 console.log('client.broadcast.comment response', result);
                 alert("Success.")
@@ -104,6 +107,17 @@ export default class CommentFeed extends Component {
         );
 
     }
+
+    /* async componentDidMount() {
+
+        if(this.state.account == null) {
+
+            this.props.history.push("/Login");
+            return;
+
+        }
+        
+    } */
 
     render() {
 
