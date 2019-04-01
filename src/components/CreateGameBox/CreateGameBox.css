@@ -89,3 +89,30 @@
     height: 418px;
     margin-top: -10px;
 }
+
+.CreateGameBox{
+    height:700px;
+    width:550px;
+    float: left;
+    margin-right: 100px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 50px;
+   }
+   
+   .Button{
+       display: table;
+       position: relative;
+       align-items: center;
+       margin-left:170px;
+       width: 200px;
+       border-radius: 20px;
+       background-color: #4CAF50;
+       border:none;
+       color: white;
+       font-size: 20px;
+   }
+   
+   .link{
+       text-decoration: none;
+   }

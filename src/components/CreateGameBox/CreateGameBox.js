@@ -88,7 +88,7 @@ class CreateGameBox extends Component {
                 <hr noshade="true" />
                 <h3>{this.state.startingColorText}</h3>
                 <PieceList onPieceChanged={this.pieceChanged} />
-                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }}><button>Create Game</button></Link>
+                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }} ><button class="Button">Create Game</button></Link>
             </div>
         </div>
         );
