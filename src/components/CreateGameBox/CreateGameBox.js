@@ -7,7 +7,6 @@ import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
 import { Link } from 'react-router-dom';
 import { loadState } from "../../components/localStorage";
-import { reject } from 'q';
 
 
 class CreateGameBox extends Component {

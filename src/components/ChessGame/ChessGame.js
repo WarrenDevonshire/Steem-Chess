@@ -82,17 +82,17 @@ class ChessGame extends PureComponent {
             });
 
             //update board
-            if (success === true || success === false) {
+            if (success === true) {
                 this.commitPieceMove();
             }
         }
     };
 
-    isValidMove(sourceSquare, targetSquare) {
+    isValidMove(sourceSquare, targetSquare) {//TODO skips turn if false. This should use this.game.moves to check instead
         return this.game.move({
             from: sourceSquare,
             to: targetSquare,
-            promotion: "q" // always promote to a queen for example simplicity
+            promotion: "q" // always promote to a queen for example simplicity TODO don't know what this is
         }) !== null;
     }
 

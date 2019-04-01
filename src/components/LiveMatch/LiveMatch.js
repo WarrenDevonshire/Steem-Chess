@@ -3,7 +3,6 @@ import Chatbox from '../Chatbox/Chatbox';
 import ChessGame from '../ChessGame/ChessGame';
 import Peer from 'simple-peer';
 import { loadState } from "../../components/localStorage";
-import {withRouter} from 'react-router-dom';
 
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
@@ -21,6 +20,7 @@ class LiveMatch extends Component {
         super(props);
 
         var localDB = loadState();
+        const pKey = dsteem.PrivateKey.fromLogin(localDB.account, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting');
 
         this.state = {
             gameData: this.props.location.gameData,
@@ -29,9 +29,8 @@ class LiveMatch extends Component {
             transactor: steemTransact(client, dsteem, GAME_ID),
             peer: null,
             username: localDB.account,
-            posting_key: localDB.key
+            posting_key: pKey
         }
-
         this.chatboxComponent = React.createRef();
         this.chessGameComponent = React.createRef();
 
@@ -80,7 +79,6 @@ class LiveMatch extends Component {
      * @param {*} gameData 
      */
     async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
-    return;
         var headBlockNumber = await this.props.location.findBlockHead(client);
         await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 25), 1, GAME_ID, 'latest')});
         return new Promise((resolve, reject) => {
@@ -129,7 +127,6 @@ class LiveMatch extends Component {
      * @param {*} gameData
      */
     sendGameRequest(username, gameData) {
-        return;
         console.log("sending request to existing game");
         this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-join', {
             data: gameData,
@@ -151,7 +148,6 @@ class LiveMatch extends Component {
      * @param {*} gameData 
      */
     postGameRequest(gameData) {
-        return;
         console.log("posting a new game request");
         this.state.transactor.json(this.state.username, this.state.posting_key.toString(), gameData.typeID, {
             data: gameData
@@ -250,7 +246,6 @@ class LiveMatch extends Component {
      * @param {*} signal 
      */
     sendSignalToUser(sendingTag, signal) {
-        return;
         console.log("starting sendSignalToUser");
         this.state.transactor.json(this.state.username, this.state.posting_key.toString(), sendingTag, {
             signal: signal,
@@ -262,24 +257,22 @@ class LiveMatch extends Component {
             }
         });
     }
-
-        sendPeerData(data) {
-        if (this.props.peer == null) {
+    sendPeerData(data) {
+        if (this.state.peer == null) {
             var error = "Peer connection not initiated!";
             console.error(error);
-            //alert(error);
+            alert(error);
             return false;
         }
-        if (!this.props.peer.connected) {
+        if (!this.state.peer.connected) {
             var error = "Not connected to the other player yet!";
             console.error(error);
-            //alert(error);
+            alert(error);
             return false;
         }
-        this.props.peer.send(JSON.stringify(data));
+        this.state.peer.send(JSON.stringify(data));
         return true;
     }
-
     render() {
         return (
             <div id="liveMatch">

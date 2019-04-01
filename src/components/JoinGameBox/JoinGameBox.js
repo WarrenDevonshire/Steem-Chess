@@ -6,9 +6,8 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Link } from 'react-router-dom';
 import { loadState } from "../../components/localStorage";
-import LiveMatch from '../LiveMatch/LiveMatch'
+//import LiveMatch from '../LiveMatch/LiveMatch'
 
-//TEMP unitl local data storage
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
@@ -39,22 +38,21 @@ class JoinGameBox extends Component {
      */
     async findAllGameRequests()//TODO stop processor eventually
     {
-        return;
-        var openRequests = new Map();
-        var closedRequests = new Map();
-        var headBlockNumber = await this.props.findBlockHead(this.client);
-        var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, GAME_ID);
-        processor.on('request-open', function (json, from) {
-            openRequests.set(json.userId, [from, json]);
-        });
-        processor.on('request-closed', function (json, from) {
-            closedRequests.set(json.userId, [from, json]);
-        });
-        processor.start();
-        closedRequests.forEach((key) => {
-            openRequests.delete(key);
-        })
-        return openRequests;
+        // var openRequests = new Map();
+        // var closedRequests = new Map();
+        // var headBlockNumber = await this.props.findBlockHead(this.client);
+        // var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, GAME_ID);
+        // processor.on('request-open', function (json, from) {
+        //     openRequests.set(json.userId, [from, json]);
+        // });
+        // processor.on('request-closed', function (json, from) {
+        //     closedRequests.set(json.userId, [from, json]);
+        // });
+        // processor.start();
+        // closedRequests.forEach((key) => {
+        //     openRequests.delete(key);
+        // })
+        // return openRequests;
     }
 
     filterChanged(value) {
@@ -80,7 +78,7 @@ class JoinGameBox extends Component {
             increment: "",
             startingColor: "",
             userId: this.state.username + Date.now(),
-            typeID: "" + "|" + "" + "|" + ""
+            typeID: "TODO | TODO | TODO"
         }
     }
 
