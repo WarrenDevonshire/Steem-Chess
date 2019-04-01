@@ -1,30 +1,54 @@
 import React, {Component} from 'react';
 import './Login.css';
-import {Link} from 'react-router-dom';
-import sc2 from "steemconnect";
+import {PrivateKey} from 'dsteem';
+import {loadState, saveState} from "../../../components/localStorage";
+import {withRouter} from "react-router-dom";
+
 
 class Login extends Component {
     constructor(props) {
         super(props);
-        let api = sc2.Initialize({
-            app: 'steemchessorg',
-            callbackURL: 'http://localhost:3000/Success',
-            accessToken: 'access_token',
-            scope: ['vote', 'comment']
-        });
-        let link = api.getLoginURL();
         this.state = {
-            api: this.props.api,
-            link: link
+            account: "",
+            password: ""
         };
+        this.handleAccountChange = this.handleAccountChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
     }
 
+    async handleAccountChange(e){
+        await this.setState({account: e.target.value});
+        console.log(this.state.account);
+    }
+
+    async handlePasswordChange(e){
+        await this.setState({password: e.target.value});
+        console.log(this.state.password);
+    }
+
+    handleLogin(e){
+        const pKey = PrivateKey.fromLogin(this.state.account, this.state.password, 'posting');
+        saveState(this.state.account, pKey);
+        this.props.history.push('/');
+    }
 
     render() {
         return (
-            <div className={Login} class='Login'>
-                <a href={this.state.link}>Login</a>
-            </div>
+            <div className="Auth">
+                <form>
+                    <label>
+                        Account:
+                        <input type="text" value={this.state.account}  onChange={this.handleAccountChange}/>
+                    </label>
+
+                    <label>
+                        Password:
+                        <input type="password" value={this.state.password}  onChange={this.handlePasswordChange}/>
+                    </label>
+                    <button onClick={this.handleLogin}>Login</button>
+                </form>
+        </div>
         )
     }
 }

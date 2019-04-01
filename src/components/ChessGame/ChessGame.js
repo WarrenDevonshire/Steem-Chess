@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 import './ChessGame.css';
@@ -12,4 +12,5 @@ class ChessGame extends Component {
     );
   }
 }
+
 export default ChessGame;

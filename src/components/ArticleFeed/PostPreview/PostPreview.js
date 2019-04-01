@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import './PostPreview.css';
 
-export default class PostPreview extends Component{
+export default class PostPreview extends Component {
 
     constructor(props) {
 
@@ -22,7 +22,7 @@ export default class PostPreview extends Component{
 
     }
 
-    render(){
+    render() {
 
         return (  
             
