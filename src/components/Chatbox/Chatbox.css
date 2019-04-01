@@ -6,17 +6,20 @@
       overflow: hidden;
       overflow-y: scroll;
       position: relative;
+      left: 200px;
   }
   .users {
       padding: 5px 0 0 5px;
       border: 2px solid black;
       height: 100px;
-      width: 200px;
+      width: 100px;
+      
   }
 
   .new-msg{
       position: relative;
       display:table;
+      left: 200px;
   }
 
   .msg{
@@ -30,4 +33,5 @@
       width: 60px;
       position:absolute;
   }
+
 
