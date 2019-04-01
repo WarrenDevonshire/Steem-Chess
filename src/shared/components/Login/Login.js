@@ -28,8 +28,7 @@ class Login extends Component {
     }
 
     handleLogin(e){
-        const pKey = PrivateKey.fromLogin(this.state.account, this.state.password, 'posting');
-        saveState(this.state.account, pKey);
+        saveState(this.state.account, this.state.password);
         this.props.history.push('/');
     }
 
