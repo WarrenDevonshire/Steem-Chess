@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export default class PostPreview extends Component {
 
@@ -7,6 +7,7 @@ export default class PostPreview extends Component {
 
         super(props);
 
+        // parse and extract contents of post for preview
         const json = JSON.parse(this.props.post.json_metadata);
 
         this.state = {
