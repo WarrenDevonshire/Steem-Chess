@@ -263,20 +263,21 @@ class LiveMatch extends Component {
         });
     }
 
-    sendPeerData(data) {
+        sendPeerData(data) {
         if (this.props.peer == null) {
             var error = "Peer connection not initiated!";
             console.error(error);
-            alert(error);
-            return;
+            //alert(error);
+            return false;
         }
         if (!this.props.peer.connected) {
             var error = "Not connected to the other player yet!";
             console.error(error);
-            alert(error);
-            return;
+            //alert(error);
+            return false;
         }
         this.props.peer.send(JSON.stringify(data));
+        return true;
     }
 
     render() {

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./Chatbox.css";
 
 class Chatbox extends Component {
@@ -20,11 +20,11 @@ class Chatbox extends Component {
     onReceiveMessage(data) {
         console.log("Received data from peer!!!!!!!!!!!!!!!!!!!");
         this.state.messageList.push([data.message, Date.now]);
-        this.setState({messageList: this.state.messageList});
+        this.setState({ messageList: this.state.messageList });
     }
 
     updateDraft(area) {
-        this.setState({draftedMessage: area.target.value});
+        this.setState({ draftedMessage: area.target.value });
     }
 
     sendMessage() {
@@ -34,7 +34,7 @@ class Chatbox extends Component {
             message: this.state.draftedMessage,
         });
 
-        this.setState({draftedMessage: ""});
+        this.setState({ draftedMessage: "" });
         this.refs.draftArea.value = ""
     }
 
@@ -43,7 +43,7 @@ class Chatbox extends Component {
         if (this.state.messageList != null) {
             messageList = this.state.messageList.map(([message, timeSent], index) =>
                 <MessageBubble key={index}
-                               message={message.toString()}/>
+                    message={message.toString()} />
             )
         }
         return (
@@ -51,13 +51,13 @@ class Chatbox extends Component {
                 <aside id="sidebar">Users</aside>
                 <section id="main">
                     <section id="messages-list">
-            <span>
-              {messageList}
-            </span>
+                        <span>
+                            {messageList}
+                        </span>
                     </section>
                     <section id="new-message">
-            <textarea ref="draftArea"
-                      onChange={e => this.updateDraft(e)}></textarea>
+                        <textarea ref="draftArea"
+                            onChange={e => this.updateDraft(e)}></textarea>
 
                         <button onClick={e => this.sendMessage()}>Send</button>
                     </section>
@@ -81,8 +81,8 @@ class MessageBubble extends Component {
     render() {
         return (
             <span>
-        <h1>{this.state.message}</h1>
-      </span>
+                <h1>{this.state.message}</h1>
+            </span>
         );
     }
 }

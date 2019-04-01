@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.
-class ChessGame extends Component {
-
+class ChessGame extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -13,7 +12,6 @@ class ChessGame extends Component {
             dropSquareStyle: {},// square styles for active drop square
             squareStyles: {},// custom square styles
             pieceSquare: "",// square with the currently clicked piece
-            square: "",// currently clicked square
             history: [],// array of past game moves
 
             peer: this.props.peer,
@@ -25,11 +23,17 @@ class ChessGame extends Component {
         this.onMouseOverSquare = this.onMouseOverSquare.bind(this);
         this.onMouseOutSquare = this.onMouseOutSquare.bind(this);
         this.onDragOverSquare = this.onDragOverSquare.bind(this);
-        this.onSquareClick = this.onSquareClick.bind(this);
+        this.onReceivedMove = this.onReceivedMove.bind(this);
     }
 
     componentDidMount() {
         this.game = new Chess();
+    }
+
+    onReceivedMove(data) {
+        if (this.isValidMove(data.sourceSquare, data.targetSquare) === true) {
+            this.commitPieceMove();
+        }
     }
 
     // keep clicked square style and remove hint squares
@@ -67,35 +71,40 @@ class ChessGame extends Component {
     };
 
     onDrop(e) {
-        // see if the move is legal
-        var move = this.game.move({
-            from: e.sourceSquare,
-            to: e.targetSquare,
+        if (this.isValidMove(e.sourceSquare, e.targetSquare) === true) {
+            //Send data to other player
+            var success = this.props.sendData({
+                type: "move",
+                sourceSquare: e.sourceSquare,
+                targetSquare: e.targetSquare,
+                piece: e.piece,
+                time: Date.now
+            });
+
+            //update board
+            if (success === true || success === false) {
+                this.commitPieceMove();
+            }
+        }
+    };
+
+    isValidMove(sourceSquare, targetSquare) {
+        return this.game.move({
+            from: sourceSquare,
+            to: targetSquare,
             promotion: "q" // always promote to a queen for example simplicity
-        });
+        }) !== null;
+    }
 
-        // illegal move
-        if (move === null) return;
-
-        //update board
+    commitPieceMove() {
         this.setState(({ history, pieceSquare }) => ({
             fen: this.game.fen(),
             history: this.game.history({ verbose: true }),
             squareStyles: squareStyling({ pieceSquare, history })
         }));
-
-        //Send data to other player
-        this.props.sendData({
-            type: "move",
-            sourceSquare: e.sourceSquare,
-            targetSquare: e.targetSquare,
-            piece: e.piece,
-            time: Date.now
-        });
-    };
+    }
 
     onMouseOverSquare(square) {
-        console.warn(this);
         // get list of possible moves for this square
         var moves = this.game.moves({
             square: square,
@@ -117,92 +126,35 @@ class ChessGame extends Component {
         this.removeHighlightSquare(square);
     }
 
-    // central squares get diff dropSquareStyles
-    onDragOverSquare(square) {
+    onDragOverSquare() {
         this.setState({
-            dropSquareStyle:
-                square === "e4" || square === "d4" || square === "e5" || square === "d5"
-                    ? { backgroundColor: "cornFlowerBlue" }
-                    : { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }
-        });
-    };
-
-    onSquareClick(square) {
-        this.setState(({ history }) => ({
-            squareStyles: squareStyling({ pieceSquare: square, history }),
-            pieceSquare: square
-        }));
-
-        var move = this.game.move({
-            from: this.state.pieceSquare,
-            to: square,
-            promotion: "q" // always promote to a queen for example simplicity
-        });
-
-        // illegal move
-        if (move === null) return;
-
-        this.setState({
-            fen: this.game.fen(),
-            history: this.game.history({ verbose: true }),
-            pieceSquare: ""
+            dropSquareStyle: { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }
         });
     };
 
     render() {
-        const { fen, dropSquareStyle, squareStyles } = this.state;
+        const { dropSquareStyle, squareStyles } = this.state;
 
-        return this.props.children({
-            squareStyles,
-            position: fen,
-            onMouseOverSquare: this.onMouseOverSquare,
-            onMouseOutSquare: this.onMouseOutSquare,
-            onDrop: this.onDrop,
-            dropSquareStyle,
-            onDragOverSquare: this.onDragOverSquare,
-            onSquareClick: this.onSquareClick,
-            onSquareRightClick: this.onSquareRightClick
-        });
+        return (
+            <div>
+                <Chessboard width={320}
+                    position={this.state.fen}
+                    onDrop={e => this.onDrop(e)}
+                    onMouseOverSquare={e => this.onMouseOverSquare(e)}
+                    onMouseOutSquare={e => this.onMouseOutSquare(e)}
+                    boardStyle={{
+                        borderRadius: "5px",
+                        boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
+                    }}
+                    squareStyles={squareStyles}
+                    dropSquareStyle={dropSquareStyle}
+                    onDragOverSquare={e => this.onDragOverSquare(e)}/>
+            </div>
+        );
     }
 }
 
-export default function WithMoveValidation() {
-    return (
-        <div>
-            <ChessGame>
-                {({
-                    position,
-                    onDrop,
-                    onMouseOverSquare,
-                    onMouseOutSquare,
-                    squareStyles,
-                    dropSquareStyle,
-                    onDragOverSquare,
-                    onSquareClick,
-                    onSquareRightClick
-                }) => (
-                        <Chessboard
-                            id="chessGame"
-                            width={320}
-                            position={position}
-                            onDrop={onDrop}
-                            onMouseOverSquare={onMouseOverSquare}
-                            onMouseOutSquare={onMouseOutSquare}
-                            boardStyle={{
-                                borderRadius: "5px",
-                                boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
-                            }}
-                            squareStyles={squareStyles}
-                            dropSquareStyle={dropSquareStyle}
-                            onDragOverSquare={onDragOverSquare}
-                            onSquareClick={onSquareClick}
-                            onSquareRightClick={onSquareRightClick}
-                        />
-                    )}
-            </ChessGame>
-        </div>
-    );
-}
+export default ChessGame;
 
 const squareStyling = ({ pieceSquare, history }) => {
     const sourceSquare = history.length && history[history.length - 1].from;
@@ -210,11 +162,13 @@ const squareStyling = ({ pieceSquare, history }) => {
 
     return {
         [pieceSquare]: { backgroundColor: "rgba(255, 255, 0, 0.4)" },
+        //style of square piece was just moved from
         ...(history.length && {
             [sourceSquare]: {
                 backgroundColor: "rgba(255, 255, 0, 0.4)"
             }
         }),
+        //style of square piece was just moved to
         ...(history.length && {
             [targetSquare]: {
                 backgroundColor: "rgba(255, 255, 0, 0.4)"
