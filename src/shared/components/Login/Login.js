@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import './Login.css';
-import {PrivateKey} from 'dsteem';
 import {loadState, saveState} from "../../../components/localStorage";
 import {withRouter} from "react-router-dom";
 

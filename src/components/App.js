@@ -32,15 +32,11 @@ class App extends Component {
                                render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
                         <Route path='/Compose' component={Compose} exact/>
-
                         <Route path='/Login' component={Login} exact/>
-
                     </Content>
-
                     <Footer/>
                 </div>
             </Router>
-
         );
     }
 }
