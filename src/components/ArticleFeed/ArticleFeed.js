@@ -50,7 +50,7 @@ export default class ArticleFeed extends Component {
                 alert(result.length + " posts retrieved.");
                 alert("pageLimit: " + (Math.ceil(result.length / 10)));
 
-                this.setState( { pageLimit: Math.ceil(result.length / 10) } );
+                this.setState( { pageLimit: (Math.ceil(result.length / 10) - 1) } );
                 this.setState( { posts: postList } );
                 this.setState( { activePosts: postList.slice((this.state.pageNumber * 10), ((this.state.pageNumber + 1) * 10)) })
             
@@ -70,7 +70,7 @@ export default class ArticleFeed extends Component {
         if (direction) {
 
             // go forward a page
-            if (this.state.pageNumber < 9) {
+            if (this.state.pageNumber < this.state.pageLimit) {
 
                 this.setState({ pageNumber: this.state.pageNumber + 1 }, () => {
 
