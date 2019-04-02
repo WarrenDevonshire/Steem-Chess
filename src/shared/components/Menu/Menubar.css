@@ -6,20 +6,20 @@
 }
 
 .Menu form{
-    top: 50px;
     left: 80px;
-    position: relative;
 }
 
 .Menu .search{ 
     position: absolute;
     font-size: inherit;
-    width: 80px;
+    width: 90px;
+    height:max-content;
+   
 }
 
 .Menu input{
-    padding: 5px;
     font-size:inherit;
+
 }
 
 .Menu li{
@@ -44,5 +44,4 @@
     font-size:inherit;
     display: inline-flex;
     float: left;
-
 }
