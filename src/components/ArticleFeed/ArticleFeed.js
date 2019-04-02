@@ -82,9 +82,6 @@ export default class ArticleFeed extends Component {
         return (
             
             <div className="ArticleFeed">
-                <Link to="/Compose">
-                    <button>Compose New Article</button>
-                </Link>
                 <div class="list-group" id="postList">{this.state.posts.map(PostPreview =>
                     <div> {PostPreview} </div>)}</div>
                 <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>

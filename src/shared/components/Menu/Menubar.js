@@ -24,6 +24,7 @@ class Menubar extends Component {
                     <li><Link to="/">Trending</Link></li>
                     <li><Link to="/New">New</Link></li>
                     <li><Link to="/Hot">Hot</Link></li>
+                    <li><Link to='/Compose'>Compose</Link></li>
                     <li><Link to={"/Login"}>Login</Link></li>
                 </ul>
                 </div>

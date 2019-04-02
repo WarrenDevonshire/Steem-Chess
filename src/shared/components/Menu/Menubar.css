@@ -1,8 +1,8 @@
 .Menu {
-    overflow: hidden;
     display: flex;
     float: left;
     text-decoration: none;
+    position: fixed;
 }
 
 .Menu form{
