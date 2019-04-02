@@ -12,7 +12,7 @@ const Header = props => {
     return (
         <header className="App-header">
             <h1 className="App-title">{title}</h1>
-            <Menubar />
+            <Menubar/>
         </header>
     );
 };
