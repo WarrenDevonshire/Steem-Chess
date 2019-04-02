@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Client, PrivateKey } from 'dsteem';
-import { Mainnet as NetConfig } from '../../configuration'; //A Steem Testnet. Replace 'Testnet' with 'Mainnet' to connect to the main Steem blockchain.
+import { Mainnet as NetConfig } from '../../configuration';
+import { loadState } from '../localStorage';
 
 const client = new Client('https://api.steemit.com');
 
@@ -12,6 +13,8 @@ let opts = {...NetConfig.net};
 
         super(props);
 
+        const localDB = loadState();
+
         this.state = {
 
             username: 'nisarg258',
@@ -19,49 +22,48 @@ let opts = {...NetConfig.net};
             author: this.props.author,
             permlink: this.props.permlink,
             weight: this.props.weight
+
         };
 
-        {this.openPost()};
+        this.pushVote = this.pushVote.bind(this);
 
     }
 
-    openPost() {
+    pushVote() {
     
-              //creating a vote object
-              const vote = {
-                voter: 'nisarg258',
-                author: this.props.author,
-                permlink: this.props.permlink,
-                weight: '10', //needs to be an integer for the vote function
-            };
-            
-               client.broadcast.vote(vote, '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy').then(result => {
+        //creating a vote object
+        const vote = {
+            voter: 'nisarg258',
+            author: this.props.author,
+            permlink: this.props.permlink,
+            weight: '10', //needs to be an integer for the vote function
+        };
 
-                console.log('Success! Vote Has Been Submitted:', result);
-                result.dangerouslySetInnerHTML = 'Success! see console for full response.';
+        client.broadcast.vote(vote, '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy').then(result => {
 
-               },
-               
-               function(error){
+            console.log('Success! Vote Has Been Submitted:', result);
+            result.dangerouslySetInnerHTML = 'Success! see console for full response.';
+
+        },
+
+            function (error) {
 
                 console.log('error', error);
 
-               })
+            })
 
+        window.onload = () => {
 
-            window.onload = () => {
-                
-                var upvoteweightslider = document.getElementById('voteWeight');
-                var currentweightslider = document.getElementById('currentWeight');
+            var upvoteweightslider = document.getElementById('voteWeight');
+            var currentweightslider = document.getElementById('currentWeight');
 
-                currentweightslider.dangerouslySetInnerHTML = upvoteweightslider.value;
-                upvoteweightslider.oninput = function() {
+            currentweightslider.dangerouslySetInnerHTML = upvoteweightslider.value;
+            upvoteweightslider.oninput = function () {
 
-                    currentweightslider.dangerouslySetInnerHTML = this.value;
-                };
+                currentweightslider.dangerouslySetInnerHTML = this.value;
+            };
 
-    
-            }
+        }
     }
 
 
@@ -69,7 +71,7 @@ let opts = {...NetConfig.net};
 
         return (  
             <div className="upvote">
-                <div id="upVote" style="display: none;"><br /><input id="pushVoteButton" type="button" value="Vote Here" onClick={() => this.broadcast.vote()} /></div>  
+                <div id="upVote"><br /><input id="pushVoteButton" type="button" value="Vote Here" onClick={() => this.pushVote()} /></div>  
 
                          
             </div>

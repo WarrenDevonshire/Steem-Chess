@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Comment.css';
 import ReactHtmlParser from 'react-html-parser';
+import UpVote from '../../../UpVote/UpVote';
 
 const Remarkable = require('remarkable');
 const md = new Remarkable({ html: true, linkify: true });
@@ -68,6 +69,7 @@ export default class Comment extends Component {
                 <textarea id={this.state.commentBodyId} class="form-control" rows="3">Reply to this comment...</textarea><br />
                 <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
+                <div id="UpVote"><UpVote /></div>
                 <button onClick={() => this.expandDropdown()}>Open replies</button>
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
                     return this.state.expanded ?  <div> {Comment} </div> : null
