@@ -1,9 +1,11 @@
 .PostPreview {
+    margin-top: 20px;
     margin-right: 300px;
     padding: 50px;
     float: left;
     display: table;
     font-size: inherit;
+    z-index: 0;
 }
 
 .PostPreview .crop{
@@ -12,13 +14,11 @@
     overflow: hidden;
     margin-right: 30px;
     float: left;
-    position: relative;
 }
 
 .PostPreview .link{
     display: inline-block;
     color: black;
-    position: relative;
     text-decoration: none;
     white-space: pre;
     overflow: hidden;

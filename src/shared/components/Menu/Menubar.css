@@ -3,6 +3,7 @@
     float: left;
     text-decoration: none;
     position: fixed;
+    z-index: 9999;
 }
 
 .Menu form{
