@@ -8,6 +8,7 @@
     border-radius: 10px;
     box-sizing: border-box;
     margin: 5px;
+    padding: 5px;
 }
 
 #title{
@@ -23,13 +24,14 @@
 }
 
 #submitPostBtn{
-    border:2px solid lightgreen;
+    border:2px solid #4CAF50;
     box-shadow: 0 0 5px green;
     border-radius: 10px;
     background: none;
-    background-color: lightgreen;
+    background-color: #4CAF50;;
     height: 30px;
     width: 100px;
+    color: white;
 }
 
 .container *{

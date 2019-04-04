@@ -33,7 +33,7 @@ export default class Post extends Component {
                 const body = md.render(result.body);
                 const content = `<div class='pull-right'></div><br><h2 class='title'>${
                     result.title
-                }</h2><br>${body}<br>`;
+                }</h2><br class='content'>${body}<br>`;
 
             document.getElementById('postBody').style.display = 'block';
             document.getElementById('postBody').innerHTML = content;
