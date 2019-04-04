@@ -1,5 +1,5 @@
-.CreateGame{
-    margin: 0 auto;
+.CreateGameBox{
+    margin: 40px auto;
     width: 960px;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .CreateGameBox{
-    height:700px;
+    height:600px;
     width:550px;
     float: left;
     margin-right: 100px;
@@ -115,4 +115,16 @@
    
    .link{
        text-decoration: none;
+   }
+
+   .Box{
+        margin-top:50px;
+   }
+
+   .Slide{
+       margin-top:30px;
+   }
+
+   h3{
+       margin-bottom: 20px;
    }

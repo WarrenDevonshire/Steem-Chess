@@ -86,7 +86,7 @@ class JoinGameBox extends Component {
     render() {
         return(
             <div className={JoinGameBox} class='JoinGameBox'>
-                <div className="horizontal">
+                <div id='horizontal'>
                     <label class="filter">Filter</label>
                     <ComboBox class='ComboBox' options={this.state.filterOptions}
                               onSelectedChanged={this.filterChanged}/>
@@ -94,9 +94,11 @@ class JoinGameBox extends Component {
                                   falseText="Grid"
                                   trueText="Card"
                                   offColor="#0000ff"
-                                  onChange={this.joinViewChanged}/>
+                                  onChange={this.joinViewChanged}
+                    />
                 </div>
-                <hr noshade="true"/>
+                <hr noshade="true" class='Line'/>
+                <div id='table'>
                 <ReactTable
                     data={this.grabJoinData()}
                     columns={[{
@@ -118,8 +120,9 @@ class JoinGameBox extends Component {
                     showPagination={false}
                     className="table"
                     resizable={false}/>
-                <hr noshade="true"/>
-                <Link to="/Live" params={{gameData: this.grabGameData, waitingPlayer: this.state.selectedUser}}><button>Join Game</button></Link>
+                    </div>
+                <hr noshade="true" class='Line'/>
+                <Link to="/Live" params={{gameData: this.grabGameData, waitingPlayer: this.state.selectedUser}} class='link'><button class='Button'>Join Game</button></Link>
             </div>
         );
     }
