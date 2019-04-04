@@ -64,7 +64,7 @@ class Chatbox extends Component {
       }
     return (
       <div id="container">
-        <aside id="sidebar" class='users'>Users</aside>
+        <aside id="sidebar">Users</aside>
         <section id="main" class='messages'>
             <section id="messages-list" class='messages-list'>
             <span>
