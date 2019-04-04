@@ -64,31 +64,33 @@ class CreateGameBox extends Component {
 
     render() {
         return (
-            <div className={CreateGameBox}>
-                <Title title={'Create Game'} />
+            <div className={CreateGameBox} class='CreateGameBox'>
+                <Title title={'Create Game'}/>
+                <div class='Box'>
                 <RadioButtonList defaultValue={this.state.timeControlChosen}
                     options={this.state.timeControlOptions}
                     onTimeControlChosen={this.timeControlChosen} />
-                <hr noshade="true" />
-                <h3>Time Per Side</h3>
+                <hr noshade="true" class='Line'/>
+                <h3 class='Line'>Time Per Side</h3>
                 <Slider min="1"
                     max="10"
                     value={this.state.timePerSide}
                     step="0.5"
                     unit="Minutes"
-                    onValueChanged={this.timePerSideChanged} />
-                <h3>Increment</h3>
+                    onValueChanged={this.timePerSideChanged}/>
+                <h3 class='Line'>Increment</h3>
                 <Slider min="1"
                     max="10"
                     value={this.state.increment}
                     step="1"
                     unit="Seconds"
                     onValueChanged={this.incrementChanged} />
-                <hr noshade="true" />
-                <h3>{this.state.startingColorText}</h3>
+                <hr noshade="true" class='Line'/>
+                <h3 class='Line'>{this.state.startingColorText}</h3>
                 <PieceList onPieceChanged={this.pieceChanged} />
-                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }}><button>Create Game</button></Link>
+                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }} class='link'><button class="Button">Create Game</button></Link>
             </div>
+        </div>
         );
     }
 }

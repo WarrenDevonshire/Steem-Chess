@@ -102,10 +102,10 @@ export default class Compose extends Component {
 
           <div class="container" id="content"><br />
             <h4>Submit a post to the Steem blockchain</h4>
-            Title of post: <input id="title" type="text" size="65" class="form-control" /><br />
+            Title of post: <input id="title" class='input' type="text" size="65" class="form-control" /><br />
             Post body:<br />
-            <textarea id="body" class="form-control" rows="3">Write your post...</textarea><br />
-            Tags: <input id="tags" type="text" size="65" class="form-control" value="chess" /><br />
+            <textarea id="body" class="form-control" rows="3" placeholder="Write your post here"></textarea><br />
+            Tags: <input id="tags" class='input' type="text" size="65" class="form-control" value="chess" /><br />
             <input id="submitPostBtn" type="button" value="Submit post!" onClick={() => this.pushPost()} class="btn btn-primary" /><br />
             { this.state.postSubmitted ? <Link to={`Post/@${this.state.account}/${this.state.permlink}`}><h1>View new post</h1></Link> : null }
 		      </div>

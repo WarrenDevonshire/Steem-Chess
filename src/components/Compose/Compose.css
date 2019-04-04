@@ -1,0 +1,40 @@
+
+#body{
+    resize: none;
+    height: 400px;
+    width: 800px;
+    outline:none!important;
+    border: 1px solid lightgreen;
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin: 5px;
+    padding: 5px;
+}
+
+#title{
+    border: 1px solid lightgreen;
+    border-radius: 5px;
+    margin: 10px 0px;
+}
+
+#tags{
+    border: 1px solid lightgreen;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#submitPostBtn{
+    border:2px solid #4CAF50;
+    box-shadow: 0 0 5px green;
+    border-radius: 10px;
+    background: none;
+    background-color: #4CAF50;;
+    height: 30px;
+    width: 100px;
+    color: white;
+}
+
+.container *{
+    font-size: 15px;
+}
+

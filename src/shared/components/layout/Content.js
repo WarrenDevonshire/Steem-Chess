@@ -6,7 +6,7 @@ const Content = props => {
     const {children} = props;
 
     return (
-        <main>
+        <main className="App-content">
             {children}
         </main>
     );

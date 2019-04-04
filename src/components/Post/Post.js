@@ -25,15 +25,15 @@ export default class Post extends Component {
     }
 
     openPost() {
-
-        // fetch post content
-        client.database.call('get_content', [this.state.author, this.state.permlink]).then(result => {
-
-            const md = new Remarkable({html: true, linkify: true});
-            const body = md.render(result.body);
-            const content = `<div class='pull-right'></div><br><h2>${
-                result.title
-                }</h2><br>${body}<br>`;
+    
+            // fetch post content
+            client.database.call('get_content', [this.state.author, this.state.permlink]).then(result => {
+    
+                const md = new Remarkable({ html: true, linkify: true });
+                const body = md.render(result.body);
+                const content = `<div class='pull-right'></div><br><h2 class='title'>${
+                    result.title
+                }</h2><br class='content'>${body}<br>`;
 
             document.getElementById('postBody').style.display = 'block';
             document.getElementById('postBody').innerHTML = content;
