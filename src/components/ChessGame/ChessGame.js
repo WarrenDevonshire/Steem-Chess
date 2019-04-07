@@ -31,8 +31,10 @@ class ChessGame extends PureComponent {
     }
 
     onReceivedMove(data) {
-        if (this.isValidMove(data.sourceSquare, data.targetSquare) === true) {
-            this.commitPieceMove();
+        var bool = this.isValidMove(data.sourceSquare, data.targetSquare) === true
+        console.log("isValidMove: ", bool)
+        if (bool) {
+            this.commitPieceMove(data.move);
         }
     }
 
@@ -78,12 +80,13 @@ class ChessGame extends PureComponent {
                 sourceSquare: e.sourceSquare,
                 targetSquare: e.targetSquare,
                 piece: e.piece,
-                time: Date.now
+                time: Date.now,
+                move: this.game.fen()
             });
 
             //update board
-            if (success === true) {
-                this.commitPieceMove();
+            if (success === true || success === false) {
+                this.commitPieceMove(this.game.fen());
             }
         }
     };
@@ -96,9 +99,11 @@ class ChessGame extends PureComponent {
         }) !== null;
     }
 
-    commitPieceMove() {
+    commitPieceMove(move) {
+        console.log("this fen", this.game.fen());
+        console.log("opponent fen", move);
         this.setState(({ history, pieceSquare }) => ({
-            fen: this.game.fen(),
+            fen: move,
             history: this.game.history({ verbose: true }),
             squareStyles: squareStyling({ pieceSquare, history })
         }));
@@ -148,7 +153,7 @@ class ChessGame extends PureComponent {
                     }}
                     squareStyles={squareStyles}
                     dropSquareStyle={dropSquareStyle}
-                    onDragOverSquare={e => this.onDragOverSquare(e)}/>
+                    onDragOverSquare={e => this.onDragOverSquare(e)} />
             </div>
         );
     }

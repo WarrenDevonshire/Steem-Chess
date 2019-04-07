@@ -20,7 +20,7 @@ class LiveMatch extends Component {
         super(props);
 
         var localDB = loadState();
-        const pKey = dsteem.PrivateKey.fromLogin(localDB.account, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting');
+        const pKey = dsteem.PrivateKey.fromLogin(localDB.account, localDB.key, 'posting');
 
         this.state = {
             gameData: this.props.location.gameData,
@@ -59,13 +59,13 @@ class LiveMatch extends Component {
         console.log(this.state.gameData);
         this.setState({waitingPlayer:this.props.location.waitingPlayer});
         console.log("waiting player: " + this.state.waitingPlayer);
-        //didn't select a match to join
+        // didn't select a match to join
         if(this.props.location.waitingPlayer == null) {
             var opponent = await this.findWaitingPlayer(this.state.gameData);
             console.log("OPPONENT", opponent);
             this.setState({waitingPlayer:opponent});
         }
-        //didn't find an existing game to join
+        // didn't find an existing game to join
         if (this.state.waitingPlayer == null) {
             this.postGameRequest(this.state.gameData);
         }
@@ -208,12 +208,15 @@ class LiveMatch extends Component {
         });
 
         this.state.peer.on('data', (data) => {
-            var parsedData = JSON.parse(data);
+            console.log(data)
+            var parsedData = JSON.parse(data); //////////////////////////////////////////////////////////////////////
+            console.log(parsedData)
             if(parsedData.type === 'message') {
                 this.chatboxComponent.current.onReceiveMessage(parsedData);
             }
-            else if(data.type === 'move') {
-                this.chessGameComponent.current.onReceiveMove(parsedData);
+            else if(parsedData.type === 'move') {
+                console.log("CALLED")
+                this.chessGameComponent.current.onReceivedMove(parsedData);
             }
         });
 
