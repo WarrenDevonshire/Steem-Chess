@@ -1,5 +1,4 @@
 select {
-
     width: 150px;
     padding: 5px 35px 5px 5px;
     font-size: 14px;
@@ -9,6 +8,8 @@ select {
     -moz-appearance: none;
     appearance: none;
     background: url(./select-arrow.png) 96% / 15% no-repeat #eee;
+    margin-top:20px;
+    margin-right:15px;
 }
 
 .rounded {

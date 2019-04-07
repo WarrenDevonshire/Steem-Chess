@@ -1,6 +1,46 @@
-textarea.composeComment {
 
-    height: 100px;
-    width: 75%;
-
+.title{
+    margin: 20px;
+    display: inline-block;
+    font-size:40px;
+    border-bottom: 10px;
+    border-bottom-color: black;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 800px;
+    align-items: flex-start;
 }
+
+h2{
+    display: table;
+}
+
+.Post{
+    margin:auto;
+
+    display: block;
+}
+
+#postBody{
+    margin: auto;
+}
+
+img{
+    max-width: 600px;
+}
+
+textarea{
+    resize:none;
+}
+
+#postBody p{
+    align-content: flex-start;
+    margin-left: 100px;
+    margin-right: 0;
+    white-space: pre;
+    overflow: auto;
+    left:0;
+    right:100px;
+}
+
+

@@ -33,7 +33,8 @@ class ToggleSwitch extends Component {
 
         return (
             <label htmlFor="normal-switch"
-                   className="horizontal">
+                className="horizontal"
+                id='label'>
                 <span>{this.state.text}</span>
                 <Switch
                     onChange={this.handleChange}

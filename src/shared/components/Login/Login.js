@@ -33,18 +33,19 @@ class Login extends Component {
 
     render() {
         return (
-            <div className="Auth">
+            <div className="Login">
                 <form>
                     <label>
                         Account:
-                        <input type="text" value={this.state.account}  onChange={this.handleAccountChange}/>
+                        <input type="text" value={this.state.account}  onChange={this.handleAccountChange} id="Account"/>
                     </label>
-
-                    <label>
+                    <br/>
+                    <label >
                         Password:
-                        <input type="password" value={this.state.password}  onChange={this.handlePasswordChange}/>
+                        <input type="password" value={this.state.password}  onChange={this.handlePasswordChange} id="Password"/>
                     </label>
-                    <button onClick={this.handleLogin}>Login</button>
+                    <br/>
+                    <button onClick={this.handleLogin} id="submit">Login</button>
                 </form>
         </div>
         )

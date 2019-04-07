@@ -54,25 +54,25 @@ class Chatbox extends Component {
         this.refs.draftArea.value = ""
     }
 
-    render() {
-        var messageList;
-        if (this.state.messageList != null) {
-            messageList = this.state.messageList.map(([message, timeSent], index) =>
-                <MessageBubble key={index}
-                               message={message.toString()}/>
-            )
-        }
-        return (
-            <div id="container">
-                <aside id="sidebar">Users</aside>
-                <section id="main">
-                    <section id="messages-list">
+  render() {
+      var messageList;
+      if (this.state.messageList != null) {
+          messageList = this.state.messageList.map(([message, timeSent], index) =>
+              <MessageBubble key={index}
+                             message={message.toString()}/>
+          )
+      }
+    return (
+      <div id="container">
+        <aside id="sidebar" class='users'>Users</aside>
+        <section id="main" class='messages'>
+            <section id="messages-list" class='messages-list'>
             <span>
               {messageList}
             </span>
-                    </section>
-                    <section id="new-message">
-            <textarea ref="draftArea"
+            </section>
+            <section id="new-message" class='new-msg'>
+            <textarea ref="draftArea" class='msg'
                       onChange={e => this.updateDraft(e)}></textarea>
 
                         <button onClick={e => this.sendMessage()}>Send</button>
