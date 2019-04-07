@@ -64,7 +64,7 @@ class Chatbox extends Component {
       }
     return (
       <div id="container">
-        <aside id="sidebar" class='users'>Users</aside>
+        <aside id="sidebar">Users</aside>
         <section id="main" class='messages'>
             <section id="messages-list" class='messages-list'>
             <span>
@@ -75,7 +75,7 @@ class Chatbox extends Component {
             <textarea ref="draftArea" class='msg'
                       onChange={e => this.updateDraft(e)}></textarea>
 
-                        <button onClick={e => this.sendMessage()}>Send</button>
+                        <button onClick={e => this.sendMessage()} id='Send'>Send</button>
                     </section>
                 </section>
             </div>

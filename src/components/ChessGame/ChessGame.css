@@ -1,9 +1,10 @@
 .ChessGame{
     align-content: center;
-    position: relative;
     max-width: 560px;
     left: 450px;
-    bottom: 500px;
     border: 2px solid;
     margin: 0px;
+    top:100px;
+    display: flex;
+    position: absolute;
 }

@@ -3,6 +3,7 @@ import Chatbox from '../Chatbox/Chatbox'
 import Peer from 'simple-peer';
 import {loadState, saveState} from "../../components/localStorage";
 import {withRouter} from 'react-router-dom';
+import ChessGame from '../ChessGame/ChessGame';
 
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
@@ -259,7 +260,7 @@ class LiveMatch extends Component {
     render() {
         return (
             <div id="liveMatch">
-                {/* <ChessGame/> */}
+               <ChessGame/>
                 <Chatbox peer={this.state.peer} ref={this.chatboxComponent} />
             </div>
         )
