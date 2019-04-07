@@ -144,7 +144,7 @@ export default class CommentFeed extends Component {
                 <hr />
                 <h4>Submit a comment:</h4>
                 Comment body:<br />
-                <textarea id="Replybody" class="form-control" rows="3">Reply to this post...</textarea><br />
+                <textarea id="Replybody" class="form-control" rows="3"placeholder='Reply to this post...'/><br />
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
                 <div id="postLink" />
 

@@ -75,7 +75,7 @@ class Chatbox extends Component {
             <textarea ref="draftArea" class='msg'
                       onChange={e => this.updateDraft(e)}></textarea>
 
-                        <button onClick={e => this.sendMessage()}>Send</button>
+                        <button onClick={e => this.sendMessage()} id='Send'>Send</button>
                     </section>
                 </section>
             </div>

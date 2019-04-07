@@ -40,7 +40,7 @@ body {
     resize: none;
 }
 
-button{
+#Send{
     height: 40px;
     width: 60px;
     position:absolute;
