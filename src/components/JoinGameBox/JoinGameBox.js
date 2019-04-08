@@ -5,16 +5,15 @@ import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Link } from 'react-router-dom';
-import LiveMatch from '../LiveMatch/LiveMatch'
+//import LiveMatch from '../LiveMatch/LiveMatch'
 
-//TEMP unitl local data storage
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
-const steemTransact = require('steem-transact');
 const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
-const POSTING_KEY = dsteem.PrivateKey.fromLogin(USERNAME, "P5KEH4V4eKrK2WWxnSGw7UQGSD2waYSps3xtpf9ajegc46PGRUzN", 'posting')
+const JOIN_TAG = 'request-join';
+const CLOSE_REQUEST_TAG = 'request-closed';
 
 class JoinGameBox extends Component {
     constructor(props) {
@@ -23,33 +22,47 @@ class JoinGameBox extends Component {
         this.state = {
             filterOptions: ["Most Recent", "Least Recent"],
             filterValue: "",
-            selectedUser: ""//TODO
+            selectedUser: "",//TODO
+            availableGames: []
         };
 
 
         this.filterChanged = this.filterChanged.bind(this);
         this.joinViewChanged = this.joinViewChanged.bind(this);
         this.grabGameData = this.grabGameData.bind(this);
+        this.processor = null;
+    }
+
+    componentDidMount() {
+        this.findGameRequests();
+    }
+
+    componentWillUnmount() {
+        if(this.processor != null) {
+            this.processor.stop();
+        }
     }
 
     /**
      * Finds all game requests that haven't been satisfied
      * @param {*} gameData 
      */
-    async findAllGameRequests()//TODO stop processor eventually
+    async findGameRequests()//TODO stop processor eventually and check if games were finished
     {
-        return;
+        console.log("Trying to find game requests");
         var openRequests = new Map();
         var closedRequests = new Map();
-        var headBlockNumber = await this.props.findBlockHead(this.client);
-        var processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 1000), 100, GAME_ID);
-        processor.on('request-open', function (json, from) {
-            openRequests.set(json.userId, [from, json]);
+        var headBlockNumber = await this.props.findBlockHead(client);
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 250), 1, GAME_ID);
+        this.processor.on(JOIN_TAG, function (json, from) {
+            console.log("Found a join game block!!!");
+            openRequests.set(from, json);
+            this.state.availableGames.push(json.data);
         });
-        processor.on('request-closed', function (json, from) {
-            closedRequests.set(json.userId, [from, json]);
+        this.processor.on(CLOSE_REQUEST_TAG, function (json, from) {
+            closedRequests.set(from, json);
         });
-        processor.start();
+        this.processor.start();
         closedRequests.forEach((key) => {
             openRequests.delete(key);
         })
@@ -67,19 +80,15 @@ class JoinGameBox extends Component {
     }
 
     //TODO
-    grabJoinData() {
-
-    }
-
-    //TODO
     grabGameData() {
         return {
             timeControlChosen: "",
             timePerSide: "",
             increment: "",
             startingColor: "",
-            userId: USERNAME + Date.now(),
-            typeID: "" + "|" + "" + "|" + ""
+            user: USERNAME,
+            time: Date.now(),
+            typeID: " | | "
         }
     }
 
@@ -100,22 +109,22 @@ class JoinGameBox extends Component {
                 <hr noshade="true" class='Line'/>
                 <div id='table'>
                 <ReactTable
-                    data={this.grabJoinData()}
+                    data={this.state.availableGames}
                     columns={[{
                         Header: "Name",
-                        accessor: 'name'
+                        accessor: 'user'
                     },
                         {
                             Header: "Type",
-                            accessor: 'type'
+                            accessor: 'timeControlChosen'
                         },
                         {
                             Header: "Time",
-                            accessor: 'time'
+                            accessor: 'timePerSide'
                         },
                         {
                             Header: "Posted",
-                            accessor: 'posted'
+                            accessor: 'time'
                         }]}
                     showPagination={false}
                     className="table"

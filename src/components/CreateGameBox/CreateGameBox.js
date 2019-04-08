@@ -6,7 +6,6 @@ import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
 import { Link } from 'react-router-dom';
-import { reject } from 'q';
 
 //TEMP unitl local data storage
 const USERNAME = "mdhalloran"
@@ -17,7 +16,7 @@ class CreateGameBox extends Component {
         this.state = {
             timeControlOptions: ["Real Time", "Correspondence"],
             timeControlChosen: "Real Time",
-            pieceChosen: "",
+            pieceChosen: "Random",
             startingColorText: "Starting Color",
             timePerSide: 5,
             increment: 5,
@@ -57,7 +56,8 @@ class CreateGameBox extends Component {
             timePerSide: this.state.timePerSide,
             increment: this.state.increment,
             startingColor: this.state.pieceChosen,
-            userId: USERNAME + Date.now(),
+            user: USERNAME,
+            time: Date.now(),
             typeID: this.state.timeControlChosen + "|" + this.state.timePerSide + "|" + this.state.increment
         }
     }
@@ -87,7 +87,7 @@ class CreateGameBox extends Component {
                     onValueChanged={this.incrementChanged} />
                 <hr noshade="true" class='Line'/>
                 <h3 class='Line'>{this.state.startingColorText}</h3>
-                <PieceList onPieceChanged={this.pieceChanged} />
+                <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
                 <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }} class='link'><button class="Button">Create Game</button></Link>
             </div>
         </div>
@@ -110,7 +110,7 @@ class PieceList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pieceChosen: "",
+            pieceChosen: this.props.pieceChosen ? this.props.pieceChosen : "",
             colorChoices: [[BlackPiece, "Black"], [MixedPiece, "Random"], [WhitePiece, "White"]]
         }
     }
