@@ -12,7 +12,7 @@ const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const client = new dsteem.Client('https://api.steemit.com');
 const USERNAME = "mdhalloran"
-const JOIN_TAG = 'request-join';
+const POST_GAME_TAG = 'post-game'
 const CLOSE_REQUEST_TAG = 'request-closed';
 
 class JoinGameBox extends Component {
@@ -53,11 +53,13 @@ class JoinGameBox extends Component {
         var openRequests = new Map();
         var closedRequests = new Map();
         var headBlockNumber = await this.props.findBlockHead(client);
-        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 250), 1, GAME_ID);
-        this.processor.on(JOIN_TAG, function (json, from) {
-            console.log("Found a join game block!!!");
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 1, GAME_ID, 'latest');
+        this.processor.on(POST_GAME_TAG, (json, from) => {
+            console.log("Found a join game block!!!", json, from);
             openRequests.set(from, json);
-            this.state.availableGames.push(json.data);
+            this.setState(prevState => ({
+                availableGames: [...prevState.availableGames, json.data]
+              }))
         });
         this.processor.on(CLOSE_REQUEST_TAG, function (json, from) {
             closedRequests.set(from, json);
