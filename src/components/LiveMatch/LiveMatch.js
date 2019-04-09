@@ -4,6 +4,7 @@ import Peer from 'simple-peer';
 import {loadState, saveState} from "../../components/localStorage";
 import {withRouter} from 'react-router-dom';
 import ChessGame from '../ChessGame/ChessGame';
+import './LiveMatch.css';
 
 const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');

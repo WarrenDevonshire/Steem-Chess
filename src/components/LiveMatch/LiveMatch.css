@@ -1,7 +1,8 @@
-.Match{
-    align-items: center;
+#liveMatch{
+    max-height:700px;
     margin: 0px;
-    left: 500px;
-    display: inline;
+    right: 500px;
+    position: relative;
+    display: inline-block;
 }
 

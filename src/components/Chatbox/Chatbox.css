@@ -43,5 +43,13 @@ body {
 #Send{
     height: 40px;
     width: 60px;
-    position:absolute;
+    position: relative;
+    bottom:16px;
+}
+
+#container{
+    bottom: 500px;
+    width: 450px;
+    display: table;
+    position: relative;
 }
