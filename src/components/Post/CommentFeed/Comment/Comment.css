@@ -15,19 +15,10 @@
     margin-bottom: 20px;
 }
 
-#openReplies{
+.openReplies{
     float: right;
     width: 90px;
     height: 30px;
-    border: none;   
-    border-radius: 10px;
-    background-color: #4CAF50;
-    color: white;
-}
-
-#closeReplies{
-    width:90px;
-    height: 25px;
     border: none;   
     border-radius: 10px;
     background-color: #4CAF50;
