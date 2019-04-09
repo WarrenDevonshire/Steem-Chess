@@ -15,12 +15,10 @@ const POST_GAME_TAG = 'post-game'
 const JOIN_TAG = 'request-join';
 const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
-//const CLOSE_REQUEST_TAG = 'request-closed';
+const CLOSE_REQUEST_TAG = 'request-closed';
 
 /**
- * Component for playing a live chess match. Must
- * be passed in the game data and if this user
- * is initiating the webRTC connection
+ * Component for playing a live chess match
  */
 class LiveMatch extends Component {
     constructor(props) {
@@ -31,7 +29,7 @@ class LiveMatch extends Component {
         this.transactor = steemTransact(client, dsteem, GAME_ID);
         this.processor = null;
         this.username = localDB.account;
-        this.posting_key = "5JQPAmzYzzzKK5tGdyrvdq4dp1bu7ExUAyx6AjfnRoz7cG1LLox";//localDB.key;
+        this.posting_key =  dsteem.PrivateKey.fromLogin(this.username, localDB.key, 'posting').toString();
         this.peer = null;
         this.chatboxComponent = React.createRef();
         this.chessGameComponent = React.createRef();
@@ -48,8 +46,8 @@ class LiveMatch extends Component {
             this.gameData = null;
         }
 
-        //Game requests found on the blockchain
         this.gameRequestBlocks = [];
+        this.closeRequestBlocks = [];
     }
 
     componentWillUnmount() {
@@ -86,23 +84,38 @@ class LiveMatch extends Component {
         }
     }
 
+    /**
+     * Determines whether to send a join request to an existing posted game, 
+     * or to create a new post game request
+     */
     checkWaitingPlayers() {
+        console.log("finding the best game to connect to");
         if (this.processor !== null) {
             this.processor.stop();
         }
-        console.log(this.gameRequestBlocks);
         var opponentData = null;
         if(this.gameRequestBlocks.length > 0) {
             var waitingPlayers = [];
             var maxWaitingTime = 1000*60*5;
+            //Finds the most recent game request from each player, which was created
+            //less than 5 minutes ago
             for (var i = this.gameRequestBlocks.length - 1; i >= 0; --i) {
                 //TODO check that the user is not the same as the current person once testing is complete
                 var currentBlock = this.gameRequestBlocks[i];
-                //If the user hasn't already made a newer game request, and the 
-                //request was made less than 5 minutes ago
                 if(!waitingPlayers.includes(currentBlock.username) && 
                    (Date.now() - currentBlock.time) < maxWaitingTime) {
                     waitingPlayers.push(currentBlock);
+                }
+            }
+            //Removes games where the player already connected to someone else
+            for (var i = this.closeRequestBlocks.length - 1; i >= 0; --i) {
+                var currentBlock = this.closeRequestBlocks[i];
+                var playerIndex = waitingPlayers.indexOf(currentBlock.username);
+                if(playerIndex >= 0) {
+                    var possibleClosedGame = waitingPlayers[playerIndex];
+                    if(currentBlock.time === possibleClosedGame.time) {
+                        waitingPlayers.splice(playerIndex, 1);
+                    }
                 }
             }
             if(waitingPlayers.length > 0) {
@@ -120,7 +133,6 @@ class LiveMatch extends Component {
 
     /**
      * Checks if a game has recently been requested with the same data
-     * @param {*} gameData
      */
     async findWaitingPlayers() {//TODO won't filter out players that have already joined a game
         var headBlockNumber = await this.props.location.findBlockHead(client);
@@ -130,6 +142,12 @@ class LiveMatch extends Component {
                 console.log("Game block found", data);
                 if (this.matchableGames(this.gameData, data)) {
                     this.gameRequestBlocks.push(data);
+                }
+            });
+            this.processor.on(CLOSE_REQUEST_TAG, (data) => {
+                console.log("Close request found", data);
+                if (this.matchableGames(this.gameData, data)) {
+                    this.closeRequestBlocks.push(data);
                 }
             });
             this.processor.start();
@@ -194,7 +212,6 @@ class LiveMatch extends Component {
 
     /**
      * Puts game request onto the blockchain
-     * @param {*} gameData
      */
     postGameRequest() {
         console.log("posting a new game request");
@@ -214,7 +231,7 @@ class LiveMatch extends Component {
                             this.initializePeer(true);
                         }
                         else {
-                            console.log("nope rope");
+                            console.log("join request found that doesn't match current post game request");
                             console.log(block, sendingTo, this.gameData);
                         }
                     });
@@ -262,12 +279,11 @@ class LiveMatch extends Component {
 
         this.peer.on('connect', () => {
             if (initializingConnection === true) {
-                //TODO currently not used, so it is commented out to save on RC cost
-                // this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, this.gameData, (err) => {
-                //     if (err) {
-                //         console.error(err);
-                //     }
-                // });
+                this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, this.gameData, (err) => {
+                    if (err) {
+                        console.error(err);
+                    }
+                });
             }
             console.log('Connected to peer!!!');
         });
@@ -300,6 +316,9 @@ class LiveMatch extends Component {
         });
     }
 
+    /**
+     * Sends data to the connected peer
+     */
     sendPeerData(data) {
         if (this.peer == null) {
             console.error("Peer connection not initiated!");
