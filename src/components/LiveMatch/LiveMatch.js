@@ -87,6 +87,7 @@ class LiveMatch extends Component {
                     console.log("Game block found", json);
                     if (this.matchableGames(gameData, json.data)) {
                         console.log("Found an opponent!!!", from);
+                        this.chessGameComponent.current.state.color = 'b';
                         this.state.processor.stop();
                         resolve(from);
                     }
@@ -96,6 +97,7 @@ class LiveMatch extends Component {
                     if(block === headBlockNumber) {
                         this.state.processor.stop();
                         console.log("Didn't find a waiting opponent:(");
+                        this.chessGameComponent.current.state.color = 'w';
                         resolve(null);//Didn't find any players
                     }
                 });
@@ -216,7 +218,7 @@ class LiveMatch extends Component {
             }
             else if(parsedData.type === 'move') {
                 console.log("CALLED")
-                this.chessGameComponent.current.onReceivedMove(parsedData);
+                this.chessGameComponent.current.onReceivedMove(parsedData, parsedData.color);
             }
         });
 

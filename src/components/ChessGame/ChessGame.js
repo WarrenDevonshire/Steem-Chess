@@ -13,9 +13,12 @@ class ChessGame extends PureComponent {
             squareStyles: {},// custom square styles
             pieceSquare: "",// square with the currently clicked piece
             history: [],// array of past game moves
-
+            color : null,
             peer: this.props.peer,
         };
+
+        this.opponentColor = {'w': 'b',
+                              'b': 'w'}
 
         this.removeHighlightSquare = this.removeHighlightSquare.bind(this);
         this.highlightSquare = this.highlightSquare.bind(this);
@@ -31,9 +34,10 @@ class ChessGame extends PureComponent {
     }
 
     onReceivedMove(data) {
-        var bool = this.isValidMove(data.sourceSquare, data.targetSquare) === true
-        console.log("isValidMove: ", bool)
-        if (bool) {
+        console.log("PASSED COLOR: ", data.color)
+        console.log("THIS COLOR: ", this.state.color)
+        console.log("OnRecievedMove: ", this.isValidMove(data.sourceSquare, data.targetSquare) && data.color === this.opponentColor[this.state.color])
+        if (this.isValidMove(data.sourceSquare, data.targetSquare) && data.color === this.opponentColor[this.state.color]) {
             this.commitPieceMove(data.move);
         }
     }
@@ -73,7 +77,7 @@ class ChessGame extends PureComponent {
     };
 
     onDrop(e) {
-        if (this.isValidMove(e.sourceSquare, e.targetSquare) === true) {
+        if (this.isValidMove(e.sourceSquare, e.targetSquare) && e.piece.startsWith(this.state.color)) {
             //Send data to other player
             var success = this.props.sendData({
                 type: "move",
@@ -81,7 +85,8 @@ class ChessGame extends PureComponent {
                 targetSquare: e.targetSquare,
                 piece: e.piece,
                 time: Date.now,
-                move: this.game.fen()
+                move: this.game.fen(),
+                color: this.state.color
             });
 
             //update board
