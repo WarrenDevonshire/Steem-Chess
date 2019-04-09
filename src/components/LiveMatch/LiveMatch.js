@@ -28,7 +28,6 @@ class LiveMatch extends Component {
 
         var localDB = loadState();
 
-        this.gameData = this.props.location.gameData;
         this.transactor = steemTransact(client, dsteem, GAME_ID);
         this.processor = null;
         this.username = localDB.account;
@@ -36,6 +35,18 @@ class LiveMatch extends Component {
         this.peer = null;
         this.chatboxComponent = React.createRef();
         this.chessGameComponent = React.createRef();
+
+        if(this.props.location.gameData != null) {
+            this.gameData = this.props.location.gameData;
+        }
+        else if(this.props.location.opponentData != null) {
+            this.gameData = this.props.location.opponentData;
+            this.gameData.startingColor = "Random";
+            this.gameData.username = this.username;
+        }
+        else {
+            this.gameData = null;
+        }
 
         //Game requests found on the blockchain
         this.gameRequestBlocks = [];
@@ -63,7 +74,7 @@ class LiveMatch extends Component {
         }
         console.log(this.gameData);
         //didn't select a match to join
-        if (this.props.location.opponentUsername == null && this.props.opponentGameData == null) {
+        if (this.props.location.opponentData == null) {
             this.findWaitingPlayers();
             //If opponent not found after 15 seconds, post a game request
             setTimeout(() => {
@@ -71,7 +82,7 @@ class LiveMatch extends Component {
             }, 15000);
         }
         else {
-            this.sendGameRequest(this.props.location.opponentUsername, this.props.location.opponentGameData);
+            this.sendGameRequest(this.props.location.opponentData);
         }
     }
 
@@ -80,35 +91,30 @@ class LiveMatch extends Component {
             this.processor.stop();
         }
         console.log(this.gameRequestBlocks);
-        var opponent = null;
+        var opponentData = null;
         if(this.gameRequestBlocks.length > 0) {
-            var waitingPlayers = []
+            var waitingPlayers = [];
+            var maxWaitingTime = 1000*60*5;
             for (var i = this.gameRequestBlocks.length - 1; i >= 0; --i) {
                 //TODO check that the user is not the same as the current person once testing is complete
                 var currentBlock = this.gameRequestBlocks[i];
                 //If the user hasn't already made a newer game request, and the 
                 //request was made less than 5 minutes ago
                 if(!waitingPlayers.includes(currentBlock.username) && 
-                   ((new Date()) - currentBlock.gameData.time) < (1000*60*5)) {
+                   (Date.now() - currentBlock.time) < maxWaitingTime) {
                     waitingPlayers.push(currentBlock);
                 }
-                else {
-                    console.log("--------------------------");
-                    console.log(((new Date()) - currentBlock.gameData.time) < (1000*60*5));
-                    console.log(!waitingPlayers.includes(currentBlock.username));
-                    console.log("--------------------------");
-                }
-                if(waitingPlayers.length > 0) {
-                    opponent = waitingPlayers[0];
-                }
+            }
+            if(waitingPlayers.length > 0) {
+                opponentData = waitingPlayers[0];
             }
         }
         //didn't find an existing game to join
-        if (opponent == null) {
+        if (opponentData == null) {
             this.postGameRequest();
         }
         else {
-            this.sendGameRequest(opponent.username, opponent.gameData);
+            this.sendGameRequest(opponentData);
         }
     }
 
@@ -120,12 +126,10 @@ class LiveMatch extends Component {
         var headBlockNumber = await this.props.location.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 100), 1, GAME_ID, 'latest');
         try {
-            this.processor.on(POST_GAME_TAG, (json, from) => {
-                console.log("Game block found", json);
-                if (this.matchableGames(this.gameData, json.data)) {
-                    this.gameRequestBlocks.push({ 
-                        gameData:json, 
-                        username:from });
+            this.processor.on(POST_GAME_TAG, (data) => {
+                console.log("Game block found", data);
+                if (this.matchableGames(this.gameData, data)) {
+                    this.gameRequestBlocks.push(data);
                 }
             });
             this.processor.start();
@@ -143,9 +147,7 @@ class LiveMatch extends Component {
      * @param {*} second
      */
     matchableGames(first, second) {
-        if (first.timeControlChosen !== second.timeControlChosen ||
-            first.timePerSide !== second.timePerSide ||
-            first.increment !== second.increment)
+        if (first.typeID !== second.typeID)
             return false;
         return first.startingColor === "Random" || first.startingColor !== second.startingColor;
     }
@@ -153,14 +155,13 @@ class LiveMatch extends Component {
     /**
      * Requests to start RTC with a user
      * @param {string} username The opponent's username
-     * @param {*} gameData
      */
-    sendGameRequest(username, opponentGameData) {
+    sendGameRequest(opponentData) {
         console.log("sending request to existing game");
-        this.decideRandom(opponentGameData);
+        this.decideRandom(opponentData);
         this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, {
             data: this.gameData,
-            sendingTo: username
+            sendingTo: opponentData.username
         }, (err, result) => {
             if (err) {
                 console.error(err);
@@ -176,12 +177,12 @@ class LiveMatch extends Component {
     /**
      * Decides on random starting color for this.gameData
      */
-    decideRandom(opponentGameData) {
+    decideRandom(opponentData) {
         if (this.gameData.startingColor === "Random") {
-            if (opponentGameData.startingColor === "Black") {
+            if (opponentData.startingColor === "Black") {
                 this.gameData.startingColor = "White";
             }
-            else if (opponentGameData.startingColor === "White") {
+            else if (opponentData.startingColor === "White") {
                 this.gameData.startingColor = "Black";
             }
             else {
@@ -197,9 +198,8 @@ class LiveMatch extends Component {
      */
     postGameRequest() {
         console.log("posting a new game request");
-        this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, {
-            data: this.gameData
-        }, (err, result) => {
+        this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, this.gameData, 
+        (err, result) => {
             if (err) {
                 console.error(err);
                 alert("Failed to request game");
@@ -208,13 +208,14 @@ class LiveMatch extends Component {
                 console.log("posted game request", result);
                 this.processor = steemState(client, dsteem, result.block_num, 100, GAME_ID);
                 try {
-                    this.processor.on(JOIN_TAG, (json) => {
-                        if (json.userID === this.gameData.userID) {
-                            this.decideRandom(json.data);
+                    this.processor.on(JOIN_TAG, (block, sendingTo) => {
+                        if(sendingTo === this.username && this.matchableGames(this.gameData, block.data)) {
+                            this.decideRandom(block.data);
                             this.initializePeer(true);
                         }
                         else {
-                            console.error("Opponent tried to connect with incorrect game data", json.data, this.gameData);
+                            console.log("nope rope");
+                            console.log(block, sendingTo, this.gameData);
                         }
                     });
                     this.processor.start();
@@ -262,9 +263,7 @@ class LiveMatch extends Component {
         this.peer.on('connect', () => {
             if (initializingConnection === true) {
                 //TODO currently not used, so it is commented out to save on RC cost
-                // this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, {
-                //     data: this.gameData
-                // }, (err) => {
+                // this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, this.gameData, (err) => {
                 //     if (err) {
                 //         console.error(err);
                 //     }

@@ -30,33 +30,26 @@ class CreateGameBox extends Component {
     }
 
     pieceChanged(tag) {
-        console.log(tag);
         this.setState({ pieceChosen: tag });
         this.setState({ startingColorText: "Starting Color: " + tag });
     }
 
     timePerSideChanged(value) {
-        console.log(value);
         this.setState({ timePerSide: value });
     }
 
     incrementChanged(value) {
-        console.log(value);
         this.setState({ increment: value });
     }
 
     timeControlChosen(value) {
-        console.log(value);
         this.setState({ timeControlChosen: value });
     }
 
     grabGameData() {
         return {
-            timeControlChosen: this.state.timeControlChosen,
-            timePerSide: this.state.timePerSide,
-            increment: this.state.increment,
             startingColor: this.state.pieceChosen,
-            user: USERNAME,
+            username: USERNAME,
             time: Date.now(),
             typeID: this.state.timeControlChosen + "|" + this.state.timePerSide + "|" + this.state.increment
         }
@@ -92,7 +85,7 @@ class CreateGameBox extends Component {
             </div>
         </div>
         );
-    }
+    }g
 }
 
 export default CreateGameBox;

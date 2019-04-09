@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './JoinGameBox.css';
 import ComboBox from '../Combo Box/ComboBox'
 import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
@@ -11,9 +11,8 @@ const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const client = new dsteem.Client('https://api.steemit.com');
-const USERNAME = "mdhalloran"
 const POST_GAME_TAG = 'post-game'
-const CLOSE_REQUEST_TAG = 'request-closed';
+//const CLOSE_REQUEST_TAG = 'request-closed';
 
 class JoinGameBox extends Component {
     constructor(props) {
@@ -23,13 +22,14 @@ class JoinGameBox extends Component {
             filterOptions: ["Most Recent", "Least Recent"],
             filterValue: "",
             selectedUser: "",//TODO
-            availableGames: []
+            availableGames: [],
+            selected: null,
+            selectedData: null
         };
-
 
         this.filterChanged = this.filterChanged.bind(this);
         this.joinViewChanged = this.joinViewChanged.bind(this);
-        this.grabGameData = this.grabGameData.bind(this);
+        this.getFormattedTime = this.getFormattedTime.bind(this);
         this.processor = null;
     }
 
@@ -38,7 +38,7 @@ class JoinGameBox extends Component {
     }
 
     componentWillUnmount() {
-        if(this.processor != null) {
+        if (this.processor != null) {
             this.processor.stop();
         }
     }
@@ -50,30 +50,44 @@ class JoinGameBox extends Component {
     async findGameRequests()//TODO stop processor eventually and check if games were finished
     {
         console.log("Trying to find game requests");
-        var openRequests = new Map();
-        var closedRequests = new Map();
+        var waitingOpponents = [];
+        var maxWaitingTime = 1000 * 60 * 5;//5 minutes
         var headBlockNumber = await this.props.findBlockHead(client);
-        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 1, GAME_ID, 'latest');
-        this.processor.on(POST_GAME_TAG, (json, from) => {
-            console.log("Found a join game block!!!", json, from);
-            openRequests.set(from, json);
-            this.setState(prevState => ({
-                availableGames: [...prevState.availableGames, json.data]
-              }))
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 0, GAME_ID, 'latest');
+        this.processor.on(POST_GAME_TAG, (data) => {
+            //If the request was made less than 5 minutes ago
+            if ((Date.now() - data.time) < maxWaitingTime) {
+                var gameIndex = waitingOpponents.indexOf(data.username);
+                //Opponent has a newer game
+                if (gameIndex >= 0) {
+                    var games = [...this.state.availableGames];
+                    games[gameIndex] = data;
+                    this.setState({ availableGames:games });
+                }
+                else {
+                    waitingOpponents.push(data.username);
+                    this.setState(prevState => ({
+                        availableGames: [...prevState.availableGames, data]
+                    }))
+                }
+            }
         });
-        this.processor.on(CLOSE_REQUEST_TAG, function (json, from) {
-            closedRequests.set(from, json);
-        });
+        //TODO
+        // this.processor.on(CLOSE_REQUEST_TAG, (data) => {
+        //     var gameIndex = waitingOpponents.indexOf(data.username);
+        //     if(gameIndex >= 0) {
+        //         waitingOpponents.splice(gameIndex, 1);
+        //         var games = [...this.state.availableGames];
+        //         games.splice(gameIndex, 1);
+        //         this.setState({ availableGames:games });
+        //     }
+        // });
         this.processor.start();
-        closedRequests.forEach((key) => {
-            openRequests.delete(key);
-        })
-        return openRequests;
     }
 
     filterChanged(value) {
         console.log(value);
-        this.setState({filterValue: value});
+        this.setState({ filterValue: value });
     }
 
     //TODO
@@ -81,59 +95,89 @@ class JoinGameBox extends Component {
         console.log(e);
     }
 
-    //TODO
-    grabGameData() {
-        return {
-            timeControlChosen: "",
-            timePerSide: "",
-            increment: "",
-            startingColor: "",
-            user: USERNAME,
-            time: Date.now(),
-            typeID: " | | "
-        }
+    getFormattedTime(time) {
+        console.log(time);
+        var date = new Date(time);
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        // Will display time in hh:mm:ss format
+        return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    }
+
+    getTimePerSide(typeID) {
+        var options = typeID.split("|");
+        return options.length > 2 ? options[1] : "";
+    }
+
+    getTimeControlChosen(typeID) {
+        var options = typeID.split("|");
+        return options.length > 1 ? options[0] : "";
     }
 
     render() {
-        return(
+        return (
             <div className={JoinGameBox} class='JoinGameBox'>
                 <div id='horizontal'>
                     <label class="filter">Filter</label>
                     <ComboBox class='ComboBox' options={this.state.filterOptions}
-                              onSelectedChanged={this.filterChanged}/>
+                        onSelectedChanged={this.filterChanged} />
                     <ToggleSwitch checked={false}
-                                  falseText="Grid"
-                                  trueText="Card"
-                                  offColor="#0000ff"
-                                  onChange={this.joinViewChanged}
+                        falseText="Grid"
+                        trueText="Card"
+                        offColor="#0000ff"
+                        onChange={this.joinViewChanged}
                     />
                 </div>
-                <hr noshade="true" class='Line'/>
+                <hr noshade="true" class='Line' />
                 <div id='table'>
-                <ReactTable
-                    data={this.state.availableGames}
-                    columns={[{
-                        Header: "Name",
-                        accessor: 'user'
-                    },
+                    <ReactTable
+                        data={this.state.availableGames}
+                        columns={[{
+                            Header: "Name",
+                            id: "name",
+                            accessor: 'username'
+                        },
                         {
                             Header: "Type",
-                            accessor: 'timeControlChosen'
+                            id: "type",
+                            accessor: data => this.getTimeControlChosen(data.typeID)
                         },
                         {
                             Header: "Time",
-                            accessor: 'timePerSide'
+                            id: "time",
+                            accessor: data => this.getTimePerSide(data.typeID)
                         },
                         {
                             Header: "Posted",
-                            accessor: 'time'
+                            id: "posted",
+                            accessor: data => this.getFormattedTime(data.time)
                         }]}
-                    showPagination={false}
-                    className="table"
-                    resizable={false}/>
-                    </div>
-                <hr noshade="true" class='Line'/>
-                <Link to="/Live" params={{gameData: this.grabGameData, waitingPlayer: this.state.selectedUser}} class='link'><button class='Button'>Join Game</button></Link>
+                        getTrProps={(state, rowInfo) => {
+                            if (rowInfo && rowInfo.row) {
+                                return {
+                                    onClick: (e) => {
+                                        this.setState({
+                                            selected: rowInfo.index,
+                                            selectedData: rowInfo.original
+                                        })
+                                    },
+                                    style: {
+                                        background: rowInfo.index === this.state.selected ? '#4CAF50' : 'white',
+                                        color: rowInfo.index === this.state.selected ? 'white' : 'black'
+                                    }
+                                }
+                            } else {
+                                return {}
+                            }
+                        }}
+                        showPagination={false}
+                        noDataText='No games found'
+                        className="table"
+                        resizable={false} />
+                </div>
+                <hr noshade="true" class='Line' />
+                <Link to={{pathname: "/Live", opponentData: this.state.selectedData, findBlockHead: this.props.findBlockHead }} class='link'><button class='Button'>Join Game</button></Link>
             </div>
         );
     }
