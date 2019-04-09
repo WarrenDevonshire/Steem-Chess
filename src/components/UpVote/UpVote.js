@@ -17,53 +17,66 @@ let opts = {...NetConfig.net};
 
         this.state = {
 
-            username: 'nisarg258',
-            PrivateKey: '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy',
+            username: localDB.account,
+            PrivateKey: localDB.key,
             author: this.props.author,
             permlink: this.props.permlink,
-            weight: this.props.weight
+            weight: this.props.weight,
+            expanded: false
 
         };
 
         this.pushVote = this.pushVote.bind(this);
+        this.expandDropdown = this.expandDropdown.bind(this);
+        this.closeDropdown = this.closeDropdown.bind(this);
 
     }
 
     pushVote() {
+
+        // check if user is logged in before attempting to post a comment
+        if (this.state.account == null) {
+
+            this.props.history.push('/Login');
+            return;
+
+        }
     
         //creating a vote object
         const vote = {
-            voter: 'nisarg258',
-            author: this.props.author,
-            permlink: this.props.permlink,
-            weight: '10', //needs to be an integer for the vote function
+            voter: this.state.voter,
+            author: this.state.author,
+            permlink: this.state.permlink,
+            // TODO: add unique id's to weight input boxes
+            weight: document.getElementById('voteWeight').value, //needs to be an integer for the vote function
         };
 
-        client.broadcast.vote(vote, '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy').then(result => {
+        client.broadcast.vote(vote, '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy')
+        .then(result => {
 
             console.log('Success! Vote Has Been Submitted:', result);
-            result.dangerouslySetInnerHTML = 'Success! see console for full response.';
+            alert("Success.");
 
         },
+        function (error) {
 
-            function (error) {
+            console.error(error);
+            alert("An error occurred when broadcasting. See console for details.");
 
-                console.log('error', error);
+        })
 
-            })
+    }
 
-        window.onload = () => {
+    expandDropdown() {
 
-            var upvoteweightslider = document.getElementById('voteWeight');
-            var currentweightslider = document.getElementById('currentWeight');
+        this.setState( {expanded: true} );
 
-            currentweightslider.dangerouslySetInnerHTML = upvoteweightslider.value;
-            upvoteweightslider.oninput = function () {
+    }
 
-                currentweightslider.dangerouslySetInnerHTML = this.value;
-            };
+    closeDropdown() {
 
-        }
+        this.setState( {expanded: false} );
+
     }
 
 
@@ -71,9 +84,12 @@ let opts = {...NetConfig.net};
 
         return (  
             <div className="upvote">
-                <div id="upVote"><br /><input id="pushVoteButton" type="button" value="Vote Here" onClick={() => this.pushVote()} /></div>  
 
-                         
+                <div id="upVote"><br /><input id="expandVote" type="button" value="Open voting UI" onClick={() => this.expandDropdown()} /></div>  
+                { this.state.expanded ? <input id="voteWeight" defaultValue="10" /> : null } 
+                { this.state.expanded ? <button id="pushVote" onClick={() => this.pushVote()}>Push vote</button> : null } 
+                { this.state.expanded ? <button id="closeVote" onClick={this.closeDropdown}>Close voting UI</button> : null }                       
+            
             </div>
         )
     }

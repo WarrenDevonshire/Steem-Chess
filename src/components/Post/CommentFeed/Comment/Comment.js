@@ -69,7 +69,7 @@ export default class Comment extends Component {
                 <textarea id={this.state.commentBodyId} class="form-control" rows="3">Reply to this comment...</textarea><br />
                 <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
-                <div id="UpVote"><UpVote /></div>
+                <div id="UpVote"><UpVote author={this.state.author} permlink={this.state.permlink} history={this.props.history} /></div>
                 <button onClick={() => this.expandDropdown()}>Open replies</button>
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
                     return this.state.expanded ?  <div> {Comment} </div> : null
