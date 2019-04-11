@@ -34,10 +34,10 @@ class ChessGame extends PureComponent {
     }
 
     onReceivedMove(data) {
-        console.log("PASSED COLOR: ", data.color)
-        console.log("THIS COLOR: ", this.state.color)
-        console.log("OnRecievedMove: ", this.isValidMove(data.sourceSquare, data.targetSquare) && data.color === this.opponentColor[this.state.color])
-        if (this.isValidMove(data.sourceSquare, data.targetSquare) && data.color === this.opponentColor[this.state.color]) {
+        if(!(data.color === this.opponentColor[this.state.color]))
+            return;
+        if (this.isValidMove(data.sourceSquare, data.targetSquare)) {
+            console.log("CALLED")
             this.commitPieceMove(data.move);
         }
     }
@@ -77,7 +77,9 @@ class ChessGame extends PureComponent {
     };
 
     onDrop(e) {
-        if (this.isValidMove(e.sourceSquare, e.targetSquare) && e.piece.startsWith(this.state.color)) {
+        if(!e.piece.startsWith(this.state.color))
+            return;
+        if (console.log(this.isValidMove(e.sourceSquare, e.targetSquare))) {
             //Send data to other player
             var success = this.props.sendData({
                 type: "move",
@@ -105,8 +107,6 @@ class ChessGame extends PureComponent {
     }
 
     commitPieceMove(move) {
-        console.log("this fen", this.game.fen());
-        console.log("opponent fen", move);
         this.setState(({ history, pieceSquare }) => ({
             fen: move,
             history: this.game.history({ verbose: true }),
