@@ -47,8 +47,8 @@ let opts = {...NetConfig.net};
             voter: this.state.voter,
             author: this.state.author,
             permlink: this.state.permlink,
-            // TODO: add unique id's to weight input boxes
-            weight: document.getElementById('voteWeight').value, //needs to be an integer for the vote function
+            // using math.random function which converts it to base 36 and uses the first 9 characters after the decimal
+            weight: document.getElementById('voteWeight + Math.random().tostring(36).substr(2,9)').value, //needs to be an integer for the vote function
         };
 
         client.broadcast.vote(vote, '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy')
@@ -86,7 +86,7 @@ let opts = {...NetConfig.net};
             <div className="upvote">
 
                 <div id="upVote"><br /><input id="expandVote" type="button" value="Open voting UI" onClick={() => this.expandDropdown()} /></div>  
-                { this.state.expanded ? <input id="voteWeight" defaultValue="10" /> : null } 
+                { this.state.expanded ? <input id="voteWeight + Math.random().tostring(36).substr(2,9)" defaultValue="10" /> : null } 
                 { this.state.expanded ? <button id="pushVote" onClick={() => this.pushVote()}>Push vote</button> : null } 
                 { this.state.expanded ? <button id="closeVote" onClick={this.closeDropdown}>Close voting UI</button> : null }                       
             
