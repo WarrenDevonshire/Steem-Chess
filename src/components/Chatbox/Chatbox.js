@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./Chatbox.css";
 
 class Chatbox extends Component {
@@ -81,8 +81,8 @@ class MessageBubble extends Component {
     render() {
         return (
             <span>
-        <h1>{this.state.message}</h1>
-      </span>
+                <h1>{this.state.message}</h1>
+            </span>
         );
     }
 }

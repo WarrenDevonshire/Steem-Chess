@@ -8,7 +8,6 @@
     "dsteem": "^0.11.2",
     "install": "^0.12.2",
     "npm": "^6.8.0",
-    "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-html-parser": "^2.0.2",
@@ -19,10 +18,9 @@
     "react-table": "^6.9.2",
     "redux": "^4.0.1",
     "remarkable": "^1.7.1",
-    "simple-peer": "^9.2.1",
+    "simple-peer": "^9.3.0",
     "steem-state": "^1.3.5",
-    "steem-transact": "^1.0.2",
-    "steemconnect": "^2.0.1"
+    "steem-transact": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
