@@ -25,7 +25,7 @@ class Menubar extends Component {
                     <li><Link to="/New">New</Link></li>
                     <li><Link to="/Hot">Hot</Link></li>
                     <li><Link to='/Compose'>Compose</Link></li>
-                    <li><Link to={"/Login"}>Login</Link></li>
+                    <li><Link to={"/Login"}>{localStorage.getItem('login')===null ? 'Login' : 'Logout'}</Link></li>
                 </ul>
                 </div>
                 <form>
