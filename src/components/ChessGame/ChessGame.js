@@ -28,9 +28,11 @@ class ChessGame extends PureComponent {
   }
 
   onReceiveMove(data) {
-    var bool = this.isValidMove(data.sourceSquare, data.targetSquare) === true
-    console.log("isValidMove: ", bool)
-    if (bool) {
+    console.log("Received move from other player!");
+    if (!(data.color === this.opponentColor[this.state.color]))
+      return;
+    if (this.isValidMove(data.sourceSquare, data.targetSquare)) {
+      console.log("CALLED")
       this.commitPieceMove(data.move);
     }
   }
@@ -70,31 +72,34 @@ class ChessGame extends PureComponent {
   };
 
   onDrop(e) {
-    if (this.isValidMove(e.sourceSquare, e.targetSquare) === true) {
-      //Send data to other player
-      var success = this.props.sendData({
-        type: "move",
-        sourceSquare: e.sourceSquare,
-        targetSquare: e.targetSquare,
-        piece: e.piece,
-        time: Date.now,
-        move: this.game.fen()
-      });
+    if(!e.piece.startsWith(this.state.color))
+            return;
+        if (console.log(this.isValidMove(e.sourceSquare, e.targetSquare))) {
+            //Send data to other player
+            var success = this.props.sendData({
+                type: "move",
+                sourceSquare: e.sourceSquare,
+                targetSquare: e.targetSquare,
+                piece: e.piece,
+                time: Date.now,
+                move: this.game.fen(),
+                color: this.state.color
+            });
 
-      //update board
-      if (success === true || success === false) {
-        this.commitPieceMove(this.game.fen());
-      }
-    }
+            //update board
+            if (success === true || success === false) {
+                this.commitPieceMove(this.game.fen());
+            }
+        }
   };
 
   isValidMove(sourceSquare, targetSquare) {//TODO skips turn if false. This should use this.game.moves to check instead
     return this.game.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q" // always promote to a queen for example simplicity TODO don't know what this is
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q" // always promote to a queen for example simplicity TODO don't know what this is
     }) !== null;
-  }
+}
 
   commitPieceMove(move) {
     this.setState(({ pieceSquare }) => ({
@@ -105,11 +110,11 @@ class ChessGame extends PureComponent {
     if (this.game.in_draw()) {
       alert('A Draw!');
     }
-    else if(this.game.in_checkmate()) {
-      alert('Oof a stalemate');
-    }
     else if (this.game.in_checkmate()) {
       alert('Checkmate!');
+    }
+    else if (this.game.in_checkmate()) {
+      alert('Oof a stalemate');
     }
   }
 
