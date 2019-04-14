@@ -17,6 +17,8 @@ const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
+const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+
 /**
  * Component for playing a live chess match
  */
@@ -71,6 +73,9 @@ class LiveMatch extends Component {
             return;
         }
         console.log(this.gameData);
+
+        if(DISABLE_BLOCKCHAIN) return;
+
         //didn't select a match to join
         if (this.props.location.opponentData == null) {
             this.findWaitingPlayers();
@@ -89,6 +94,8 @@ class LiveMatch extends Component {
      * or to create a new post game request
      */
     checkWaitingPlayers() {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("finding the best game to connect to");
         if (this.processor !== null) {
             this.processor.stop();
@@ -135,6 +142,8 @@ class LiveMatch extends Component {
      * Checks if a game has recently been requested with the same data
      */
     async findWaitingPlayers() {
+        if(DISABLE_BLOCKCHAIN) return;
+
         var headBlockNumber = await this.props.location.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 100), 1, GAME_ID, 'latest');
         try {
@@ -175,6 +184,8 @@ class LiveMatch extends Component {
      * @param {string} username The opponent's username
      */
     sendGameRequest(opponentData) {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("sending request to existing game");
         this.decideRandom(opponentData);
         this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, {
@@ -214,6 +225,8 @@ class LiveMatch extends Component {
      * Puts game request onto the blockchain
      */
     postGameRequest() {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("posting a new game request");
         this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, this.gameData, 
         (err, result) => {
@@ -252,6 +265,8 @@ class LiveMatch extends Component {
      * the offer
      */
     async initializePeer(initializingConnection) {
+        if(DISABLE_BLOCKCHAIN) return;
+
         var receivingTag = initializingConnection === true ? PEER_INIT_TAG : PEER_NOT_INIT_TAG;
         var sendingTag = initializingConnection === true ? PEER_NOT_INIT_TAG : PEER_INIT_TAG;
 
@@ -304,6 +319,8 @@ class LiveMatch extends Component {
      * @param {*} signal
      */
     sendSignalToUser(sendingTag, signal) {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("starting sendSignalToUser");
         this.transactor.json(this.username, this.posting_key.toString(), sendingTag, {
             signal: signal,
@@ -320,6 +337,8 @@ class LiveMatch extends Component {
      * Sends data to the connected peer
      */
     sendPeerData(data) {
+        if(DISABLE_BLOCKCHAIN) return;
+        
         if (this.peer == null) {
             console.error("Peer connection not initiated!");
             alert("Peer connection not initiated!");

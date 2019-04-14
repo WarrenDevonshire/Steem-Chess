@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './CreateGameBox.css';
-import RadioButtonList from "../Radio Button/RadioButtonList";
+//import RadioButtonList from "../Radio Button/RadioButtonList";
 import Slider from '../Slider/Slider'
 import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
@@ -17,7 +17,7 @@ class CreateGameBox extends Component {
             timeControlOptions: ["Real Time", "Correspondence"],
             timeControlChosen: "Real Time",
             pieceChosen: "Random",
-            startingColorText: "Starting Color",
+            startingColorText: "Starting Color: Random",
             timePerSide: 5,
             increment: 5,
         };
@@ -58,41 +58,41 @@ class CreateGameBox extends Component {
     render() {
         return (
             <div className={CreateGameBox} class='CreateGameBox'>
-                <Title title={'Create Game'}/>
+                <Title title={'Create Game'} />
                 <div class='Box'>
-                <RadioButtonList defaultValue={this.state.timeControlChosen}
+                    {/* <RadioButtonList defaultValue={this.state.timeControlChosen}
                     options={this.state.timeControlOptions}
-                    onTimeControlChosen={this.timeControlChosen} />
-                <hr noshade="true" class='Line'/>
-                <h3 class='Line'>Time Per Side</h3>
-                <Slider min="1"
-                    max="10"
-                    value={this.state.timePerSide}
-                    step="0.5"
-                    unit="Minutes"
-                    onValueChanged={this.timePerSideChanged}/>
-                <h3 class='Line'>Increment</h3>
-                <Slider min="1"
-                    max="10"
-                    value={this.state.increment}
-                    step="1"
-                    unit="Seconds"
-                    onValueChanged={this.incrementChanged} />
-                <hr noshade="true" class='Line'/>
-                <h3 class='Line'>{this.state.startingColorText}</h3>
-                <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
-                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }} class='link'><button class="Button">Create Game</button></Link>
+                    onTimeControlChosen={this.timeControlChosen} /> */}
+                    <hr noshade="true" class='Line' />
+                    <h3 class='Line'>Time Per Side</h3>
+                    <Slider min="1"
+                        max="10"
+                        value={this.state.timePerSide}
+                        step="0.5"
+                        unit="Minutes"
+                        onValueChanged={this.timePerSideChanged} />
+                    <h3 class='Line'>Increment</h3>
+                    <Slider min="1"
+                        max="10"
+                        value={this.state.increment}
+                        step="1"
+                        unit="Seconds"
+                        onValueChanged={this.incrementChanged} />
+                    <hr noshade="true" class='Line' />
+                    <h3 class='Line'>{this.state.startingColorText}</h3>
+                    <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
+                    <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }} class='link'><button class="Button">Create Game</button></Link>
+                </div>
             </div>
-        </div>
         );
-    }g
+    } g
 }
 
 export default CreateGameBox;
 
 
 function Title(props) {
-    return <h1>{props.title}</h1>
+    return <h1 className="createTitle">{props.title}</h1>
 }
 
 Title.defaultProps = {
@@ -123,7 +123,7 @@ class PieceList extends Component {
                 alt={tag} />
         )
         return (
-            <span>
+            <span className="pieceListSpan">
                 {pieces}
             </span>
         );

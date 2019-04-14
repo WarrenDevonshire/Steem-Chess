@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './JoinGameBox.css';
-import ComboBox from '../Combo Box/ComboBox'
-import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
+//import ComboBox from '../Combo Box/ComboBox'
+//import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Link } from 'react-router-dom';
@@ -19,9 +19,7 @@ class JoinGameBox extends Component {
         super(props);
 
         this.state = {
-            filterOptions: ["Most Recent", "Least Recent"],
             filterValue: "",
-            selectedUser: "",//TODO
             availableGames: [],
             selected: null,
             selectedData: null
@@ -117,19 +115,18 @@ class JoinGameBox extends Component {
     render() {
         return (
             <div className={JoinGameBox} class='JoinGameBox'>
-                <div id='horizontal'>
-                    <label class="filter">Filter</label>
-                    <ComboBox class='ComboBox' options={this.state.filterOptions}
-                        onSelectedChanged={this.filterChanged} />
-                    <ToggleSwitch checked={false}
+                <div>
+                    <Title title={'Join Game'}/>
+                    {/* <label class="filter">Filter</label> */}
+                    {/* <ToggleSwitch checked={false}
                         falseText="Grid"
                         trueText="Card"
                         offColor="#0000ff"
                         onChange={this.joinViewChanged}
-                    />
+                    /> */}
                 </div>
-                <hr noshade="true" class='Line' />
-                <div id='table'>
+                {/* <hr noshade="true" class='Line' /> */}
+                <div>
                     <ReactTable
                         data={this.state.availableGames}
                         columns={[{
@@ -183,3 +180,11 @@ class JoinGameBox extends Component {
 }
 
 export default JoinGameBox;
+
+function Title(props) {
+    return <h1>{props.title}</h1>
+}
+
+Title.defaultProps = {
+    title: "Title"
+};
