@@ -5,7 +5,6 @@ import Slider from '../Slider/Slider'
 import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
-import { Link } from 'react-router-dom';
 
 //TEMP unitl local data storage
 const USERNAME = "mdhalloran"
@@ -27,6 +26,7 @@ class CreateGameBox extends Component {
         this.incrementChanged = this.incrementChanged.bind(this);
         this.timeControlChosen = this.timeControlChosen.bind(this);
         this.grabGameData = this.grabGameData.bind(this);
+        this.createClicked = this.createClicked.bind(this);
     }
 
     pieceChanged(tag) {
@@ -55,14 +55,15 @@ class CreateGameBox extends Component {
         }
     }
 
+    createClicked() {
+        this.props.onCreateGameClicked();
+    }
+
     render() {
         return (
             <div className={CreateGameBox} class='CreateGameBox'>
-                <Title title={'Create Game'} />
+                <h1>Create Game</h1>
                 <div class='Box'>
-                    {/* <RadioButtonList defaultValue={this.state.timeControlChosen}
-                    options={this.state.timeControlOptions}
-                    onTimeControlChosen={this.timeControlChosen} /> */}
                     <hr noshade="true" class='Line' />
                     <h3 class='Line'>Time Per Side</h3>
                     <Slider min="1"
@@ -81,11 +82,11 @@ class CreateGameBox extends Component {
                     <hr noshade="true" class='Line' />
                     <h3 class='Line'>{this.state.startingColorText}</h3>
                     <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
-                    <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }} class='link'><button class="Button">Create Game</button></Link>
+                    <button class="Button" onClick={this.createClicked}>Create Game</button>
                 </div>
             </div>
         );
-    } g
+    }
 }
 
 export default CreateGameBox;

@@ -1,0 +1,13 @@
+@keyframes rotate {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    width: 100px;
+    height: 100px;
+    position:fixed;
+    top:40%;
+    left:50%;
+    z-index:60;
+    animation: rotate 2s infinite linear;
+}
