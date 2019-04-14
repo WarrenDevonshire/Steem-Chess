@@ -5,15 +5,25 @@ import {withRouter} from "react-router-dom";
 
 
 class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            account: "",
-            password: ""
-        };
-        this.handleAccountChange = this.handleAccountChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
+    
+            constructor(props) {
+                super(props);
+
+                if(localStorage.getItem('login') !== null)
+                {
+                    localStorage.removeItem('account');
+                    localStorage.removeItem('pKey');
+                    localStorage.removeItem('login');
+                    this.props.history.push('/');
+                }
+
+                this.state = {
+                    account: "",
+                    password: ""
+                };
+                this.handleAccountChange = this.handleAccountChange.bind(this);
+                this.handlePasswordChange = this.handlePasswordChange.bind(this);
+                this.handleLogin = this.handleLogin.bind(this);
     }
 
     async handleAccountChange(e){
@@ -27,7 +37,7 @@ class Login extends Component {
     }
 
     handleLogin(e){
-        saveState(this.state.account, this.state.password);
+        saveState(this.state.account, this.state.password, "loggedIn");
         this.props.history.push('/');
     }
 
