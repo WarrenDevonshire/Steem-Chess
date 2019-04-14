@@ -62,7 +62,7 @@ class LiveMatch extends Component {
 
     async componentDidMount() {
         if (this.username == null) {
-            this.history.push("/Login");
+            this.props.history.push("/Login");
             return;
         }
         if (this.gameData == null) {
