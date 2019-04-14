@@ -4,9 +4,8 @@ import ChessGame from '../ChessGame/ChessGame';
 import { loadState } from "../../components/localStorage";
 import Peer from 'simple-peer';
 import './LiveMatch.css';
-import PubSub from 'pubsub-js';
 
-const DISABLE_BLOCKCHAIN = true;
+const DISABLE_BLOCKCHAIN = false;
 
 /**
  * Component for playing a live chess match
@@ -16,9 +15,7 @@ class LiveMatch extends Component {
         super(props);
         console.log(this.props);
 
-        PubSub.publish('spinner', { start: false })
-
-        this.peer = this.props.peer;
+        this.peer = this.props.location.peer;
         this.chatboxComponent = React.createRef();
         this.chessGameComponent = React.createRef();
 
@@ -53,11 +50,13 @@ class LiveMatch extends Component {
             console.error("LiveMatch not passed any game data!");
             return;
         }
-        if(this.peer == null) {
+        if(this.peer == null && !DISABLE_BLOCKCHAIN) {
             this.props.history.push("/Play");
             console.error("LiveMatch not passed a peer!");
             return;
         }
+
+        if(DISABLE_BLOCKCHAIN) return;
 
         this.peer.on('data', (data) => {
             var parsedData = JSON.parse(data);

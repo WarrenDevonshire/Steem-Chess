@@ -22,9 +22,10 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.spinnerToken = PubSub.subscribe('spinner', function (e) {
-            this.setState({ spinning: !!e.start })
-        }.bind(this))
+        PubSub.subscribe('spinner', (tag, message) => {
+            console.log(tag, message);
+            this.setState({ spinning: message.spin });
+        });
     }
 
     componentWillUnmount() {

@@ -17,8 +17,8 @@ class ChessGame extends PureComponent {
       console.error("ChessGame component not passed any game data");
     }
     else {
-      console.log(this.gameData);
-      console.log("Starting color: " + this.gameData.startingColor);
+      console.log(this.props.gameData);
+      console.log("Starting color: " + this.props.gameData.startingColor);
       this.gameData = this.props.gameData;
       this.color = this.gameData.startingColor;
     }

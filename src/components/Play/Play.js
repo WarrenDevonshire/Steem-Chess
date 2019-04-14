@@ -10,6 +10,7 @@ const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const steemTransact = require('steem-transact');
 const client = new dsteem.Client('https://api.steemit.com');
+const maxWaitingTime = 1000 * 60 * 5;
 
 //Blockchain message tags
 const GAME_ID = 'steem-chess'
@@ -19,7 +20,7 @@ const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
-const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
 
 class Play extends Component {
     constructor(props) {
@@ -46,6 +47,7 @@ class Play extends Component {
         if (this.processor !== null) {
             this.processor.stop();
         }
+        PubSub.publish('spinner', { spin: false });
     }
 
     componentDidMount() {
@@ -85,7 +87,7 @@ class Play extends Component {
     async findWaitingPlayers(gameData) {
         if (DISABLE_BLOCKCHAIN) return;
 
-        var headBlockNumber = await this.props.location.findBlockHead(client);
+        var headBlockNumber = await this.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 100), 1, GAME_ID, 'latest');
         try {
             this.processor.on(POST_GAME_TAG, (data) => {
@@ -122,7 +124,6 @@ class Play extends Component {
         }
         if (this.gameRequestBlocks.length > 0) {
             var waitingPlayers = [];
-            var maxWaitingTime = 1000 * 60 * 5;
             //Finds the most recent game request from each player, which was created
             //less than 5 minutes ago
             for (var i = this.gameRequestBlocks.length - 1; i >= 0; --i) {
@@ -282,23 +283,21 @@ class Play extends Component {
 
         this.peer.on('connect', () => {
             if (initializingConnection === true) {
-                this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, gameData, (err, result) => {
+                this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, gameData, (err) => {
                     if (err) {
                         console.error(err);
                     }
-                    else if (result) {
-                        this.props.history.push({
-                            pathname: '/LiveMatch',
-                            gameData: gameData,
-                            peer: this.peer,
-                        });
-                    }
                 });
             }
+            this.props.history.push({
+                pathname: '/Live',
+                gameData: gameData,
+                peer: this.peer,
+            });
             console.log('Connected to peer!!!');
         });
 
-        var headerBlockNumber = await this.props.location.findBlockHead(client);
+        var headerBlockNumber = await this.findBlockHead(client);
         this.processor = steemState(client, dsteem, headerBlockNumber, 100, GAME_ID);
         this.processor.on(receivingTag, (signal) => {
             if (this.peer !== null) {
@@ -329,11 +328,9 @@ class Play extends Component {
     }
 
     createGameClicked() {
-        console.log(this.createGameComponent);
-        var gameData = this.createGameComponent.current.grabGameData();
+        this.gameData = this.createGameComponent.current.grabGameData();
 
         if (DISABLE_BLOCKCHAIN) {
-            console.log("fdsafdsafdsaf");
             this.props.history.push({
                 pathname: '/Live',
                 gameData: this.gameData,
@@ -341,27 +338,26 @@ class Play extends Component {
             return;
         }
 
-        PubSub.publish('spinner', { start: true })
+        PubSub.publish('spinner', { spin: true });
 
-        this.findWaitingPlayers(gameData);
+        this.findWaitingPlayers(this.gameData);
         //If opponent not found after 15 seconds, post a game request
         setTimeout(() => {
             var opponentData = this.checkWaitingPlayers();
             if (opponentData == null) {
-                this.postGameRequest(gameData);
+                this.postGameRequest(this.gameData);
             }
             else {
-                this.sendGameRequest(opponentData, gameData);
+                this.sendGameRequest(opponentData, this.gameData);
             }
         }, 15000);
     }
 
     joinGameClicked() {
-        console.log(this.joinGameComponent);
-        var opponentData = this.joinGameComponent.current.selectedData;
-        if(opponentData == null) {
+        var opponentData = this.joinGameComponent.current.state.selectedData;
+        if (opponentData == null) {
             console.error("Opponent data null");
-            return;  
+            return;
         }
         this.gameData = opponentData;
         this.gameData.startingColor = "Random";
@@ -375,7 +371,7 @@ class Play extends Component {
             return;
         }
 
-        PubSub.publish('spinner', { start: true })
+        PubSub.publish('spinner', { spin: true });
 
         this.sendGameRequest(opponentData, this.gameData);
     }
@@ -383,8 +379,13 @@ class Play extends Component {
     render() {
         return (
             <div className="horizontal">
-                <CreateGameBox ref={this.createGameComponent} onCreateGameClicked={this.createGameClicked} className="box" />
-                <JoinGameBox ref={this.joinGameComponent} onJoinGameClicked={this.joinGameClicked} findBlockHead={this.findBlockHead} className="box" />
+                <CreateGameBox ref={this.createGameComponent}
+                    onCreateGameClicked={this.createGameClicked}
+                    className="box" />
+                <JoinGameBox ref={this.joinGameComponent}
+                    onJoinGameClicked={this.joinGameClicked}
+                    findBlockHead={this.findBlockHead}
+                    className="box" />
             </div>
         )
     }
