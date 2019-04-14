@@ -13,6 +13,16 @@ class ChessGame extends PureComponent {
       pieceSquare: "",// square with the currently clicked piece
     };
 
+    if (this.props.gameData == null) {
+      console.error("ChessGame component not passed any game data");
+    }
+    else {
+      console.log(this.gameData);
+      console.log("Starting color: " + this.gameData.startingColor);
+      this.gameData = this.props.gameData;
+      this.color = this.gameData.startingColor;
+    }
+    this.opponentColor = { 'w': 'b', 'b': 'w' };
     this.dropSquareStyle = { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }; // square styles for active drop square
     this.history = []; //array of past game moves
     this.removeHighlightSquare = this.removeHighlightSquare.bind(this);
@@ -72,34 +82,34 @@ class ChessGame extends PureComponent {
   };
 
   onDrop(e) {
-    if(!e.piece.startsWith(this.state.color))
-            return;
-        if (console.log(this.isValidMove(e.sourceSquare, e.targetSquare))) {
-            //Send data to other player
-            var success = this.props.sendData({
-                type: "move",
-                sourceSquare: e.sourceSquare,
-                targetSquare: e.targetSquare,
-                piece: e.piece,
-                time: Date.now,
-                move: this.game.fen(),
-                color: this.state.color
-            });
+    if (!e.piece.startsWith(this.state.color))
+      return;
+    if (console.log(this.isValidMove(e.sourceSquare, e.targetSquare))) {
+      //Send data to other player
+      var success = this.props.sendData({
+        type: "move",
+        sourceSquare: e.sourceSquare,
+        targetSquare: e.targetSquare,
+        piece: e.piece,
+        time: Date.now,
+        move: this.game.fen(),
+        color: this.state.color
+      });
 
-            //update board
-            if (success === true || success === false) {
-                this.commitPieceMove(this.game.fen());
-            }
-        }
+      //update board
+      if (success === true || success === false) {
+        this.commitPieceMove(this.game.fen());
+      }
+    }
   };
 
   isValidMove(sourceSquare, targetSquare) {//TODO skips turn if false. This should use this.game.moves to check instead
     return this.game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q" // always promote to a queen for example simplicity TODO don't know what this is
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: "q" // always promote to a queen for example simplicity TODO don't know what this is
     }) !== null;
-}
+  }
 
   commitPieceMove(move) {
     this.setState(({ pieceSquare }) => ({
