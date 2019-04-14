@@ -12,7 +12,7 @@ const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const client = new dsteem.Client('https://api.steemit.com');
 const POST_GAME_TAG = 'post-game'
-//const CLOSE_REQUEST_TAG = 'request-closed';
+const CLOSE_REQUEST_TAG = 'request-closed';
 
 class JoinGameBox extends Component {
     constructor(props) {
@@ -72,16 +72,15 @@ class JoinGameBox extends Component {
                 }
             }
         });
-        //TODO
-        // this.processor.on(CLOSE_REQUEST_TAG, (data) => {
-        //     var gameIndex = waitingOpponents.indexOf(data.username);
-        //     if(gameIndex >= 0) {
-        //         waitingOpponents.splice(gameIndex, 1);
-        //         var games = [...this.state.availableGames];
-        //         games.splice(gameIndex, 1);
-        //         this.setState({ availableGames:games });
-        //     }
-        // });
+        this.processor.on(CLOSE_REQUEST_TAG, (data) => {
+            var gameIndex = waitingOpponents.indexOf(data.username);
+            if(gameIndex >= 0) {
+                waitingOpponents.splice(gameIndex, 1);
+                var games = [...this.state.availableGames];
+                games.splice(gameIndex, 1);
+                this.setState({ availableGames:games });
+            }
+        });
         this.processor.start();
     }
 

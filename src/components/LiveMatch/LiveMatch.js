@@ -134,7 +134,7 @@ class LiveMatch extends Component {
     /**
      * Checks if a game has recently been requested with the same data
      */
-    async findWaitingPlayers() {//TODO won't filter out players that have already joined a game
+    async findWaitingPlayers() {
         var headBlockNumber = await this.props.location.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 100), 1, GAME_ID, 'latest');
         try {
