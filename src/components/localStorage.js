@@ -5,7 +5,6 @@ export const loadState = () => {
             key: localStorage.getItem('pKey'),
             login: localStorage.getItem('login')
         };
-        console.log(serializedState);
         return serializedState;
     } catch (err) {
         return null;
