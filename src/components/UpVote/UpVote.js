@@ -14,14 +14,27 @@ let opts = {...NetConfig.net};
         super(props);
 
         const localDB = loadState();
+        var pKey;
+
+        // check if user is logged in before attempting to gen privateKey object
+        if (localDB.account == null) {
+
+            pKey = null;
+
+        } else {
+
+            pKey = PrivateKey.fromString(localDB.key);
+            
+        }
 
         this.state = {
 
-            username: localDB.account,
-            PrivateKey: localDB.key,
+            account: localDB.account,
+            privateKey: pKey,
             author: this.props.author,
             permlink: this.props.permlink,
             weight: this.props.weight,
+            weightId: "voteWeight" + this.props.id,
             expanded: false
 
         };
@@ -34,6 +47,8 @@ let opts = {...NetConfig.net};
 
     pushVote() {
 
+
+        
         // check if user is logged in before attempting to post a comment
         if (this.state.account == null) {
 
@@ -44,14 +59,15 @@ let opts = {...NetConfig.net};
     
         //creating a vote object
         const vote = {
-            voter: this.state.voter,
+
+            voter: this.state.account,
             author: this.state.author,
             permlink: this.state.permlink,
-            // using math.random function which converts it to base 36 and uses the first 9 characters after the decimal
-            weight: document.getElementById('voteWeight + Math.random().tostring(36).substr(2,9)').value, //needs to be an integer for the vote function
+            weight: parseInt(document.getElementById(this.state.weightId).value) //needs to be an integer for the vote function
+
         };
 
-        client.broadcast.vote(vote, '5KdDmisvxHXhEQ5UbAdibZtx4LcoJ2dDA2jjz9XP1f4xn8PREhy')
+        client.broadcast.vote(vote, this.state.privateKey)
         .then(result => {
 
             console.log('Success! Vote Has Been Submitted:', result);
@@ -86,7 +102,7 @@ let opts = {...NetConfig.net};
             <div className="upvote">
 
                 <div id="upVote"><br /><input id="expandVote" type="button" value="Open voting UI" onClick={() => this.expandDropdown()} /></div>  
-                { this.state.expanded ? <input id="voteWeight + Math.random().tostring(36).substr(2,9)" defaultValue="10" /> : null } 
+                { this.state.expanded ? <input id={this.state.weightId} defaultValue="10" /> : null } 
                 { this.state.expanded ? <button id="pushVote" onClick={() => this.pushVote()}>Push vote</button> : null } 
                 { this.state.expanded ? <button id="closeVote" onClick={this.closeDropdown}>Close voting UI</button> : null }                       
             
