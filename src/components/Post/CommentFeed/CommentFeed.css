@@ -9,7 +9,7 @@
     text-align: left;
 }
 
-#Replybody{
+.Replybody{
     border: 2px solid lightgreen;
     border-radius: 10px;
     padding: 2px;
@@ -17,7 +17,7 @@
     height: 50px;
 }
 
-#Replybody:focus{
+.Replybody:focus{
     outline: none;
     border: 2px solid green;
     border-radius: 10px;

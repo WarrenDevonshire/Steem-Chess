@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './Post.css';
 import { Client } from 'dsteem';
 import CommentFeed from './CommentFeed/CommentFeed';
+import UpVote from '../UpVote/UpVote';
 
 const client = new Client('https://api.steemit.com');
 const Remarkable = require('remarkable');
@@ -47,10 +48,11 @@ export default class Post extends Component {
         return (
             <div className="Post">
 
-                <div id="postBody" styles="display: none;"></div>	
+                <div id="postBody"></div>
+                <div id="upVote"><UpVote author={this.state.author} permlink={this.state.permlink} id={"Root"} history={this.props.history} /></div>	
                 <CommentFeed history={this.props.history} author={this.state.author} permlink={this.state.permlink} getAccessToken={this.props.getAccessToken} getAPI={this.props.getAPI}/>
                 
             </div>
         )
     }
-}
+} 

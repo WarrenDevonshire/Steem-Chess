@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Comment.css';
 import ReactHtmlParser from 'react-html-parser';
+import UpVote from '../../../UpVote/UpVote';
 
 const Remarkable = require('remarkable');
 const md = new Remarkable({ html: true, linkify: true });
@@ -27,8 +28,7 @@ export default class Comment extends Component {
             commentPermlink: this.props.comment.permlink,
             numericId: bodyId, // this holds just the numeric suffix to append to unique id's in this comment
             commentBodyId: this.props.id, // this will give each reply box a unique id to pass to the pushComment callback function
-            replyButtonId: "replies" + bodyId, // this will give each open/close replies button a unique id
-            replyValue: "Open replies" // this will hold the text that the open/close replies button should display
+            replyButtonValue: "Open replies" // this will hold the text that the open/close replies button should display
 
         };
 
@@ -52,16 +52,14 @@ export default class Comment extends Component {
 
         this.fetchComments(this.state.commentAuthor, this.state.commentPermlink, this.state.numericId, this.props.fetchComments);
         this.setState( {expanded: true} );
-        this.setState( {replyValue: "Close replies"} );
-        document.getElementById(this.state.replyButtonId).value = "Close replies";
+        this.setState( {replyButtonValue: "Close replies"} );
 
     }
 
     closeDropdown() {
 
         this.setState( {expanded: false} );
-        this.setState( {replyValue: "Open replies"} );
-        document.getElementById(this.state.replyButtonId).value = "Open replies";
+        this.setState( {replyButtonValue: "Open replies"} );
 
     }
 
@@ -86,11 +84,12 @@ export default class Comment extends Component {
                     }</small>
                 </div>
 
-                <textarea id={this.state.commentBodyId} class="form-control" id='commentReply'rows="3" placeholder='Reply to this comment...'/><br />
+                <textarea id={this.state.commentBodyId} class="commentReply" rows="3" placeholder='Reply to this comment...'/><br />
                 <div id='Buttons'>
                 <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
-                <button onClick={() => this.handleClick()} class="openReplies" id={this.state.replyButtonId} >{this.state.replyValue}</button>
+                <button onClick={() => this.handleClick()} class="openReplies" id={"openReplies"} >{this.state.replyButtonValue}</button>
+                <div id="UpVote"><UpVote author={this.state.author} permlink={this.state.permlink} id={this.state.numericId} history={this.props.history} /></div>
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
                     return this.state.expanded ?  <div> {Comment} </div> : null
                 })} </div>
