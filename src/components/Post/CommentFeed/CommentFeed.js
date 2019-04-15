@@ -44,7 +44,6 @@ export default class CommentFeed extends Component {
 
         };
 
-        console.log(this.state.privateKey);
         this.pushComment = this.pushComment.bind(this);
         this.fetchComments(this.state.parentAuthor, this.state.parentPermlink, -1, this.fetchComments);
         
@@ -64,11 +63,11 @@ export default class CommentFeed extends Component {
 
                     if (bodyId === -1) {
 
-                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={i} history={this.props.history} />);
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + i} history={this.props.history} />);
 
                     } else {
 
-                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={i} history={this.props.history} />);
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + bodyId + "-" + i} history={this.props.history} />);
 
                     }
                 
@@ -112,7 +111,6 @@ export default class CommentFeed extends Component {
             .substring(2);
 
         const payload = {
-
             author: this.state.account,
             title: '',
             body: body,
@@ -120,7 +118,6 @@ export default class CommentFeed extends Component {
             parent_permlink: parent_permlink,
             permlink: permlink,
             json_metadata: '',
-            
         };
 
         // push comment to blockchain
@@ -146,7 +143,7 @@ export default class CommentFeed extends Component {
                 <hr />
                 <h4>Submit a comment:</h4>
                 Comment body:<br />
-                <textarea id="Replybody" class="form-control" rows="3"placeholder='Reply to this post...'/><br />
+                <textarea id="commentBodyRoot" class="Replybody" rows="3" placeholder='Reply to this post...'/><br />
                 <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
                 <div id="postLink" />
 

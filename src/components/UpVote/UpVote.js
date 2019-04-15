@@ -29,12 +29,13 @@ let opts = {...NetConfig.net};
 
         this.state = {
 
-            account: localDB.account,
+            account: localDB.account, // user who is voting
             privateKey: pKey,
-            author: this.props.author,
-            permlink: this.props.permlink,
-            weight: this.props.weight,
-            weightId: "voteWeight" + this.props.id,
+            author: this.props.author, // author of post to be voted on
+            permlink: this.props.permlink, // permlink of post to be voted on
+            weight: this.props.weight, // weight of vote
+            weightId: "voteWeight" + this.props.id, // unique id for each vote weight input
+            voteButtonValue: "Open voting UI",
             expanded: false
 
         };
@@ -47,8 +48,6 @@ let opts = {...NetConfig.net};
 
     pushVote() {
 
-
-        
         // check if user is logged in before attempting to post a comment
         if (this.state.account == null) {
 
@@ -83,15 +82,31 @@ let opts = {...NetConfig.net};
 
     }
 
+    handleClick() {
+
+        if(this.state.expanded == false) {
+
+            this.expandDropdown();
+
+        } else {
+
+            this.closeDropdown();
+
+        }
+
+    }
+
     expandDropdown() {
 
         this.setState( {expanded: true} );
+        this.setState( {voteButtonValue: "Close voting UI"} );
 
     }
 
     closeDropdown() {
 
         this.setState( {expanded: false} );
+        this.setState( {voteButtonValue: "Open voting UI"} );
 
     }
 
@@ -101,10 +116,11 @@ let opts = {...NetConfig.net};
         return (  
             <div className="upvote">
 
-                <div id="upVote"><br /><input id="expandVote" type="button" value="Open voting UI" onClick={() => this.expandDropdown()} /></div>  
+                <div id="upVote"><br />
+                <button onClick={() => this.handleClick()} id={"openVotes"} >{this.state.voteButtonValue}</button>
                 { this.state.expanded ? <input id={this.state.weightId} defaultValue="10" /> : null } 
                 { this.state.expanded ? <button id="pushVote" onClick={() => this.pushVote()}>Push vote</button> : null } 
-                { this.state.expanded ? <button id="closeVote" onClick={this.closeDropdown}>Close voting UI</button> : null }                       
+                </div>                    
             
             </div>
         )
