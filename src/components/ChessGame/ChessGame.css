@@ -8,3 +8,18 @@
     display: flex;
     position: absolute;
 }
+
+.normal, .flipped {
+    border-radius: "5px";
+    box-shadow: "0 5px 15px rgba(0, 0, 0, 0.5)";
+    border: 10px solid red !important;
+}
+
+/* When the player is white pieces */
+.normal {
+}
+
+/* When the player is black pieces */
+.flipped {
+    transform: rotate(180deg);
+}

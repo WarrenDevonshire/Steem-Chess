@@ -22,8 +22,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        PubSub.subscribe('spinner', (tag, message) => {
-            console.log(tag, message);
+        PubSub.subscribe('spinner', (_, message) => {
             this.setState({ spinning: message.spin });
         });
     }

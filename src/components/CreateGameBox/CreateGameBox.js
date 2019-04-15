@@ -9,6 +9,7 @@ import WhitePiece from "../CreateGameBox/Images/rook-white.png";
 //TEMP unitl local data storage
 const USERNAME = "mdhalloran"
 
+
 class CreateGameBox extends Component {
     constructor(props) {
         super(props);
@@ -61,28 +62,28 @@ class CreateGameBox extends Component {
 
     render() {
         return (
-            <div className={CreateGameBox} class='CreateGameBox'>
+            <div className='CreateGameBox'>
                 <h1>Create Game</h1>
-                <div class='Box'>
-                    <hr noshade="true" class='Line' />
-                    <h3 class='Line'>Time Per Side</h3>
+                <div className='Box'>
+                    <hr noshade="true" className='Line' />
+                    <h3 className='Line'>Time Per Side</h3>
                     <Slider min="1"
                         max="10"
                         value={this.state.timePerSide}
                         step="0.5"
                         unit="Minutes"
                         onValueChanged={this.timePerSideChanged} />
-                    <h3 class='Line'>Increment</h3>
+                    <h3 className='Line'>Increment</h3>
                     <Slider min="1"
                         max="10"
                         value={this.state.increment}
                         step="1"
                         unit="Seconds"
                         onValueChanged={this.incrementChanged} />
-                    <hr noshade="true" class='Line' />
-                    <h3 class='Line'>{this.state.startingColorText}</h3>
+                    <hr noshade="true" className='Line' />
+                    <h3 className='Line'>{this.state.startingColorText}</h3>
                     <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
-                    <button class="Button" onClick={this.createClicked}>Create Game</button>
+                    <button className="Button" onClick={this.createClicked}>Create Game</button>
                 </div>
             </div>
         );

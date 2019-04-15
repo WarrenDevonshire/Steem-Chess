@@ -20,7 +20,7 @@ const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
-const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
 
 class Play extends Component {
     constructor(props) {
@@ -166,14 +166,14 @@ class Play extends Component {
      * Requests to start RTC with a user
      * @param {string} username The opponent's username
      */
-    async sendGameRequest(opponentData, gameData) {
+    async sendGameRequest(opponentData) {
         return new Promise((resolve, reject) => {
             if (DISABLE_BLOCKCHAIN) resolve();
 
             console.log("sending request to existing game");
-            gameData.startingColor = this.decideRandom(gameData, opponentData);
+            this.gameData.startingColor = this.decideRandom(this.gameData, opponentData);
             this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, {
-                data: gameData,
+                data: this.gameData,
                 sendingTo: opponentData.username
             }, (err, result) => {
                 if (err) {
@@ -182,8 +182,8 @@ class Play extends Component {
                     alert("Failed to send game request");
                 }
                 else if (result) {
-                    console.log("sent request to existing game", gameData);
-                    this.initializePeer(false, gameData);
+                    console.log("sent request to existing game", this.gameData);
+                    this.initializePeer(false);
                     resolve();
                 }
             });
@@ -193,31 +193,30 @@ class Play extends Component {
     /**
      * Decides on random starting color for gameData
      */
-    decideRandom(gameData, opponentData) {
-        if (gameData.startingColor === "Random") {
-            if (opponentData.startingColor === "Black") {
+    decideRandom(thisGame, thatGame) {
+        if (thisGame.startingColor === "Random") {
+            if (thatGame.startingColor === "Black") {
                 return "White";
             }
-            else if (opponentData.startingColor === "White") {
+            else if (thatGame.startingColor === "White") {
                 return "Black";
             }
             else {
-                //TODO make a random choice
-                return "White";
+                return Math.random() < 0.5 ? "White" : "Black";
             }
         }
-        return gameData.startingColor;
+        return thisGame.startingColor;
     }
 
     /**
      * Puts game request onto the blockchain
      */
-    async postGameRequest(gameData) {
+    async postGameRequest() {
         return new Promise((resolve, reject) => {
             if (DISABLE_BLOCKCHAIN) resolve();
 
             console.log("posting a new game request");
-            this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, gameData,
+            this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, this.gameData,
                 (err, result) => {
                     if (err) {
                         console.error(err);
@@ -226,7 +225,7 @@ class Play extends Component {
                     }
                     else if (result) {
                         console.log("posted game request", result);
-                        this.listenForJoinTag(result.block_num, gameData);
+                        this.listenForJoinTag(result.block_num);
                         resolve();
                     }
                 });
@@ -236,17 +235,13 @@ class Play extends Component {
     /**
      * Opens a stream to listen to join requests
      */
-    listenForJoinTag(currentBlockNumber, gameData) {//TODO timeout after 5 minutes
+    listenForJoinTag(currentBlockNumber) {//TODO timeout after 5 minutes
         this.processor = steemState(client, dsteem, currentBlockNumber, 100, GAME_ID);
         try {
             this.processor.on(JOIN_TAG, (block, sendingTo) => {
-                if (sendingTo === this.username && this.matchableGames(gameData, block.data)) {
-                    this.decideRandom(block.data);
-                    this.initializePeer(true, gameData);
-                }
-                else {
-                    console.log("join request found that doesn't match current post game request");
-                    console.log(block, sendingTo, gameData);
+                if (sendingTo === this.username && this.matchableGames(this.gameData, block.data)) {
+                    this.gameData.startingColor = this.decideRandom(block.data);
+                    this.initializePeer(true);
                 }
             });
             this.processor.start();
@@ -263,7 +258,7 @@ class Play extends Component {
      * @param {bool} initializingConnection True if this peer is creating the offer
      * the offer
      */
-    async initializePeer(initializingConnection, gameData) {
+    async initializePeer(initializingConnection) {
         if (DISABLE_BLOCKCHAIN) return;
 
         var receivingTag = initializingConnection === true ? PEER_INIT_TAG : PEER_NOT_INIT_TAG;
@@ -283,7 +278,7 @@ class Play extends Component {
 
         this.peer.on('connect', () => {
             if (initializingConnection === true) {
-                this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, gameData, (err) => {
+                this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, this.gameData, (err) => {
                     if (err) {
                         console.error(err);
                     }
@@ -291,7 +286,7 @@ class Play extends Component {
             }
             this.props.history.push({
                 pathname: '/Live',
-                gameData: gameData,
+                gameData: this.gameData,
                 peer: this.peer,
             });
             console.log('Connected to peer!!!');
@@ -345,10 +340,10 @@ class Play extends Component {
         setTimeout(() => {
             var opponentData = this.checkWaitingPlayers();
             if (opponentData == null) {
-                this.postGameRequest(this.gameData);
+                this.postGameRequest();
             }
             else {
-                this.sendGameRequest(opponentData, this.gameData);
+                this.sendGameRequest(opponentData);
             }
         }, 15000);
     }
@@ -373,7 +368,7 @@ class Play extends Component {
 
         PubSub.publish('spinner', { spin: true });
 
-        this.sendGameRequest(opponentData, this.gameData);
+        this.sendGameRequest(opponentData);
     }
 
     render() {

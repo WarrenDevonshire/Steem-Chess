@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox';
 import ChessGame from '../ChessGame/ChessGame';
 import { loadState } from "../../components/localStorage";
-import Peer from 'simple-peer';
 import './LiveMatch.css';
 
-const DISABLE_BLOCKCHAIN = false;
+const DISABLE_BLOCKCHAIN = true;
 
 /**
  * Component for playing a live chess match
@@ -42,6 +41,7 @@ class LiveMatch extends Component {
 
         var localDB = loadState();
         if(localDB.account == null) {
+            console.log("Went to LiveMatch without logging in");
             this.props.history.push("/Login");
             return;
         }

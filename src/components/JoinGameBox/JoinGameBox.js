@@ -119,7 +119,7 @@ class JoinGameBox extends Component {
 
     render() {
         return (
-            <div className={JoinGameBox} class='JoinGameBox'>
+            <div className='JoinGameBox'>
                 <div>
                     <h1>Join Game</h1>
                 </div>
@@ -146,10 +146,10 @@ class JoinGameBox extends Component {
                             id: "posted",
                             accessor: data => this.getFormattedTime(data.time)
                         }]}
-                        getTrProps={(state, rowInfo) => {
+                        getTrProps={(_, rowInfo) => {
                             if (rowInfo && rowInfo.row) {
                                 return {
-                                    onClick: (e) => {
+                                    onClick: () => {
                                         this.setState({
                                             selected: rowInfo.index,
                                             selectedData: rowInfo.original
@@ -169,7 +169,7 @@ class JoinGameBox extends Component {
                         className="table"
                         resizable={false} />
                 </div>
-                <hr noshade="true" class='Line' />
+                <hr noshade="true" className='Line' />
                 <button className="Button" onClick={this.joinClicked}>Join Game</button>
             </div>
         );

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import SpinnerImage from "./spinner.png"
+import SpinnerImage from "./spinner.gif"
 import './Spinner.css';
 
 class Spinner extends Component {
@@ -7,7 +7,6 @@ class Spinner extends Component {
         super(props);
     }
     render() {
-
         return (
             <div>
                 { this.props.enabled ? <img className="spinner" src={SpinnerImage} alt="spinner" /> : null }
