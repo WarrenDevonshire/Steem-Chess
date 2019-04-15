@@ -2,12 +2,21 @@ import React, {Component} from 'react';
 import './Play.css';
 import JoinGameBox from '../JoinGameBox/JoinGameBox';
 import CreateGameBox from "../CreateGameBox/CreateGameBox";
+import { loadState } from "../../components/localStorage";
 
 class Play extends Component {
     constructor(props) {
         super(props);
 
         this.findBlockHead = this.findBlockHead.bind(this);
+    }
+
+    componentDidMount() {
+        var localDB = loadState();
+        if(localDB.account == null) {
+            this.props.history.push("/Login");
+            return;
+        }
     }
 
     /**

@@ -1,3 +1,7 @@
 .horizontal {
-    display: inline-block;
+    display: inline;
+}
+
+#label{
+    margin-right: 10px;
 }

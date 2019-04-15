@@ -5,15 +5,25 @@ import {withRouter} from "react-router-dom";
 
 
 class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            account: "",
-            password: ""
-        };
-        this.handleAccountChange = this.handleAccountChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
+    
+            constructor(props) {
+                super(props);
+
+                if(localStorage.getItem('login') !== null)
+                {
+                    localStorage.removeItem('account');
+                    localStorage.removeItem('pKey');
+                    localStorage.removeItem('login');
+                    this.props.history.push('/');
+                }
+
+                this.state = {
+                    account: "",
+                    password: ""
+                };
+                this.handleAccountChange = this.handleAccountChange.bind(this);
+                this.handlePasswordChange = this.handlePasswordChange.bind(this);
+                this.handleLogin = this.handleLogin.bind(this);
     }
 
     async handleAccountChange(e){
@@ -27,24 +37,25 @@ class Login extends Component {
     }
 
     handleLogin(e){
-        saveState(this.state.account, this.state.password);
+        saveState(this.state.account, this.state.password, "loggedIn");
         this.props.history.push('/');
     }
 
     render() {
         return (
-            <div className="Auth">
+            <div className="Login">
                 <form>
                     <label>
                         Account:
-                        <input type="text" value={this.state.account}  onChange={this.handleAccountChange}/>
+                        <input type="text" value={this.state.account}  onChange={this.handleAccountChange} id="Account"/>
                     </label>
-
-                    <label>
+                    <br/>
+                    <label >
                         Password:
-                        <input type="password" value={this.state.password}  onChange={this.handlePasswordChange}/>
+                        <input type="password" value={this.state.password}  onChange={this.handlePasswordChange} id="Password"/>
                     </label>
-                    <button onClick={this.handleLogin}>Login</button>
+                    <br/>
+                    <button onClick={this.handleLogin} id="submit">Login</button>
                 </form>
         </div>
         )

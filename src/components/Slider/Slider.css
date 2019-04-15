@@ -11,6 +11,7 @@
     outline: none;
     opacity: 0.7;
     transition: opacity .2s;
+    margin-bottom: 40px;/*TODO shouldn't be here. Find a way to pass extra css to custom components */
 }
 
 .slider:hover {

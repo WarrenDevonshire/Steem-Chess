@@ -1,0 +1,20 @@
+.JoinGameBox{
+   height: 600px;
+   width: 550px;
+   float: right;
+   margin-left: 100px;
+   border: 2px solid black;
+   border-radius: 50px;
+   margin-top:40px;
+}
+
+.table{
+    height: 480px !important;
+    width: 525px;
+    margin-left: 10px;
+    margin-top: 5px !important;
+}
+
+.link{
+    text-decoration: none;
+}

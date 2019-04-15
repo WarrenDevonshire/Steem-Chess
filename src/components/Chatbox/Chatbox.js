@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./Chatbox.css";
 
 class Chatbox extends Component {
@@ -18,64 +18,48 @@ class Chatbox extends Component {
      * @param {*} message 
      */
     onReceiveMessage(data) {
-        console.log("Received data from peer!!!!!!!!!!!!!!!!!!!");
+        console.log("Received data from peer!");
         this.state.messageList.push([data.message, Date.now]);
-        this.setState({messageList: this.state.messageList});
+        this.setState({ messageList: this.state.messageList });
     }
 
     updateDraft(area) {
-        this.setState({draftedMessage: area.target.value});
+        this.setState({ draftedMessage: area.target.value });
     }
 
     sendMessage() {
-        console.log("-----------------------------------------------------------");
-        console.log(this.state.peer);
-        console.log(this.props.peer);
-        console.log("-----------------------------------------------------------");
-        if (this.props.peer == null) {
-            var error = "Peer connection not initiated!";
-            console.error(error);
-            alert(error);
-            return;
-        }
-        if (!this.props.peer.connected) {
-            var error = "Not connected to the other player yet!";
-            console.error(error);
-            alert(error);
-            return;
-        }
-        var data = {
+        this.props.sendData({
             type: "message",
             timeSent: Date.now,
             message: this.state.draftedMessage,
-        }
-        this.props.peer.send(JSON.stringify(data));
-        this.setState({draftedMessage: ""});
+        });
+
+        this.setState({ draftedMessage: "" });
         this.refs.draftArea.value = ""
     }
 
-    render() {
-        var messageList;
-        if (this.state.messageList != null) {
-            messageList = this.state.messageList.map(([message, timeSent], index) =>
-                <MessageBubble key={index}
-                               message={message.toString()}/>
-            )
-        }
-        return (
-            <div id="container">
-                <aside id="sidebar">Users</aside>
-                <section id="main">
-                    <section id="messages-list">
+  render() {
+      var messageList;
+      if (this.state.messageList != null) {
+          messageList = this.state.messageList.map(([message, timeSent], index) =>
+              <MessageBubble key={index}
+                             message={message.toString()}/>
+          )
+      }
+    return (
+      <div id="container">
+        <aside id="sidebar">Users</aside>
+        <section id="main" class='messages'>
+            <section id="messages-list" class='messages-list'>
             <span>
               {messageList}
             </span>
-                    </section>
-                    <section id="new-message">
-            <textarea ref="draftArea"
+            </section>
+            <section id="new-message" class='new-msg'>
+            <textarea ref="draftArea" class='msg'
                       onChange={e => this.updateDraft(e)}></textarea>
 
-                        <button onClick={e => this.sendMessage()}>Send</button>
+                        <button onClick={e => this.sendMessage()} id='Send'>Send</button>
                     </section>
                 </section>
             </div>
@@ -97,8 +81,8 @@ class MessageBubble extends Component {
     render() {
         return (
             <span>
-        <h1>{this.state.message}</h1>
-      </span>
+                <h1>{this.state.message}</h1>
+            </span>
         );
     }
 }
