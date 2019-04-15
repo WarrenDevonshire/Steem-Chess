@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import ArticleFeed from './ArticleFeed/ArticleFeed';
 import LiveMatch from './LiveMatch/LiveMatch';
 import Post from './Post/Post';
+import UpVote from './UpVote/UpVote';
 import Compose from './Compose/Compose';
 import Play from './Play/Play';
 import Login from "../shared/components/Login/Login";
@@ -48,10 +49,11 @@ class App extends Component {
                         <Route path='/Play' render={(props) => <Play {...props} getAccessToken={this.getAccessToken} />}
                             exact />
                         <Route path='/Live'
-                            render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken} />} exact />
-                        <Route path='/Post/@:author/:permlink' component={Post} exact />
-                        <Route path='/Compose' component={Compose} exact />
-                        <Route path='/Login' component={Login} exact />
+                               render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
+                        <Route path='/Post/@:author/:permlink' component={Post} exact/>
+                        <Route path= '/UpVote/' component={UpVote} exact/>
+                        <Route path='/Compose' component={Compose} exact/>
+                        <Route path='/Login' component={Login} exact/>
                     </Content>
                     <Footer />
                 </div>
