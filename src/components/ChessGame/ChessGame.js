@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
+import './ChessGame.css'
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.
 class ChessGame extends PureComponent {
@@ -165,8 +166,8 @@ class ChessGame extends PureComponent {
     const { squareStyles } = this.state;
 
     return (
-      <div>
-        <Chessboard width={320}
+      <div id='Chessboard'>
+        <Chessboard width={512}
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
@@ -176,7 +177,8 @@ class ChessGame extends PureComponent {
             boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
           }}
           squareStyles={squareStyles}
-          dropSquareStyle={this.dropSquareStyle} />
+          dropSquareStyle={this.dropSquareStyle} 
+          />
       </div>
     );
   }
