@@ -15,19 +15,10 @@
     margin-bottom: 20px;
 }
 
-#openReplies{
+.openReplies{
     float: right;
     width: 90px;
     height: 30px;
-    border: none;   
-    border-radius: 10px;
-    background-color: #4CAF50;
-    color: white;
-}
-
-#closeReplies{
-    width:90px;
-    height: 25px;
     border: none;   
     border-radius: 10px;
     background-color: #4CAF50;
@@ -38,7 +29,7 @@
     margin-top: 50px;
 }
 
-#commentReply{
+.commentReply{
     width:300px;
     padding: 2px;
     border:2px solid lightgreen;
@@ -46,7 +37,7 @@
     border-radius: 10px;
 }
 
-#commentReply:focus{
+.commentReply:focus{
     outline: none;
     border:2px solid green;
     border-radius: 10px;

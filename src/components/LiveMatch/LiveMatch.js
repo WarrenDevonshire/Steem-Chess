@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
-import Chatbox from '../Chatbox/Chatbox'
-import Peer from 'simple-peer';
-import {loadState, saveState} from "../../components/localStorage";
-import {withRouter} from 'react-router-dom';
+import Chatbox from '../Chatbox/Chatbox';
 import ChessGame from '../ChessGame/ChessGame';
-import './LiveMatch.css';
+import Peer from 'simple-peer';
+import { loadState } from "../../components/localStorage";
 
-const GAME_ID = 'steem-chess'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const steemTransact = require('steem-transact');
 const client = new dsteem.Client('https://api.steemit.com');
 
+//Blockchain message tags
+const GAME_ID = 'steem-chess'
+const POST_GAME_TAG = 'post-game'
+const JOIN_TAG = 'request-join';
+const PEER_INIT_TAG = 'join-signal-i';
+const PEER_NOT_INIT_TAG = 'join-signal-ni';
+const CLOSE_REQUEST_TAG = 'request-closed';
+
+const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+
 /**
- * Component for playing a live chess match. Must
- * be passed in the game data and if this user
- * is initiating the webRTC connection
+ * Component for playing a live chess match
  */
 class LiveMatch extends Component {
     constructor(props) {
@@ -23,99 +28,155 @@ class LiveMatch extends Component {
 
         var localDB = loadState();
 
-        this.state = {
-            gameData: this.props.location.gameData,
-            waitingPlayer: null,
-            processor: null,
-            transactor: steemTransact(client, dsteem, GAME_ID),
-            peer: null,
-            username: localDB.account,
-            posting_key: localDB.key
+        this.transactor = steemTransact(client, dsteem, GAME_ID);
+        this.processor = null;
+        this.username = localDB.account;
+        this.posting_key =  dsteem.PrivateKey.fromLogin(this.username, localDB.key, 'posting').toString();
+        this.peer = null;
+        this.chatboxComponent = React.createRef();
+        this.chessGameComponent = React.createRef();
+
+        if(this.props.location.gameData != null) {
+            this.gameData = this.props.location.gameData;
+        }
+        else if(this.props.location.opponentData != null) {
+            this.gameData = this.props.location.opponentData;
+            this.gameData.startingColor = "Random";
+            this.gameData.username = this.username;
+        }
+        else {
+            this.gameData = null;
         }
 
-        this.chatboxComponent = React.createRef();
+        this.gameRequestBlocks = [];
+        this.closeRequestBlocks = [];
+
+        this.sendPeerData = this.sendPeerData.bind(this);
     }
 
     componentWillUnmount() {
-        if(this.state.processor !== null) {
-            this.state.processor.stop();
+        if (this.processor !== null) {
+            this.processor.stop();
         }
-        if(this.state.peer !== null) {
-            this.state.peer.destroy();
+        if (this.peer !== null) {
+            console.log("Destroying peer");
+            this.peer.destroy();
         }
     }
 
     async componentDidMount() {
-        if(this.state.username == null) {
+        if (this.username == null) {
             this.props.history.push("/Login");
             return;
         }
-        if (this.state.gameData == null) {
+        if (this.gameData == null) {
             this.props.history.push("/Play");
             console.error("LiveMatch not passed any game data!");
             return;
         }
-        console.log(this.state.gameData);
-        this.setState({waitingPlayer:this.props.location.waitingPlayer});
-        console.log("waiting player: " + this.state.waitingPlayer);
+        console.log(this.gameData);
+
+        if(DISABLE_BLOCKCHAIN) return;
+
         //didn't select a match to join
-        if(this.props.location.waitingPlayer == null) {
-            var opponent = await this.findWaitingPlayer(this.state.gameData);
-            console.log("OPPONENT", opponent);
-            this.setState({waitingPlayer:opponent});
-        }
-        //didn't find an existing game to join
-        if (this.state.waitingPlayer == null) {
-            this.postGameRequest(this.state.gameData);
+        if (this.props.location.opponentData == null) {
+            this.findWaitingPlayers();
+            //If opponent not found after 15 seconds, post a game request
+            setTimeout(() => {
+                this.checkWaitingPlayers()
+            }, 15000);
         }
         else {
-            this.sendGameRequest(this.state.waitingPlayer, this.state.gameData);
+            this.sendGameRequest(this.props.location.opponentData);
+        }
+    }
+
+    /**
+     * Determines whether to send a join request to an existing posted game, 
+     * or to create a new post game request
+     */
+    checkWaitingPlayers() {
+        if(DISABLE_BLOCKCHAIN) return;
+
+        console.log("finding the best game to connect to");
+        if (this.processor !== null) {
+            this.processor.stop();
+        }
+        var opponentData = null;
+        if(this.gameRequestBlocks.length > 0) {
+            var waitingPlayers = [];
+            var maxWaitingTime = 1000*60*5;
+            //Finds the most recent game request from each player, which was created
+            //less than 5 minutes ago
+            for (var i = this.gameRequestBlocks.length - 1; i >= 0; --i) {
+                //TODO check that the user is not the same as the current person once testing is complete
+                var currentBlock = this.gameRequestBlocks[i];
+                if(!waitingPlayers.includes(currentBlock.username) && 
+                   (Date.now() - currentBlock.time) < maxWaitingTime) {
+                    waitingPlayers.push(currentBlock);
+                }
+            }
+            //Removes games where the player already connected to someone else
+            for (var i = this.closeRequestBlocks.length - 1; i >= 0; --i) {
+                var currentBlock = this.closeRequestBlocks[i];
+                var playerIndex = waitingPlayers.indexOf(currentBlock.username);
+                if(playerIndex >= 0) {
+                    var possibleClosedGame = waitingPlayers[playerIndex];
+                    if(currentBlock.time === possibleClosedGame.time) {
+                        waitingPlayers.splice(playerIndex, 1);
+                    }
+                }
+            }
+            if(waitingPlayers.length > 0) {
+                opponentData = waitingPlayers[0];
+            }
+        }
+        //didn't find an existing game to join
+        if (opponentData == null) {
+            this.postGameRequest();
+        }
+        else {
+            this.sendGameRequest(opponentData);
         }
     }
 
     /**
      * Checks if a game has recently been requested with the same data
-     * @param {*} gameData 
      */
-    async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
+    async findWaitingPlayers() {
+        if(DISABLE_BLOCKCHAIN) return;
+
         var headBlockNumber = await this.props.location.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 25), 1, GAME_ID, 'latest')});
-        return new Promise((resolve, reject) => {
-            try {
-                this.state.processor.on(gameData.typeID, (json, from) => {
-                    console.log("Game block found", json);
-                    if (this.matchableGames(gameData, json.data)) {
-                        console.log("Found an opponent!!!", from);
-                        this.state.processor.stop();
-                        resolve(from);
-                    }
-                });
-                this.state.processor.onBlock((block) => {
-                    //Finish processing
-                    if(block === headBlockNumber) {
-                        this.state.processor.stop();
-                        console.log("Didn't find a waiting opponent:(");
-                        resolve(null);//Didn't find any players
-                    }
-                });
-                this.state.processor.start();
-            } catch (err) {
-                console.error(err)
-                this.state.processor.stop();
-                return reject("Failed to check for waiting players");
-            }
-        });
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 100), 1, GAME_ID, 'latest');
+        try {
+            this.processor.on(POST_GAME_TAG, (data) => {
+                console.log("Game block found", data);
+                if (this.matchableGames(this.gameData, data)) {
+                    this.gameRequestBlocks.push(data);
+                }
+            });
+            this.processor.on(CLOSE_REQUEST_TAG, (data) => {
+                console.log("Close request found", data);
+                if (this.matchableGames(this.gameData, data)) {
+                    this.closeRequestBlocks.push(data);
+                }
+            });
+            this.processor.start();
+        } catch (err) {
+            console.error(err)
+            if (this.processor !== null)
+                this.processor.stop();
+            console.error("Failed to check for waiting players");
+        }
     }
 
     /**
      * Checks if two games are compatable
-     * @param {*} first 
-     * @param {*} second 
+     * @param {*} first
+     * @param {*} second
      */
     matchableGames(first, second) {
-        if (first.timeControlChosen !== second.timeControlChosen ||
-            first.timePerSide !== second.timePerSide ||
-            first.increment !== second.increment)
+        if (first.typeID !== second.typeID)
             return false;
         return first.startingColor === "Random" || first.startingColor !== second.startingColor;
     }
@@ -123,54 +184,77 @@ class LiveMatch extends Component {
     /**
      * Requests to start RTC with a user
      * @param {string} username The opponent's username
-     * @param {*} gameData
      */
-    sendGameRequest(username, gameData) {
+    sendGameRequest(opponentData) {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("sending request to existing game");
-        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-join', {
-            data: gameData,
-            sendingTo: username
+        this.decideRandom(opponentData);
+        this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, {
+            data: this.gameData,
+            sendingTo: opponentData.username
         }, (err, result) => {
             if (err) {
                 console.error(err);
                 alert("Failed to send game request");
             }
             else if (result) {
-                console.log("sent request to existing game", gameData);
-                this.initializePeer(false, username, gameData);
+                console.log("sent request to existing game", this.gameData);
+                this.initializePeer(false);
             }
         });
     }
 
     /**
-     * Puts game request onto the blockchain
-     * @param {*} gameData 
+     * Decides on random starting color for this.gameData
      */
-    postGameRequest(gameData) {
+    decideRandom(opponentData) {
+        if (this.gameData.startingColor === "Random") {
+            if (opponentData.startingColor === "Black") {
+                this.gameData.startingColor = "White";
+            }
+            else if (opponentData.startingColor === "White") {
+                this.gameData.startingColor = "Black";
+            }
+            else {
+                //TODO make a random choice
+                this.gameData.startingColor = "White";
+            }
+        }
+    }
+
+    /**
+     * Puts game request onto the blockchain
+     */
+    postGameRequest() {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("posting a new game request");
-        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), gameData.typeID, {
-            data: gameData
-        }, (err, result) => {
+        this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, this.gameData, 
+        (err, result) => {
             if (err) {
                 console.error(err);
                 alert("Failed to request game");
             }
             else if (result) {
                 console.log("posted game request", result);
-                this.state.processor = steemState(client, dsteem, result.block_num, 100, GAME_ID);
+                this.processor = steemState(client, dsteem, result.block_num, 100, GAME_ID);
                 try {
-                    this.state.processor.on('request-join', (json, from) => {
-                        if (json.userID === gameData.userID) {
-                            this.initializePeer(true, from, gameData);
+                    this.processor.on(JOIN_TAG, (block, sendingTo) => {
+                        if(sendingTo === this.username && this.matchableGames(this.gameData, block.data)) {
+                            this.decideRandom(block.data);
+                            this.initializePeer(true);
                         }
                         else {
-                            console.error("Opponent tried to connect with incorrect game data", json.data, gameData);
+                            console.log("join request found that doesn't match current post game request");
+                            console.log(block, sendingTo, this.gameData);
                         }
                     });
-                    this.state.processor.start();
-                } catch(err) {
+                    this.processor.start();
+                } catch (err) {
                     console.error(err);
-                    this.state.processor.stop();
+                    if (this.processor !== null)
+                        this.processor.stop();
                     alert("Game request failed");
                 }
             }
@@ -179,49 +263,40 @@ class LiveMatch extends Component {
 
     /**
      * Creates a new peer
-     * @param {bool} initializingConnection True if this peer is creating 
-     * @param {string} otherUsername The opponent's username
+     * @param {bool} initializingConnection True if this peer is creating the offer
      * the offer
      */
-    async initializePeer(initializingConnection, otherUsername, gameData) {
-        var receivingTag;
-        var sendingTag;
-        if(initializingConnection === true) {
-            receivingTag = 'join-signal-i';
-            sendingTag = 'join-signal-ni';
-        }
-        else {
-            sendingTag = 'join-signal-i';
-            receivingTag = 'join-signal-ni';
-        }
+    async initializePeer(initializingConnection) {
+        if(DISABLE_BLOCKCHAIN) return;
+
+        var receivingTag = initializingConnection === true ? PEER_INIT_TAG : PEER_NOT_INIT_TAG;
+        var sendingTag = initializingConnection === true ? PEER_NOT_INIT_TAG : PEER_INIT_TAG;
+
         console.log("starting initializePeer");
-        await this.setState({peer:new Peer({ initiator: initializingConnection, trickle: false })});
-        this.state.peer.on('error', (err) => {
+        this.peer = new Peer({ initiator: initializingConnection, trickle: false });
+        this.peer.on('error', (err) => {
             console.error(err)
             alert("Failed to connect to opponent :(");
         });
 
-        this.state.peer.on('signal', (data) => {
+        this.peer.on('signal', (data) => {
             this.sendSignalToUser(sendingTag, data);
             console.log("received a signal", JSON.stringify(data));
         });
 
-        this.state.peer.on('data', (data) => {
+        this.peer.on('data', (data) => {
             var parsedData = JSON.parse(data);
-            if(parsedData.type === 'message') {
-                console.log("bloop");
+            if (parsedData.type === 'message') {
                 this.chatboxComponent.current.onReceiveMessage(parsedData);
             }
-            else if(data.type === 'move') {
-
+            else if (parsedData.type === 'move') {
+                this.chatboxComponent.current.onReceiveMove(parsedData);
             }
         });
 
-        this.state.peer.on('connect', () => {
+        this.peer.on('connect', () => {
             if (initializingConnection === true) {
-                this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-closed', {
-                    data: gameData
-                }, (err) => {
+                this.transactor.json(this.username, this.posting_key.toString(), CLOSE_REQUEST_TAG, this.gameData, (err) => {
                     if (err) {
                         console.error(err);
                     }
@@ -231,26 +306,28 @@ class LiveMatch extends Component {
         });
 
         var headerBlockNumber = await this.props.location.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, headerBlockNumber, 100, GAME_ID)});
-        this.state.processor.on(receivingTag, (signal) => {
-            if(this.state.peer !== null) {
-                this.state.peer.signal(signal.signal);
+        this.processor = steemState(client, dsteem, headerBlockNumber, 100, GAME_ID);
+        this.processor.on(receivingTag, (signal) => {
+            if (this.peer !== null) {
+                this.peer.signal(signal.signal);
             }
         });
-        this.state.processor.start();
+        this.processor.start();
     }
 
     /**
      * Sends a webRTC signal to the opponent through the blockchain
-     * @param {string} username 
-     * @param {*} signal 
+     * @param {string} username
+     * @param {*} signal
      */
     sendSignalToUser(sendingTag, signal) {
+        if(DISABLE_BLOCKCHAIN) return;
+
         console.log("starting sendSignalToUser");
-        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), sendingTag, {
+        this.transactor.json(this.username, this.posting_key.toString(), sendingTag, {
             signal: signal,
-            from: this.state.username
-        }, (err, success) => {
+            from: this.username
+        }, (err) => {
             if (err) {
                 console.error(err);
                 alert("Failed opponent connection process");
@@ -258,11 +335,31 @@ class LiveMatch extends Component {
         });
     }
 
+    /**
+     * Sends data to the connected peer
+     */
+    sendPeerData(data) {
+        if(DISABLE_BLOCKCHAIN) return;
+        
+        if (this.peer == null) {
+            console.error("Peer connection not initiated!");
+            alert("Peer connection not initiated!");
+            return false;
+        }
+        if (!this.peer.connected) {
+            console.error("Not connected to the other player yet!");
+            alert("Not connected to the other player yet!");
+            return false;
+        }
+        this.peer.send(JSON.stringify(data));
+        return true;
+    }
+
     render() {
         return (
             <div id="liveMatch">
-               <ChessGame/>
-                <Chatbox peer={this.state.peer} ref={this.chatboxComponent} />
+                <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} />
+                <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
             </div>
         )
     }
