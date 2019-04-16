@@ -37,8 +37,10 @@ class ChessGame extends PureComponent {
         if(!(data.color === this.opponentColor[this.state.color]))
             return;
         if (this.isValidMove(data.sourceSquare, data.targetSquare)) {
-            console.log("CALLED")
             this.commitPieceMove(data.move);
+            if(this.game.in_check())    {
+                console.log('You are in check.')
+            }
         }
     }
 
@@ -77,9 +79,10 @@ class ChessGame extends PureComponent {
     };
 
     onDrop(e) {
-        if(!e.piece.startsWith(this.state.color))
+        if(!e.piece.startsWith(this.state.color)){
             return;
-        if (console.log(this.isValidMove(e.sourceSquare, e.targetSquare))) {
+        }
+        if (this.isValidMove(e.sourceSquare, e.targetSquare)) {
             //Send data to other player
             var success = this.props.sendData({
                 type: "move",
