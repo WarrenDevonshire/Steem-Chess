@@ -13,6 +13,7 @@ const client = new Client(NetConfig.url, opts);
 
 // TODO: default to mark down, add button for switching to editor and back
 // TODO: add image button, other buttons
+// <textarea id="body" class="form-control" rows="3" placeholder="Write your post here"></textarea><br />
 
 export default class Compose extends Component {
 
