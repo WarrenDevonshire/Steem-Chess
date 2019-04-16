@@ -4,10 +4,15 @@ import { Client, PrivateKey } from 'dsteem';
 import { Mainnet as NetConfig } from '../../configuration';
 import { loadState } from "../../components/localStorage";
 import { Link } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 let opts = { ...NetConfig.net };
 
 const client = new Client(NetConfig.url, opts);
+
+// TODO: default to mark down, add button for switching to editor and back
+// TODO: add image button, other buttons
 
 export default class Compose extends Component {
 
@@ -19,7 +24,8 @@ export default class Compose extends Component {
         // render does not crash when trying to access it in the case of a user not being logged in
         this.state = {
             
-          postSubmitted: false
+          postSubmitted: false,
+          postBody: ""
 
         };
 
@@ -44,6 +50,7 @@ export default class Compose extends Component {
         };
 
         this.pushPost = this.pushPost.bind(this);
+        this.handleChange = this.handleChange.bind(this);
 
       }
 
@@ -59,8 +66,6 @@ export default class Compose extends Component {
 
         //get title
         const title = document.getElementById('title').value;
-        //get body
-        const body = document.getElementById('body').value;
         //get tags and convert to array list
         const tags = document.getElementById('tags').value;
         const taglist = tags.split(' ');
@@ -75,7 +80,7 @@ export default class Compose extends Component {
 
         const payload = {
           author: this.state.account,
-          body: body,
+          body: this.state.postBody,
           json_metadata: json_metadata,
           parent_author: '',
           parent_permlink: taglist[0],
@@ -96,6 +101,12 @@ export default class Compose extends Component {
 
       }
 
+      handleChange(value) {
+
+          this.setState({ postBody: value });
+
+      }
+
       render() {
 
         return (
@@ -103,8 +114,7 @@ export default class Compose extends Component {
           <div class="container" id="content"><br />
             <h4>Submit a post to the Steem blockchain</h4>
             Title of post: <input id="title" class='input' type="text" size="65" class="form-control" /><br />
-            Post body:<br />
-            <textarea id="body" class="form-control" rows="3" placeholder="Write your post here"></textarea><br />
+            <ReactQuill value={"Write your post here..."} onChange={this.handleChange} />
             Tags: <input id="tags" class='input' type="text" size="65" class="form-control" value="chess" /><br />
             <input id="submitPostBtn" type="button" value="Submit post!" onClick={() => this.pushPost()} class="btn btn-primary" /><br />
             { this.state.postSubmitted ? <Link to={`Post/@${this.state.account}/${this.state.permlink}`}><h1>View new post</h1></Link> : null }
