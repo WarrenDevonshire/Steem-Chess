@@ -3,6 +3,7 @@ import Chatbox from '../Chatbox/Chatbox';
 import ChessGame from '../ChessGame/ChessGame';
 import Peer from 'simple-peer';
 import { loadState } from "../../components/localStorage";
+import './LiveMatch.css';
 
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
