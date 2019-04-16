@@ -79,7 +79,7 @@ class ChessGame extends PureComponent {
     onDrop(e) {
         if(!e.piece.startsWith(this.state.color))
             return;
-        if (console.log(this.isValidMove(e.sourceSquare, e.targetSquare))) {
+        if (this.isValidMove(e.sourceSquare, e.targetSquare)) {
             //Send data to other player
             var success = this.props.sendData({
                 type: "move",
