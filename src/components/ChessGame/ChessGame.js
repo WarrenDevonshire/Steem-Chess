@@ -34,7 +34,6 @@ class ChessGame extends PureComponent {
     this.onMouseOverSquare = this.onMouseOverSquare.bind(this);
     this.onMouseOutSquare = this.onMouseOutSquare.bind(this);
     this.onReceiveMove = this.onReceiveMove.bind(this);
-    this.getBoardStyle = this.getBoardStyle.bind(this);
   }
 
   componentDidMount() {
@@ -192,7 +191,7 @@ class ChessGame extends PureComponent {
           boardStyle={{ boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)` }}
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
-          orientation={this.color.toLowerCase()}
+          orientation={this.color === null || this.color === undefined ? "white" : this.color.toLowerCase()}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
           onMouseOutSquare={e => this.onMouseOutSquare(e)}
           squareStyles={squareStyles}

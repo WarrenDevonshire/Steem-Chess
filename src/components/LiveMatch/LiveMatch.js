@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox';
 import ChessGame from '../ChessGame/ChessGame';
+import GameInfo from '../GameInfo/GameInfo';
+import Timer from '../Timer/Timer';
 import { loadState } from "../../components/localStorage";
 import './LiveMatch.css';
 
@@ -17,6 +19,8 @@ class LiveMatch extends Component {
         this.peer = this.props.location.peer;
         this.chatboxComponent = React.createRef();
         this.chessGameComponent = React.createRef();
+        this.opponentTimerComponent = React.createRef();
+        this.myTimerComponent = React.createRef();
 
         if(this.props.location.gameData != null) {
             this.gameData = this.props.location.gameData;
@@ -26,6 +30,9 @@ class LiveMatch extends Component {
         }
 
         this.sendPeerData = this.sendPeerData.bind(this);
+        this.opponentTimesUp = this.opponentTimesUp.bind(this);
+        this.myTimesUp = this.myTimesUp.bind(this); 
+        this.gameDataParser = this.gameDataParser.bind(this);
     }
 
     componentWillUnmount() {
@@ -89,11 +96,34 @@ class LiveMatch extends Component {
         return true;
     }
 
+    /**
+     * Called when the opponent's timer component reaches 0
+     */
+    opponentTimesUp() {
+        console.log("Opponent time's up!!!")
+    }
+
+    /**
+     * Called when the local player's time reaches 0
+     */
+    myTimesUp() {
+        console.log("My time's up!!!")
+    }
+
+    gameDataParser(index) {
+        if(this.gameData === null) return "";
+        var data = this.gameData.typeID.split("|");
+        if(data.length > index) return data[index];
+    }
+
     render() {
         return (
             <div id=".Match">
+                <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
                 <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} gameData={this.gameData}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
+                <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={120}/>
+                <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} seconds={120}/>
             </div>
         )
     }
