@@ -10,7 +10,6 @@ class ChessGame extends PureComponent {
   constructor(props) {
     super(props);
 
-
     this.state = {
       fen: "start",
       squareStyles: {},// custom square styles
@@ -36,14 +35,6 @@ class ChessGame extends PureComponent {
     this.onMouseOutSquare = this.onMouseOutSquare.bind(this);
     this.onReceiveMove = this.onReceiveMove.bind(this);
     this.getBoardStyle = this.getBoardStyle.bind(this);
-  }
-
-  getBoardStyle() {
-    var style = { boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)` };
-    // if(this.color === "Black") {             TODO use this if we can figure out how to rotate pieces
-    //   style.transform = "rotate(180deg)";
-    // }
-    return style;
   }
 
   componentDidMount() {
@@ -147,9 +138,6 @@ class ChessGame extends PureComponent {
     else if (this.game.in_checkmate()) {
       alert('Checkmate!');
     }
-    else if (this.game.in_checkmate()) {
-      alert('Oof a stalemate');
-    }
   }
 
   onMouseOverSquare(square) {
@@ -201,9 +189,10 @@ class ChessGame extends PureComponent {
     return (
       <div>
         <Chessboard width={320}
-          boardStyle={this.getBoardStyle()}
+          boardStyle={{ boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)` }}
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
+          orientation={this.color.toLowerCase()}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
           onMouseOutSquare={e => this.onMouseOutSquare(e)}
           squareStyles={squareStyles}
