@@ -1,10 +1,5 @@
-.ChessGame{
-    align-content: center;
-    max-width: 560px;
-    left: 450px;
-    border: 2px solid;
-    margin: 0px;
+#Chessboard{
+    position: relative;
+    left:350px;
     top:100px;
-    display: flex;
-    position: absolute;
 }

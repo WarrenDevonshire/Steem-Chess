@@ -4,9 +4,12 @@
 }
 
 
-
 #postComments p{
     text-align: left;
+}
+
+#postComments a{
+    background-image: inherit;
 }
 
 .Replybody{

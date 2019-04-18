@@ -16,22 +16,16 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     position: relative;
-    left: 200px;
+    top:150px;
+    left:100px;
 }
 
-#sidebar {
-    padding: 5px 0 0 5px;
-    position: relative;
-    border: 2px solid black;
-    height: 100px;
-    width: 100px;
-    left:200px;
-}
 
 .new-msg{
     position: relative;
     display:table;
-    left: 200px;
+    top:150px;
+    left:100px;
 }
 
 .msg{
@@ -43,5 +37,14 @@ body {
 #Send{
     height: 40px;
     width: 60px;
-    position:absolute;
+    position: relative;
+    bottom:16px;
+}
+
+#container{
+    bottom: 500px;
+    width: 450px;
+    display: table;
+    position: relative;
+    margin:auto;
 }
