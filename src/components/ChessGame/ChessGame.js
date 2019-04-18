@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
+import './ChessGame.css'
 
 const DISABLE_BLOCKCHAIN = true;
 //var PiecesEnum = Object.freeze({"Black":1, "White":2})
@@ -202,16 +203,16 @@ class ChessGame extends PureComponent {
     const { squareStyles } = this.state;
 
     return (
-      <div>
-        <Chessboard width={320}
-          boardStyle={{ boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)` }}
+      <div id='Chessboard'>
+        <Chessboard width={512}
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
           orientation={this.color === null || this.color === undefined ? "white" : this.color.toLowerCase()}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
           onMouseOutSquare={e => this.onMouseOutSquare(e)}
           squareStyles={squareStyles}
-          dropSquareStyle={this.dropSquareStyle} />
+          dropSquareStyle={this.dropSquareStyle} 
+          />
       </div>
     );
   }
