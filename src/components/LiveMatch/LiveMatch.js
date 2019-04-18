@@ -89,6 +89,7 @@ class LiveMatch extends Component {
                     if (this.matchableGames(gameData, json.data)) {
                         this.chessGameComponent.current.state.color = 'b';
                         console.log("Found an opponent!!!", from);
+                        this.chessGameComponent.current.state.color = 'b';
                         this.state.processor.stop();
                         resolve(from);
                     }
@@ -99,6 +100,7 @@ class LiveMatch extends Component {
                         this.chessGameComponent.current.state.color = 'w';
                         this.state.processor.stop();
                         console.log("Didn't find a waiting opponent:(");
+                        this.chessGameComponent.current.state.color = 'w';
                         resolve(null);//Didn't find any players
                     }
                 });
@@ -219,11 +221,8 @@ class LiveMatch extends Component {
                 this.chatboxComponent.current.onReceiveMessage(parsedData);
             }
             else if(parsedData.type === 'move') {
-                //console.log("SEND DATA: ", parsedData.color)
-                //if(parsedData.color === this.chessGameComponent.current.state.color)    {
-                    console.log("CALLED")
-                    this.chessGameComponent.current.onReceivedMove(parsedData, parsedData.color);
-                //}
+                console.log("CALLED")
+                this.chessGameComponent.current.onReceivedMove(parsedData, parsedData.color);
             }
         });
 
