@@ -8,9 +8,7 @@
     text-align: left;
 }
 
-#postComments a{
-    background-image: inherit;
-}
+
 
 .Replybody{
     border: 2px solid lightgreen;
@@ -34,4 +32,3 @@
     color: white;
     margin-bottom: 5px;
 }
-
