@@ -30,6 +30,7 @@ class LiveMatch extends Component {
             peer: null,
             username: localDB.account,
             posting_key: pKey
+           //color: null
         }
         this.chatboxComponent = React.createRef();
         this.chessGameComponent = React.createRef();
@@ -80,12 +81,13 @@ class LiveMatch extends Component {
      */
     async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
         var headBlockNumber = await this.props.location.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 25), 1, GAME_ID, 'latest')});
+        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 15), 1, GAME_ID, 'latest')});
         return new Promise((resolve, reject) => {
             try {
                 this.state.processor.on(gameData.typeID, (json, from) => {
                     console.log("Game block found", json);
                     if (this.matchableGames(gameData, json.data)) {
+                        this.chessGameComponent.current.state.color = 'b';
                         console.log("Found an opponent!!!", from);
                         this.state.processor.stop();
                         resolve(from);
@@ -94,11 +96,13 @@ class LiveMatch extends Component {
                 this.state.processor.onBlock((block) => {
                     //Finish processing
                     if(block === headBlockNumber) {
+                        this.chessGameComponent.current.state.color = 'w';
                         this.state.processor.stop();
                         console.log("Didn't find a waiting opponent:(");
                         resolve(null);//Didn't find any players
                     }
                 });
+
                 this.state.processor.start();
             } catch (err) {
                 console.error(err)
@@ -208,15 +212,18 @@ class LiveMatch extends Component {
         });
 
         this.state.peer.on('data', (data) => {
-            console.log(data)
-            var parsedData = JSON.parse(data); //////////////////////////////////////////////////////////////////////
+            //console.log(data)
+            var parsedData = JSON.parse(data); /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             console.log(parsedData)
             if(parsedData.type === 'message') {
                 this.chatboxComponent.current.onReceiveMessage(parsedData);
             }
             else if(parsedData.type === 'move') {
-                console.log("CALLED")
-                this.chessGameComponent.current.onReceivedMove(parsedData);
+                //console.log("SEND DATA: ", parsedData.color)
+                //if(parsedData.color === this.chessGameComponent.current.state.color)    {
+                    console.log("CALLED")
+                    this.chessGameComponent.current.onReceivedMove(parsedData, parsedData.color);
+                //}
             }
         });
 
@@ -284,7 +291,6 @@ class LiveMatch extends Component {
             </div>
         )
     }
-
 }
 
 export default LiveMatch;

@@ -15,7 +15,11 @@ class ChessGame extends PureComponent {
             history: [],// array of past game moves
 
             peer: this.props.peer,
+            color: null
         };
+
+        this.opponentColor = {'w': 'b',
+                              'b': 'w'}
 
         this.removeHighlightSquare = this.removeHighlightSquare.bind(this);
         this.highlightSquare = this.highlightSquare.bind(this);
@@ -30,10 +34,11 @@ class ChessGame extends PureComponent {
         this.game = new Chess();
     }
 
-    onReceivedMove(data) {
-        var bool = this.isValidMove(data.sourceSquare, data.targetSquare) === true
-        console.log("isValidMove: ", bool)
-        if (bool) {
+    onReceivedMove(data, color) {
+        console.log("PASSED COLOR: ", color)
+        console.log("THIS COLOR: ", this.state.color)
+        console.log("OnRecievedMove: ", this.isValidMove(data.sourceSquare, data.targetSquare) && color === this.opponentColor[color])
+        if (this.isValidMove(data.sourceSquare, data.targetSquare) && color === this.opponentColor[color]) {
             this.commitPieceMove(data.move);
         }
     }
@@ -73,7 +78,8 @@ class ChessGame extends PureComponent {
     };
 
     onDrop(e) {
-        if (this.isValidMove(e.sourceSquare, e.targetSquare) === true) {
+        console.log("ON DROP: ", this.isValidMove(e.sourceSquare, e.targetSquare) && e.piece.startsWith(this.state.color))
+        if (this.isValidMove(e.sourceSquare, e.targetSquare) && e.piece.startsWith(this.state.color)) {
             //Send data to other player
             var success = this.props.sendData({
                 type: "move",
@@ -81,11 +87,12 @@ class ChessGame extends PureComponent {
                 targetSquare: e.targetSquare,
                 piece: e.piece,
                 time: Date.now,
-                move: this.game.fen()
+                move: this.game.fen(),
+                color: this.state.color
             });
 
             //update board
-            if (success === true || success === false) {
+            if (success) {
                 this.commitPieceMove(this.game.fen());
             }
         }
@@ -100,8 +107,6 @@ class ChessGame extends PureComponent {
     }
 
     commitPieceMove(move) {
-        console.log("this fen", this.game.fen());
-        console.log("opponent fen", move);
         this.setState(({ history, pieceSquare }) => ({
             fen: move,
             history: this.game.history({ verbose: true }),
