@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import './Login.css';
+import { Client, PrivateKey } from 'dsteem';
 import {loadState, saveState} from "../../../components/localStorage";
 import {withRouter} from "react-router-dom";
 
+const client = new Client('https://api.steemit.com');
 
 class Login extends Component {
     
@@ -37,14 +39,38 @@ class Login extends Component {
     }
 
     handleLogin(e){
-        saveState(this.state.account, this.state.password, "loggedIn");
-        this.props.history.push('/');
+        const pKey = PrivateKey.fromString(this.state.password);
+        const vote = {
+
+            voter: this.state.account,
+            author: 'almost-digital',
+            permlink: 'dsteem-is-the-best',
+            weight: 0 //needs to be an integer for the vote function
+
+        };
+
+        client.broadcast.vote(vote, pKey)
+        .then(result => {
+
+            //console.log('Success! Vote Has Been Submitted:', result);
+            alert("Success.");
+            saveState(this.state.account, this.state.password, "loggedIn");
+            this.props.history.push('/');
+
+        },
+        function (error) {
+
+            //console.error(error);
+            alert("An error occurred when broadcasting. See console for details.");
+
+        })
+
     }
 
     render() {
         return (
             <div className="Login">
-                <form>
+                
                     <label>
                         Account:
                         <input type="text" value={this.state.account}  onChange={this.handleAccountChange} id="Account"/>
@@ -56,7 +82,7 @@ class Login extends Component {
                     </label>
                     <br/>
                     <button onClick={this.handleLogin} id="submit">Login</button>
-                </form>
+                
         </div>
         )
     }
