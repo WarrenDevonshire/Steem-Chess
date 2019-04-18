@@ -11,9 +11,7 @@ let opts = { ...NetConfig.net };
 
 const client = new Client(NetConfig.url, opts);
 
-// TODO: default to mark down, add button for switching to editor and back
 // TODO: add image button, other buttons
-// <textarea id="body" class="form-control" rows="3" placeholder="Write your post here"></textarea><br />
 
 export default class Compose extends Component {
 
@@ -47,10 +45,21 @@ export default class Compose extends Component {
             
           account: localDB.account,
           privateKey: pKey,
+          editor: false, // whether or not the quill editor is being used instead of markdown
+          editorButtonValue: "Switch to editor",
+          modules: {
+            toolbar: [
+              [{ 'header': [1, 2, 3, false] }],
+              ['bold', 'italic', 'strike', 'blockquote', 'code-block'],
+              [{'list': 'ordered'}, {'list': 'bullet'}],
+              ['link', 'image'],
+            ],
+          } 
 
         };
 
         this.pushPost = this.pushPost.bind(this);
+        this.switchEditor = this.switchEditor.bind(this);
         this.handleChange = this.handleChange.bind(this);
 
       }
@@ -58,7 +67,7 @@ export default class Compose extends Component {
       pushPost() {
 
         // check that all fields are populated
-        if (document.getElementById('title').value === "" || document.getElementById('body').value === "") {
+        if (document.getElementById('title').value === "" || this.state.postBody === "" || document.getElementById('tags').value === "") {
 
           alert("Please fill out all fields.");
           return;
@@ -70,6 +79,13 @@ export default class Compose extends Component {
         //get tags and convert to array list
         const tags = document.getElementById('tags').value;
         const taglist = tags.split(' ');
+        //check that chess is included in tags
+        if (!taglist.includes("chess")) {
+
+          alert("Tags must contain 'chess'");
+          return;
+
+        }
         //make simple json metadata including only tags
         const json_metadata = JSON.stringify({ tags: taglist });
         //generate random permanent link for post
@@ -102,9 +118,42 @@ export default class Compose extends Component {
 
       }
 
+      switchEditor() {
+
+        // switch editor based on which is currently being used
+        // check for value that happens when text is deleted in editor and switched to markdown
+        if (this.state.editor) {
+
+          if (this.state.postBody === "<p><br></p>") {
+
+            this.setState({ postBody: ""});
+
+          }
+          this.setState({ editor: false });
+          this.setState({ editorButtonValue: "Switch to editor" });
+          
+        } else {
+
+          this.setState({ editor: true });
+          this.setState({ editorButtonValue: "Switch to markdown" });
+
+        }
+
+      }
+
       handleChange(value) {
 
+        // update postBody based on which editor is being used
+        if (this.state.editor) {
+
           this.setState({ postBody: value });
+          
+        } else {
+
+          var newBody = document.getElementById('body').value;
+          this.setState({ postBody: newBody });
+
+        }
 
       }
 
@@ -115,8 +164,10 @@ export default class Compose extends Component {
           <div class="container" id="content"><br />
             <h4>Submit a post to the Steem blockchain</h4>
             Title of post: <input id="title" class='input' type="text" size="65" class="form-control" /><br />
-            <ReactQuill value={"Write your post here..."} onChange={this.handleChange} />
-            Tags: <input id="tags" class='input' type="text" size="65" class="form-control" value="chess" /><br />
+            <button onClick={this.switchEditor}>{this.state.editorButtonValue}</button>
+            { this.state.editor ? <ReactQuill modules={this.state.modules} placeholder={"Write your post here..."} defaultValue={this.state.postBody} onChange={this.handleChange} /> : <textarea id="body" class="form-control" rows="3" onChange={this.handleChange} placeholder="Write your post here..." defaultValue={this.state.postBody} />}
+            <br />Tags: <input id="tags" class='input' type="text" size="65" class="form-control" defaultValue="chess" /><br />
+            <em>Separate tags with spaces.</em><br />
             <input id="submitPostBtn" type="button" value="Submit post!" onClick={() => this.pushPost()} class="btn btn-primary" /><br />
             { this.state.postSubmitted ? <Link to={`Post/@${this.state.account}/${this.state.permlink}`}><h1>View new post</h1></Link> : null }
 		      </div>
