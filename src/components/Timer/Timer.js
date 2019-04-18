@@ -1,49 +1,74 @@
 import React from "react";
-import ReactDOM from "react-dom";
 
 //import './Timer.css'
+
+class TimerInput extends React.Component {
+    render() {
+      return (
+          <div>
+          <h3>Input your Game Timer</h3>
+          <input type="number" value={this.props.value} onChange={this.props.handleChange} required />
+        </div>
+      );
+    }
+  }
 
 class Timer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            timerStarted: false,
-            timerStopped: true,
-            hours: 0,
             minutes: 0,
-            seconds: 0,
+            seconds: '00',
+            isClicked : false
         }
+        this.secondsReamaining = this.secondsReamaining;
+        this.intervalHandle = this.intervalHandle;
+        this.handleTicking = this.handleTicking.bind(this); 
     }
 
-handleTimerStart(e) {
+handleChange(event) {
 
-    e.preventDefault();
-    if(this.state.timerStopped){
+    this.setState({
+        value: event.CurrentTarget.value
+    })
+}
 
-        this.timer = setInterval(() => {
+handleTicking() {
+    var min = Math.floor(this.secondsReamaining / 60);
+    var sec = this.secondsRemaining - (min * 60);
 
-            this.setState({timerStarted: true, timerStopped: false});
-            if(this.state.timerStarted) {
+    this.setState({
+        value: min,
+        seconds: sec,
+    })
 
-                //starts counting minutes if seconds go above 60
-                if(this.state.seconds >= 60) {
 
-                    this.setState((prevState) => ({minutes: prevState.minutes + 1, seconds: 0}));
-                }
+if(sec < 10){
+    this.setState ({
+        seconds: "0" + this.state.seconds,
+    })
+}
 
-                //starts counting hours if minutes go above 60
-                if(this.state.minutes >= 60) {
+if (min < 10) {
+    this.setState({
+      value: "0" + min,
+    })
 
-                    this.setState((prevState) => ({hours: prevState.hours + 1, minutes: 0, seconds: 0}));
-                }
-
-                //clears the seconds counter to zero and starts over
-                this.setState((prevState) => ({ seconds: prevState.seconds + 1}));
-
-            }
-        
-        }, 1000);
+    if (min === 0 & sec === 0) {
+        clearInterval(this.intervalHandle);
     }
+
+}
+}
+
+handleDownTimer() {
+
+      this.intervalHandle = setInterval(this.handleTicking, 1000);
+      let time = this.state.value;
+      this.secondsReamaining = time * 60;
+      this.setState({
+        isClicked : true
+    })  
 }
 
 handleTimerStop(e)  {
@@ -52,31 +77,46 @@ handleTimerStop(e)  {
     clearInterval(this.timer);
 }
 
-handleTimerReset(e){
+handleTimerReset(){
     this.setState({timerStarted:false, timerStopped:true, seconds:0, minutes:0, hours:0});
     clearInterval(this.timer);
 }
 
 render() {
-    return (
-        <div className = "container">
-        <h2 className= "text-center"> Chess Game Timer</h2>
-        <div className = "timer-container">
-        <div className = "current-timer">
-        {this.state.hours + ":" +  this.state.minutes + ":" +  this.state.seconds}
-
-        <div className = "timer-controls"></div>
-
-            
-            <button className = "btn btn-success" onClick= {this.handleTimerStart.bind(this)}>Start </button>
-            <button className = "btn btn-danger" onClick = {this.handleTimerStop.bind(this)}>Stop </button>
-            <button className = "btn btn-info" onClick = {this.handleTimerReset.bind(this)}>Reset</button>
-
+    const clicked = this.state.isClicked;
+    if(clicked){return (
+        <div>
+          <div className="row">
+            <div className="col-md-4"></div>
+            <div className="col-md-4">
+              <div value={this.state.value} seconds={this.state.seconds} />
+            </div>
+          </div>
         </div>
+      );}
+   else{
+       return(
+        <div>
+        <div className="row">
+          <div className="col-md-4"></div>
+          <div className="col-md-4">
+            <TimerInput value={this.state.value} handleChange={this.handleChange} />
+            <div value={this.state.value} seconds={this.state.seconds} />
+            <div startCountDown={this.startCountDown} value={this.state.value} />
+          </div>
         </div>
-        </div>
-    );
+      
+
+    <div className = "timer-controls"></div>  
+    <button className = "btn btn-success" onClick= {this.handleDownTimer.bind(this)}>Start </button>
+    <button className = "btn btn-danger" onClick = {this.handleTimerStop.bind(this)}>Stop </button>
+    <button className = "btn btn-info" onClick = {this.handleTimerReset.bind(this)}>Reset</button> 
+
+    </div>
+);} 
+
 }
 }
+
 
 export default Timer;
