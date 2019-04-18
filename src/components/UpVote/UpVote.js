@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Client, PrivateKey } from 'dsteem';
 import { Mainnet as NetConfig } from '../../configuration';
 import { loadState } from '../localStorage';
+import './UpVote.css'
 
 const client = new Client('https://api.steemit.com');
 
@@ -117,7 +118,7 @@ let opts = {...NetConfig.net};
             <div className="upvote">
 
                 <div id="upVote"><br />
-                <button onClick={() => this.handleClick()} id={"openVotes"} >{this.state.voteButtonValue}</button>
+                <button onClick={() => this.handleClick()} id={"openVotes"} class='smallBtn'>{this.state.voteButtonValue}</button>
                 { this.state.expanded ? <input id={this.state.weightId} defaultValue="10" /> : null } 
                 { this.state.expanded ? <button id="pushVote" onClick={() => this.pushVote()}>Push vote</button> : null } 
                 </div>                    
