@@ -91,6 +91,7 @@ class ChessGame extends PureComponent {
       console.warn("Tried to move a piece while it was the opponent's turn");
       return;
     }
+    console.log("EEEEE", e);
 
     if (!this.isValidMove(e.sourceSquare, e.targetSquare)) {
       console.warn("Tried to move to an invalid square");
@@ -116,8 +117,23 @@ class ChessGame extends PureComponent {
   };
 
   isValidMove(sourceSquare, targetSquare) {
+    //Normal moves are 2 or 3 letters long. Taking a piece is 4
     var availableMoves = this.game.moves({ square: sourceSquare });
-    return availableMoves != null && availableMoves.indexOf(targetSquare) >= 0;
+    var filteredMoves = [];
+    availableMoves.forEach(option => {
+      var move = option;
+      //Would put the other player in check
+      if(move.charAt(move.length-1) === "+") {
+        move = move.substring(0, move.length-1);
+      }
+      //Pawn reaching other side
+      if(move.includes("=")) {
+        move = move.substring(0, move.length-2);
+      }
+      filteredMoves.push(move.substring(move.length-2, move.length));
+    });
+    console.log("available moves", availableMoves, sourceSquare, targetSquare);
+    return filteredMoves != null && filteredMoves.indexOf(targetSquare) >= 0;
   }
 
   commitPieceMove(sourceSquare, targetSquare) {

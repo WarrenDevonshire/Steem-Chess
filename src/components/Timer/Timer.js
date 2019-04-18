@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Timer.css'
 
-const tps = 20;
+const tps = 30;
 const rate = 1000/tps;
 
 /**
@@ -15,10 +15,10 @@ class Timer extends Component {
             ended: false,
             display: null,
         }
-        this.initializeTimer();
+        this.initialize();
     }
 
-    initializeTimer() {
+    initialize() {
         //Using this instead of counting down from settimeout prevents 
         //timer from stopping when game is not the current tab
         this.startTime = Date.now();
@@ -33,38 +33,39 @@ class Timer extends Component {
         if (this.props.seconds != null) {
             seconds = this.props.seconds;
         }
-        this.endTime = Date.now() + ((((hours * 60) + minutes) * 60) + seconds) * 1000;
+        this.timeLeft = ((((hours * 60) + minutes) * 60) + seconds) * 1000;
         this.updateDisplay();
     }
 
-    startTimer() {
+    start(startTime = startTime || Date.now()) {
         this.on = true;
-        this.tickLoop();
+        this.endTime = startTime + this.timeLeft;
+        this.tickLoop(); 
     }
 
     tickLoop() {
         setTimeout(() => {
             this.updateDisplay();
-            if(Date.now() >= this.endTime) {
+            this.timeLeft = this.endTime - Date.now();
+            if(this.timeLeft <= 0) {
                 this.on = false;
             }
             if(this.on) {
-                this.startTimer();
+                this.start();
             }
         }, rate);
     }
 
-    stopTimer() {
+    stop() {
         this.on = false;
     }
 
     updateDisplay() {
-        var timeLeft = this.endTime - Date.now();
-        var minutes = Math.floor(timeLeft / 60000);
+        var minutes = Math.floor(this.timeLeft / 60000);
         if(minutes < 10) {
             minutes = "0" + minutes;
         }
-        var seconds = Math.floor((timeLeft % 60000)/1000);
+        var seconds = Math.floor((this.timeLeft % 60000)/1000);
         if(seconds < 10) {
             seconds = "0" + seconds;
         }
@@ -80,9 +81,9 @@ class Timer extends Component {
                         {this.state.display}
 
                         <div className="timer-controls"></div>
-                        <button className="btn btn-success" onClick={this.startTimer.bind(this)}>Start </button>
-                        <button className="btn btn-danger" onClick={this.stopTimer.bind(this)}>Stop </button>
-                        <button className="btn btn-info" onClick={this.initializeTimer.bind(this)}>Reset</button>
+                        <button className="btn btn-success" onClick={this.start.bind(this)}>Start </button>
+                        <button className="btn btn-danger" onClick={this.stop.bind(this)}>Stop </button>
+                        <button className="btn btn-info" onClick={this.initialize.bind(this)}>Reset</button>
                     </div>
                 </div>
             </div>

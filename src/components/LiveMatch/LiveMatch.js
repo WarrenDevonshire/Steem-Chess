@@ -43,9 +43,6 @@ class LiveMatch extends Component {
     }
 
     async componentDidMount() {
-        console.log("cdm");
-        console.log(this);
-
         var localDB = loadState();
         if(localDB.account == null) {
             console.log("Went to LiveMatch without logging in");
@@ -63,6 +60,13 @@ class LiveMatch extends Component {
             return;
         }
 
+        if(this.gameData.startingColor === "White") {
+            this.myTimerComponent.current.start();
+        }
+        else {
+            this.opponentTimerComponent.current.start();
+        }
+
         if(DISABLE_BLOCKCHAIN) return;
 
         this.peer.on('data', (data) => {
@@ -72,6 +76,8 @@ class LiveMatch extends Component {
             }
             else if (parsedData.type === 'move') {
                 this.chatboxComponent.current.onReceiveMove(parsedData);
+                this.opponentTimerComponent.current.stop();
+                this.myTimerComponent.current.start();
             }
         });
     }
@@ -80,6 +86,11 @@ class LiveMatch extends Component {
      * Sends data to the connected peer
      */
     sendPeerData(data) {
+        if(data.type === "move") { //TODO make sure both players agree on timer times, and implement increments
+            this.myTimerComponent.current.stop();
+            this.opponentTimerComponent.current.start();
+        }
+        
         if(DISABLE_BLOCKCHAIN) return true;
         
         if (this.peer == null) {
@@ -122,8 +133,8 @@ class LiveMatch extends Component {
                 <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
                 <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} gameData={this.gameData}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
-                <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={120}/>
-                <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} seconds={120}/>
+                <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
+                <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
             </div>
         )
     }
