@@ -3,16 +3,27 @@ import './Menubar.css';
 import {Link} from 'react-router-dom';
 import Login from '../Login/Login';
 
+export default class Menubar extends Component {
 
-class Menubar extends Component {
     constructor(props) {
+
         super(props);
         this.state = {
             api: this.props.api
         }
+
+        this.search = this.search.bind(this);
+
+    }
+
+    search() {
+
+        alert("test");
+
     }
 
     render() {
+
         return (
 
 
@@ -30,12 +41,10 @@ class Menubar extends Component {
                 </div>
                 <form>
                     <input type="text" />
-                    <button type="submit" class='search'>Search</button>
+                    <button type="submit" class='search' onClick={() => this.search()}>Search</button>
                 </form>
             </div>
 
         )
     }
 }
-
-export default Menubar;
