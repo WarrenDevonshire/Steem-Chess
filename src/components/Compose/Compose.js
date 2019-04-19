@@ -16,9 +16,6 @@ const client = new Client(NetConfig.url, opts);
 
 // TODO: make header dropdown wider so text doesn't clip with arrows, CSS?
 
-// define custom image button
-const CustomImage = () => <span>IMG</span>;
-
 // define custom toolbar using custom image button
 const CustomToolbar = () => (
 
@@ -35,9 +32,7 @@ const CustomToolbar = () => (
         </span>
         <span className="ql-formats">
             <button className="ql-link" />
-            <button className="ql-image">
-                <CustomImage />
-            </button>
+            <button className="ql-image" />
         </span>
         <span className="ql-formats">
             <span className="ql-header">
