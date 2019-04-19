@@ -11,6 +11,11 @@ let opts = { ...NetConfig.net };
 
 const client = new Client(NetConfig.url, opts);
 
+// TODO: when switching from a header font to normal, clicking once switches the editor to normal
+// but the selector still says header that was selected, have to click again to make the selector say 'normal'
+
+// TODO: make header dropdown wider so text doesn't clip with arrows, CSS?
+
 // define custom image button
 const CustomImage = () => <span>IMG</span>;
 
@@ -35,14 +40,14 @@ const CustomToolbar = () => (
             </button>
         </span>
         <span className="ql-formats">
-            <span className="ql-size">
+            <span className="ql-header">
                 <span className="ql-picker-label" />
                 <span className="ql-picker-options" />
-                <select className="ql-size">
-                    <option value="small" />
-                    <option selected />
-                    <option value="large" />
-                    <option value="huge" />
+                <select className="ql-header">
+                    <option false />
+                    <option value="3" />
+                    <option value="2" />
+                    <option value="1" />
                 </select>
             </span>
         </span>
