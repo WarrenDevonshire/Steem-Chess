@@ -89,7 +89,7 @@ class ChessGame extends PureComponent {
   onDrop(e) {
     console.log(this);
     console.log(e.piece == (this.color + "P"));
-    if (!DISABLE_BLOCKCHAIN && !e.piece == (this.color + "P")) {
+    if (!DISABLE_BLOCKCHAIN && !(e.piece == (this.color + "P"))) {
       console.warn("Tried to move a piece while it was the opponent's turn");
       return;
     }
@@ -142,7 +142,7 @@ class ChessGame extends PureComponent {
     this.game.move({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q" // always promote to a queen for example simplicity TODO don't know what this is
+      promotion: "q" // always promote to a queen for simplicity. This is for pawns that make it to the other side
     });
     this.setState(({ pieceSquare }) => ({
       fen: this.game.fen(),

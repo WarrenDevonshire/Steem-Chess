@@ -49,6 +49,7 @@ class Timer extends Component {
             this.timeLeft = this.endTime - Date.now();
             if(this.timeLeft <= 0) {
                 this.on = false;
+                this.props.timesUp();
             }
             if(this.on) {
                 this.start();
@@ -58,6 +59,15 @@ class Timer extends Component {
 
     stop() {
         this.on = false;
+    }
+
+    addTime(seconds) {
+        if(this.on) {
+            this.endTime = this.endTime + (seconds * 1000);
+        }
+        else {
+            this.timeLeft = this.timeLeft + (seconds * 1000);
+        }
     }
 
     updateDisplay() {

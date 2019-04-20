@@ -88,6 +88,7 @@ class LiveMatch extends Component {
     sendPeerData(data) {
         if(data.type === "move") { //TODO make sure both players agree on timer times, and implement increments
             this.myTimerComponent.current.stop();
+            this.myTimerComponent.current.addTime(this.gameData.increment);
             this.opponentTimerComponent.current.start();
         }
         
@@ -111,14 +112,16 @@ class LiveMatch extends Component {
      * Called when the opponent's timer component reaches 0
      */
     opponentTimesUp() {
-        console.log("Opponent time's up!!!")
+        console.log("Opponent time's up!!!");
+        alert("You win!! Opponent ran out of time");
     }
 
     /**
      * Called when the local player's time reaches 0
      */
     myTimesUp() {
-        console.log("My time's up!!!")
+        console.log("My time's up!!!");
+        alert("Sorry, you lose! You ran out of time");
     }
 
     gameDataParser(index) {
