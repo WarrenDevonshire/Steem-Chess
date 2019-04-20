@@ -3,7 +3,7 @@ import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 import './ChessGame.css'
 
-const DISABLE_BLOCKCHAIN = true;
+const DISABLE_BLOCKCHAIN = false;
 //var PiecesEnum = Object.freeze({"Black":1, "White":2})
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.
@@ -23,10 +23,10 @@ class ChessGame extends PureComponent {
     else {
       console.log("Chess game props: ", this.props.gameData);
       this.gameData = this.props.gameData;
-      this.color = this.gameData.startingColor;
+      this.color = this.gameData.startingColor[0].toLowerCase();
     }
 
-    this.opponentColor = this.color === "White" ? "Black" : "White";
+    this.opponentColor = this.color === "w" ? "b" : "w";
     this.dropSquareStyle = { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }; // square styles for active drop square
     this.history = []; //array of past game moves
     this.removeHighlightSquare = this.removeHighlightSquare.bind(this);
@@ -88,7 +88,8 @@ class ChessGame extends PureComponent {
 
   onDrop(e) {
     console.log(this);
-    if (!DISABLE_BLOCKCHAIN && !e.piece.startsWith(this.state.color)) {
+    console.log(e.piece == (this.color + "P"));
+    if (!DISABLE_BLOCKCHAIN && !e.piece == (this.color + "P")) {
       console.warn("Tried to move a piece while it was the opponent's turn");
       return;
     }
@@ -106,7 +107,7 @@ class ChessGame extends PureComponent {
       piece: e.piece,
       time: Date.now,
       move: this.game.fen(),
-      color: this.state.color
+      color: this.color
     });
 
     if(!success) {
@@ -207,7 +208,7 @@ class ChessGame extends PureComponent {
         <Chessboard width={512}
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
-          orientation={this.color === null || this.color === undefined ? "white" : this.color.toLowerCase()}
+          orientation={this.color === "b" ? "black" : "white"}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
           onMouseOutSquare={e => this.onMouseOutSquare(e)}
           squareStyles={squareStyles}

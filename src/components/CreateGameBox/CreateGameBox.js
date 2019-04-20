@@ -6,10 +6,6 @@ import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
 
-//TEMP unitl local data storage
-const USERNAME = "mdhalloran"
-
-
 class CreateGameBox extends Component {
     constructor(props) {
         super(props);
@@ -50,7 +46,7 @@ class CreateGameBox extends Component {
     grabGameData() {
         return {
             startingColor: this.state.pieceChosen,
-            username: USERNAME,
+            username: null,
             time: Date.now(),
             typeID: this.state.timeControlChosen + "|" + this.state.timePerSide + "|" + this.state.increment
         }

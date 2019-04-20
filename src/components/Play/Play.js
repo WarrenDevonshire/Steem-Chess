@@ -20,7 +20,7 @@ const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
-const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
 
 class Play extends Component {
     constructor(props) {
@@ -71,7 +71,6 @@ class Play extends Component {
             }
             try {
                 client.database.getDynamicGlobalProperties().then((result) => {
-                    console.log("current block head: ", result.head_block_number);
                     resolve(result.head_block_number);
                 });
             } catch (err) {
@@ -88,7 +87,7 @@ class Play extends Component {
         if (DISABLE_BLOCKCHAIN) return;
 
         var headBlockNumber = await this.findBlockHead(client);
-        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 100), 1, GAME_ID, 'latest');
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 1, GAME_ID, 'latest');
         try {
             this.processor.on(POST_GAME_TAG, (data) => {
                 console.log("Game block found", data);
@@ -128,24 +127,25 @@ class Play extends Component {
             //less than 5 minutes ago
             for (var i = this.gameRequestBlocks.length - 1; i >= 0; --i) {
                 //TODO check that the user is not the same as the current person once testing is complete
-                var currentBlock = this.gameRequestBlocks[i];
-                if (!waitingPlayers.includes(currentBlock.username) &&
-                    (Date.now() - currentBlock.time) < maxWaitingTime) {
-                    waitingPlayers.push(currentBlock);
+                var iBlock = this.gameRequestBlocks[i];
+                if (!waitingPlayers.includes(iBlock.username) &&
+                    (Date.now() - iBlock.time) < maxWaitingTime) {
+                    waitingPlayers.push(iBlock);
                 }
             }
             //Removes games where the player already connected to someone else
-            for (var i = this.closeRequestBlocks.length - 1; i >= 0; --i) {
-                var currentBlock = this.closeRequestBlocks[i];
-                var playerIndex = waitingPlayers.indexOf(currentBlock.username);
+            for (var j = this.closeRequestBlocks.length - 1; j >= 0; --j) {
+                var jBlock = this.closeRequestBlocks[j];
+                var playerIndex = waitingPlayers.indexOf(jBlock.username);
                 if (playerIndex >= 0) {
                     var possibleClosedGame = waitingPlayers[playerIndex];
-                    if (currentBlock.time === possibleClosedGame.time) {
+                    if (jBlock.time === possibleClosedGame.time) {
                         waitingPlayers.splice(playerIndex, 1);
                     }
                 }
             }
             if (waitingPlayers.length > 0) {
+                console.log("got eem");
                 return waitingPlayers[0];
             }
         }
@@ -171,41 +171,32 @@ class Play extends Component {
             if (DISABLE_BLOCKCHAIN) resolve();
 
             console.log("sending request to existing game");
-            this.gameData.startingColor = this.decideRandom(this.gameData, opponentData);
-            this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, {
-                data: this.gameData,
-                sendingTo: opponentData.username
-            }, (err, result) => {
-                if (err) {
-                    console.error(err);
-                    reject(err);
-                    alert("Failed to send game request");
-                }
-                else if (result) {
-                    console.log("sent request to existing game", this.gameData);
-                    this.initializePeer(false);
-                    resolve();
-                }
-            });
+            this.gameData.startingColor = this.decideRandom(this.gameData.startingColor, opponentData.startingColor);
+            opponentData.startingColor = this.decideRandom(opponentData.startingColor, this.gameData.startingColor);
+            this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, opponentData,
+                (err, result) => {
+                    if (err) {
+                        console.error(err);
+                        reject(err);
+                        alert("Failed to send game request");
+                    }
+                    else if (result) {
+                        console.log("sent request to existing game", this.gameData);
+                        this.initializePeer(false);
+                        resolve();
+                    }
+                });
         });
     }
 
     /**
-     * Decides on random starting color for gameData
+     * Decides on random starting color for thisColor
      */
-    decideRandom(thisGame, thatGame) {
-        if (thisGame.startingColor === "Random") {
-            if (thatGame.startingColor === "Black") {
-                return "White";
-            }
-            else if (thatGame.startingColor === "White") {
-                return "Black";
-            }
-            else {
-                return Math.random() < 0.5 ? "White" : "Black";
-            }
-        }
-        return thisGame.startingColor;
+    decideRandom(thisColor, thatColor) {
+        if(thisColor !== "Random") return thisColor.toString();
+        if (thatColor === "Black") return "White";
+        if (thatColor === "White") return "Black";
+        return Math.random() < 0.5 ? "White" : "Black";
     }
 
     /**
@@ -235,12 +226,13 @@ class Play extends Component {
     /**
      * Opens a stream to listen to join requests
      */
-    listenForJoinTag(currentBlockNumber) {//TODO timeout after 5 minutes
+    listenForJoinTag(currentBlockNumber) {
         this.processor = steemState(client, dsteem, currentBlockNumber, 100, GAME_ID);
         try {
-            this.processor.on(JOIN_TAG, (block, sendingTo) => {
-                if (sendingTo === this.username && this.matchableGames(this.gameData, block.data)) {
-                    this.gameData.startingColor = this.decideRandom(block.data);
+            this.processor.on(JOIN_TAG, (block) => {
+                if (this.username === block.username && this.gameData.typeID === block.typeID) {
+                    console.log("accepted join block");
+                    this.gameData.startingColor = block.startingColor;
                     this.initializePeer(true);
                 }
             });
@@ -251,6 +243,15 @@ class Play extends Component {
                 this.processor.stop();
             alert("Game request failed");
         }
+
+        setTimeout(() => {//TODO put timeouts in more places, for different parts of the process
+            if (this.peer == null) {
+                if (this.processor !== null)
+                    this.processor.stop();
+                PubSub.publish('spinner', { spin: false });
+                alert("Failed to find opponent within 5 minutes");
+            }
+        }, maxWaitingTime);
     }
 
     /**
@@ -324,6 +325,7 @@ class Play extends Component {
 
     createGameClicked() {
         this.gameData = this.createGameComponent.current.grabGameData();
+        this.gameData.username = this.username;
 
         if (DISABLE_BLOCKCHAIN) {
             this.props.history.push({
@@ -339,6 +341,7 @@ class Play extends Component {
         //If opponent not found after 15 seconds, post a game request
         setTimeout(() => {
             var opponentData = this.checkWaitingPlayers();
+            console.log("in timeout thingy",this.gameData, opponentData);
             if (opponentData == null) {
                 this.postGameRequest();
             }
@@ -354,9 +357,13 @@ class Play extends Component {
             console.error("Opponent data null");
             return;
         }
-        this.gameData = opponentData;
-        this.gameData.startingColor = "Random";
-        this.gameData.username = this.username;
+
+        this.gameData = {
+            startingColor: "Random",
+            username: this.username,
+            time: opponentData.time,
+            typeID: opponentData.typeID
+        }
 
         if (DISABLE_BLOCKCHAIN) {
             this.props.history.push({

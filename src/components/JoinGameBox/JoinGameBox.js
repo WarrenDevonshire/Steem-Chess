@@ -50,10 +50,11 @@ class JoinGameBox extends Component {
     {
         console.log("Trying to find game requests");
         var waitingOpponents = [];
-        var maxWaitingTime = 1000 * 60 * 5;//5 minutes
+        var maxWaitingTime = 1000 * 60 * 15;//5 minutes
         var headBlockNumber = await this.props.findBlockHead(client);
-        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 0, GAME_ID, 'latest');
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 350), 0, GAME_ID, 'latest');
         this.processor.on(POST_GAME_TAG, (data) => {
+            console.log("found BLOCK", data);
             //If the request was made less than 5 minutes ago
             if ((Date.now() - data.time) < maxWaitingTime) {
                 var gameIndex = waitingOpponents.indexOf(data.username);
@@ -103,14 +104,17 @@ class JoinGameBox extends Component {
         return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     }
 
-    getTimePerSide(typeID) {
+    optionsSplitter(typeID, index) {
         var options = typeID.split("|");
-        return options.length > 2 ? options[1] : "";
+        return options.length > index + 1 ? options[index] : "";
+    }
+
+    getTimePerSide(typeID) {
+        return this.optionsSplitter(typeID, 1);
     }
 
     getTimeControlChosen(typeID) {
-        var options = typeID.split("|");
-        return options.length > 1 ? options[0] : "";
+        return this.optionsSplitter(typeID, 0);
     }
 
     joinClicked(e) {
