@@ -77,6 +77,7 @@ class LiveMatch extends Component {
             else if (parsedData.type === 'move') {
                 this.chessGameComponent.current.onReceiveMove(parsedData);
                 this.opponentTimerComponent.current.stop();
+                this.opponentTimerComponent.current.addTime(this.gameDataParser(2));
                 this.myTimerComponent.current.start();
             }
         });
@@ -88,7 +89,7 @@ class LiveMatch extends Component {
     sendPeerData(data) {
         if(data.type === "move") { //TODO make sure both players agree on timer times, and implement increments
             this.myTimerComponent.current.stop();
-            this.myTimerComponent.current.addTime(this.gameData.increment);
+            this.myTimerComponent.current.addTime(this.gameDataParser(2));
             this.opponentTimerComponent.current.start();
         }
         
@@ -113,6 +114,7 @@ class LiveMatch extends Component {
      */
     opponentTimesUp() {
         console.log("Opponent time's up!!!");
+        this.chessGameComponent.current.endGame();
         alert("You win!! Opponent ran out of time");
     }
 
@@ -121,6 +123,7 @@ class LiveMatch extends Component {
      */
     myTimesUp() {
         console.log("My time's up!!!");
+        this.chessGameComponent.current.endGame();
         alert("Sorry, you lose! You ran out of time");
     }
 

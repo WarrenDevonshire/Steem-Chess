@@ -26,6 +26,8 @@ class ChessGame extends PureComponent {
       this.color = this.gameData.startingColor[0].toLowerCase();
     }
 
+    this.gameOver = false;
+    this.myTurn = this.color === "w";
     this.opponentColor = this.color === "w" ? "b" : "w";
     this.dropSquareStyle = { boxShadow: "inset 0 0 1px 4px rgb(255, 255, 0)" }; // square styles for active drop square
     this.history = []; //array of past game moves
@@ -49,6 +51,7 @@ class ChessGame extends PureComponent {
     }
     if (this.isValidMove(data.sourceSquare, data.targetSquare)) {
       this.commitPieceMove(data.sourceSquare, data.targetSquare);
+      this.myTurn = true;
     }
   }
 
@@ -87,9 +90,8 @@ class ChessGame extends PureComponent {
   };
 
   onDrop(e) {
-    console.log(this);
-    console.log(e.piece == (this.color + "P"));
-    if (!DISABLE_BLOCKCHAIN && !(e.piece == (this.color + "P"))) {
+    if(this.gameOver) return;
+    if (!DISABLE_BLOCKCHAIN && !this.myTurn) {
       console.warn("Tried to move a piece while it was the opponent's turn");
       return;
     }
@@ -116,16 +118,20 @@ class ChessGame extends PureComponent {
     }
 
     this.commitPieceMove(e.sourceSquare, e.targetSquare);
+    this.myTurn = false;
   };
 
   isValidMove(sourceSquare, targetSquare) {
-    //Normal moves are 2 or 3 letters long. Taking a piece is 4
     var availableMoves = this.game.moves({ square: sourceSquare });
     var filteredMoves = [];
     availableMoves.forEach(option => {
       var move = option;
       //Would put the other player in check
       if(move.charAt(move.length-1) === "+") {
+        move = move.substring(0, move.length-1);
+      }
+      //Would put the other player in checkmate
+      if(move.charAt(move.length-1) === "#") {
         move = move.substring(0, move.length-1);
       }
       //Pawn reaching other side
@@ -158,6 +164,8 @@ class ChessGame extends PureComponent {
   }
 
   onMouseOverSquare(square) {
+    if(this.gameOver || !this.myTurn) return;
+
     // get list of possible moves for this square
     var moves = this.game.moves({
       square: square,
@@ -199,6 +207,10 @@ class ChessGame extends PureComponent {
       })
     };
   };
+
+  endGame() {
+    this.gameOver = true;
+  }
 
   render() {
     const { squareStyles } = this.state;

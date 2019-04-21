@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Timer.css'
 
 const tps = 30;
-const rate = 1000/tps;
+const rate = 1000 / tps;
 
 /**
  * A component used to keep track of how much time
@@ -15,6 +15,9 @@ class Timer extends Component {
             ended: false,
             display: null,
         }
+    }
+
+    componentDidMount() {
         this.initialize();
     }
 
@@ -37,22 +40,25 @@ class Timer extends Component {
         this.updateDisplay();
     }
 
-    start(startTime = startTime || Date.now()) {
+    start(startTime) {
+        if(isNaN(startTime)) {
+            startTime = Date.now();
+        }
         this.on = true;
         this.endTime = startTime + this.timeLeft;
-        this.tickLoop(); 
+        this.tickLoop();
     }
 
     tickLoop() {
         setTimeout(() => {
             this.updateDisplay();
             this.timeLeft = this.endTime - Date.now();
-            if(this.timeLeft <= 0) {
-                this.on = false;
-                this.props.timesUp();
-            }
-            if(this.on) {
-                this.start();
+            if (this.on) {
+                if (this.timeLeft <= 0) {
+                    this.on = false;
+                    this.props.timesUp();
+                }
+                this.tickLoop();
             }
         }, rate);
     }
@@ -62,40 +68,27 @@ class Timer extends Component {
     }
 
     addTime(seconds) {
-        if(this.on) {
-            this.endTime = this.endTime + (seconds * 1000);
-        }
-        else {
-            this.timeLeft = this.timeLeft + (seconds * 1000);
-        }
+        if(isNaN(seconds)) return;
+        if (this.on) this.endTime = this.endTime + (seconds * 1000);
+        else this.timeLeft = this.timeLeft + (seconds * 1000);
     }
 
     updateDisplay() {
-        var minutes = Math.floor(this.timeLeft / 60000);
-        if(minutes < 10) {
+        var minutes = Math.max(0, Math.floor(this.timeLeft / 60000));
+        if (minutes < 10) {
             minutes = "0" + minutes;
         }
-        var seconds = Math.floor((this.timeLeft % 60000)/1000);
-        if(seconds < 10) {
+        var seconds = Math.max(0, Math.floor((this.timeLeft % 60000) / 1000));
+        if (seconds < 10) {
             seconds = "0" + seconds;
         }
-        this.setState({display:minutes + ":" + seconds});
+        this.setState({ display: minutes + ":" + seconds });
     }
 
     render() {
         return (
-            <div className="container">
-                <h2 className="text-center"> Chess Game Timer</h2>
-                <div className="timer-container">
-                    <div className="current-timer">
-                        {this.state.display}
-
-                        <div className="timer-controls"></div>
-                        <button className="btn btn-success" onClick={this.start.bind(this)}>Start </button>
-                        <button className="btn btn-danger" onClick={this.stop.bind(this)}>Stop </button>
-                        <button className="btn btn-info" onClick={this.initialize.bind(this)}>Reset</button>
-                    </div>
-                </div>
+            <div className="current-timer">
+                {this.state.display}
             </div>
         );
     }

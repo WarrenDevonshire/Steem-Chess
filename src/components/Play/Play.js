@@ -31,6 +31,7 @@ class Play extends Component {
         this.username = null;
         this.posting_key = null;
         this.peer = null;
+        this.optionClicked = false;
 
         this.createGameComponent = React.createRef();
         this.joinGameComponent = React.createRef();
@@ -47,6 +48,8 @@ class Play extends Component {
         if (this.processor !== null) {
             this.processor.stop();
         }
+        clearTimeout(this.failedToJoinTimeout);//TODO not working
+        clearTimeout(this.createGameTimeout);//TODO not working
         PubSub.publish('spinner', { spin: false });
     }
 
@@ -244,7 +247,7 @@ class Play extends Component {
             alert("Game request failed");
         }
 
-        setTimeout(() => {//TODO put timeouts in more places, for different parts of the process
+        this.failedToJoinTimeout = setTimeout(() => {//TODO put timeouts in more places, for different parts of the process
             if (this.peer == null) {
                 if (this.processor !== null)
                     this.processor.stop();
@@ -324,6 +327,8 @@ class Play extends Component {
     }
 
     createGameClicked() {
+        if(this.optionClicked) return;
+        this.optionClicked = true;
         this.gameData = this.createGameComponent.current.grabGameData();
         this.gameData.username = this.username;
 
@@ -339,7 +344,7 @@ class Play extends Component {
 
         this.findWaitingPlayers(this.gameData);
         //If opponent not found after 15 seconds, post a game request
-        setTimeout(() => {
+        this.createGameTimeout = setTimeout(() => {
             var opponentData = this.checkWaitingPlayers();
             console.log("in timeout thingy",this.gameData, opponentData);
             if (opponentData == null) {
@@ -352,6 +357,8 @@ class Play extends Component {
     }
 
     joinGameClicked() {
+        if(this.optionClicked) return;
+        this.optionClicked = true;
         var opponentData = this.joinGameComponent.current.state.selectedData;
         if (opponentData == null) {
             console.error("Opponent data null");

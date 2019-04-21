@@ -1,25 +1,8 @@
-.timer-container {
-    
-    display: flex;
-    flex-direction: column;
-}
-
 .current-timer{
     text-align: center;
     font-family: monospace;
-    font-size: 65px;
-    margin: auto;
-    line-height: 3.3;
-    width: 24px;
-    height: 226px;
+    font-size: 2em;
+    display: inline-block;
     border: 1px solid;
-    border-radius: 100%;
-    margin-bottom: 40px;
-    margin-top: 40px;
+    padding: 5px;
 }
-
-.timer-controls {
-    display: flex;
-    justify-content: space-evenly;
-}
-
