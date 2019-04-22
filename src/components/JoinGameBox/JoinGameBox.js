@@ -4,7 +4,6 @@ import './JoinGameBox.css';
 //import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import { Link } from 'react-router-dom';
 //import LiveMatch from '../LiveMatch/LiveMatch'
 
 const GAME_ID = 'steem-chess'
@@ -25,10 +24,12 @@ class JoinGameBox extends Component {
             selectedData: null
         };
 
+        this.processor = null;
+
         this.filterChanged = this.filterChanged.bind(this);
         this.joinViewChanged = this.joinViewChanged.bind(this);
         this.getFormattedTime = this.getFormattedTime.bind(this);
-        this.processor = null;
+        this.joinClicked = this.joinClicked.bind(this);
     }
 
     componentDidMount() {
@@ -49,10 +50,11 @@ class JoinGameBox extends Component {
     {
         console.log("Trying to find game requests");
         var waitingOpponents = [];
-        var maxWaitingTime = 1000 * 60 * 5;//5 minutes
+        var maxWaitingTime = 1000 * 60 * 15;//5 minutes
         var headBlockNumber = await this.props.findBlockHead(client);
-        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 0, GAME_ID, 'latest');
+        this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 350), 0, GAME_ID, 'latest');
         this.processor.on(POST_GAME_TAG, (data) => {
+            console.log("found BLOCK", data);
             //If the request was made less than 5 minutes ago
             if ((Date.now() - data.time) < maxWaitingTime) {
                 var gameIndex = waitingOpponents.indexOf(data.username);
@@ -102,30 +104,29 @@ class JoinGameBox extends Component {
         return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     }
 
-    getTimePerSide(typeID) {
+    optionsSplitter(typeID, index) {
         var options = typeID.split("|");
-        return options.length > 2 ? options[1] : "";
+        return options.length > index + 1 ? options[index] : "";
+    }
+
+    getTimePerSide(typeID) {
+        return this.optionsSplitter(typeID, 1);
     }
 
     getTimeControlChosen(typeID) {
-        var options = typeID.split("|");
-        return options.length > 1 ? options[0] : "";
+        return this.optionsSplitter(typeID, 0);
+    }
+
+    joinClicked(e) {
+        this.props.onJoinGameClicked();
     }
 
     render() {
         return (
-            <div className={JoinGameBox} class='JoinGameBox'>
+            <div className='JoinGameBox'>
                 <div>
-                    <Title title={'Join Game'}/>
-                    {/* <label class="filter">Filter</label> */}
-                    {/* <ToggleSwitch checked={false}
-                        falseText="Grid"
-                        trueText="Card"
-                        offColor="#0000ff"
-                        onChange={this.joinViewChanged}
-                    /> */}
+                    <h1>Join Game</h1>
                 </div>
-                {/* <hr noshade="true" class='Line' /> */}
                 <div>
                     <ReactTable
                         data={this.state.availableGames}
@@ -149,10 +150,10 @@ class JoinGameBox extends Component {
                             id: "posted",
                             accessor: data => this.getFormattedTime(data.time)
                         }]}
-                        getTrProps={(state, rowInfo) => {
+                        getTrProps={(_, rowInfo) => {
                             if (rowInfo && rowInfo.row) {
                                 return {
-                                    onClick: (e) => {
+                                    onClick: () => {
                                         this.setState({
                                             selected: rowInfo.index,
                                             selectedData: rowInfo.original
@@ -172,19 +173,11 @@ class JoinGameBox extends Component {
                         className="table"
                         resizable={false} />
                 </div>
-                <hr noshade="true" class='Line' />
-                <Link to={{pathname: "/Live", opponentData: this.state.selectedData, findBlockHead: this.props.findBlockHead }} class='link'><button class='Button'>Join Game</button></Link>
+                <hr noshade="true" className='Line' />
+                <button className="Button" onClick={this.joinClicked}>Join Game</button>
             </div>
         );
     }
 }
 
 export default JoinGameBox;
-
-function Title(props) {
-    return <h1>{props.title}</h1>
-}
-
-Title.defaultProps = {
-    title: "Title"
-};

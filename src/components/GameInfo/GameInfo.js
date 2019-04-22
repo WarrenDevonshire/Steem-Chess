@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import LiveMatch from '../LiveMatch/LiveMatch';
 import './GameInfo.css';
 
 class GameInfo extends Component{

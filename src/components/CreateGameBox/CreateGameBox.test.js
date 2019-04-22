@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ComboBox from './ComboBox';
+import CreateGameBox from './CreateGameBox';
 
 it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<ComboBox/>, div);
+    ReactDOM.render(<CreateGameBox/>, div);
     ReactDOM.unmountComponentAtNode(div);
 });
