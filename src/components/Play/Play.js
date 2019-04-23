@@ -60,7 +60,7 @@ class Play extends Component {
             return;
         }
         this.username = localDB.account;
-        this.posting_key = dsteem.PrivateKey.fromLogin(this.username, localDB.key, 'posting').toString();
+        this.posting_key = dsteem.PrivateKey.fromString(localDB.key);
     }
 
     /**
