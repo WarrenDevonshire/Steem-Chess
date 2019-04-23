@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ComboBox from './ComboBox';
+import Spinner from './Spinner';
 
 it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<ComboBox/>, div);
+    ReactDOM.render(<Spinner/>, div);
     ReactDOM.unmountComponentAtNode(div);
 });

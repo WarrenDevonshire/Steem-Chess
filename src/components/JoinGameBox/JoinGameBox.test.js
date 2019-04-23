@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ToggleSwitch from './ToggleSwitch';
+import JoinGameBox from './JoinGameBox';
 
 it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<ToggleSwitch/>, div);
+    ReactDOM.render(<JoinGameBox/>, div);
     ReactDOM.unmountComponentAtNode(div);
 });
