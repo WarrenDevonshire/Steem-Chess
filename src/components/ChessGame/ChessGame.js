@@ -40,7 +40,16 @@ class ChessGame extends PureComponent {
         if (this.isValidMove(data.sourceSquare, data.targetSquare)) {
             this.commitPieceMove(data.move);
             if(this.game.in_check())    {
-                console.log('You are in check.')
+                alert('You are in check.')
+            }
+            if(this.game.game_over())   {
+                console.log("game over!")
+            }
+            if(this.game.in_checkmate())    {
+                alert("checkmate")
+            }
+            else if(this.game.in_stalemate())   {
+                alert('stalemate')
             }
         }
     }
@@ -98,6 +107,18 @@ class ChessGame extends PureComponent {
             //update board
             if (success) {
                 this.commitPieceMove(this.game.fen());
+            }
+            if(this.game.in_check())    {
+                alert("Your opponent is in check.")
+            }
+            if(this.game.game_over())   {
+                console.log("game over!")
+            }
+            if(this.game.in_checkmate())    {
+                alert("checkmate")
+            }
+            else if(this.game.in_stalemate())   {
+                alert('stalemate')
             }
         }
     };
