@@ -11,6 +11,7 @@ import UpVote from './UpVote/UpVote';
 import Compose from './Compose/Compose';
 import Play from './Play/Play';
 import Login from "../shared/components/Login/Login";
+import Edit from "./Edit/Edit";
 
 class App extends Component {
 
@@ -29,7 +30,8 @@ class App extends Component {
                                render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'created'}/>} exact/>
                         <Route path='/Play' render={(props) => <Play {...props} getAccessToken={this.getAccessToken}/>}
                                exact/>
-                        <Route path='/Live'
+                        <Route path='/Edit' render={(props) => <ArticleFeed {...props} limit={'10'} sortMethod={'username'} />}
+                               exact/>                        <Route path='/Live'
                                render={(props) => <LiveMatch {...props} getAccessToken={this.getAccessToken}/>} exact/>
                         <Route path='/Post/@:author/:permlink' component={Post} exact/>
                         <Route path= '/UpVote/' component={UpVote} exact/>

@@ -89,12 +89,12 @@ export default class Compose extends Component {
         }
 
         // if user is logged in, gen privateKey obejct from stored posting key
-        const pKey = PrivateKey.fromString(localDB.key);
+       // const pKey = PrivateKey.fromString(localDB.key);
 
         this.state = {
 
             account: localDB.account,
-            privateKey: pKey,
+          //  privateKey: pKey,
             editor: false, // whether or not the quill editor is being used instead of markdown
             editorButtonValue: "Switch to editor",
             modules: {
