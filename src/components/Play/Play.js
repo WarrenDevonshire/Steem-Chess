@@ -60,7 +60,13 @@ class Play extends Component {
             return;
         }
         this.username = localDB.account;
-        this.posting_key = dsteem.PrivateKey.fromString(localDB.key);
+        try {
+            this.posting_key = dsteem.PrivateKey.fromString(localDB.key);
+        }
+        catch (err) {
+            console.error(err);
+            this.props.history.push("/Login");
+        }
     }
 
     /**
@@ -196,7 +202,7 @@ class Play extends Component {
      * Decides on random starting color for thisColor
      */
     decideRandom(thisColor, thatColor) {
-        if(thisColor !== "Random") return thisColor.toString();
+        if (thisColor !== "Random") return thisColor.toString();
         if (thatColor === "Black") return "White";
         if (thatColor === "White") return "Black";
         return Math.random() < 0.5 ? "White" : "Black";
@@ -327,7 +333,7 @@ class Play extends Component {
     }
 
     createGameClicked() {
-        if(this.optionClicked) return;
+        if (this.optionClicked) return;
         this.optionClicked = true;
         this.gameData = this.createGameComponent.current.grabGameData();
         this.gameData.username = this.username;
@@ -346,7 +352,7 @@ class Play extends Component {
         //If opponent not found after 15 seconds, post a game request
         this.createGameTimeout = setTimeout(() => {
             var opponentData = this.checkWaitingPlayers();
-            console.log("in timeout thingy",this.gameData, opponentData);
+            console.log("in timeout thingy", this.gameData, opponentData);
             if (opponentData == null) {
                 this.postGameRequest();
             }
@@ -357,7 +363,7 @@ class Play extends Component {
     }
 
     joinGameClicked() {
-        if(this.optionClicked) return;
+        if (this.optionClicked) return;
         this.optionClicked = true;
         var opponentData = this.joinGameComponent.current.state.selectedData;
         if (opponentData == null) {
