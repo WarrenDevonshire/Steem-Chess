@@ -220,13 +220,13 @@ export default class Compose extends Component {
             <div class="container" id="content"><br />
                 <h4>Submit a post to the Steem blockchain</h4>
                 Title of post: <input id="title" class='input' type="text" size="65" class="form-control" /><br />
-                <button id="switchEditorBtn" onClick={this.switchEditor}>{this.state.editorButtonValue}</button>                
+                <button id="switchEditorBtn" class="smallBtn" onClick={this.switchEditor}>{this.state.editorButtonValue}</button>                
                 {this.state.editor ? <div className="text-editor"><CustomToolbar />
                     <ReactQuill modules={this.state.modules} placeholder={"Write your post here..."} defaultValue={this.state.postBody} onChange={this.handleChange} /></div>
                     : <textarea id="body" class="form-control" rows="3" onChange={this.handleChange} placeholder="Write your post here..." defaultValue={this.state.postBody} />}
                 <br />Tags: <input id="tags" class='input' type="text" size="65" class="form-control" defaultValue="chess" /><br />
                 <em>Separate tags with spaces.</em><br /><br />
-                <input id="submitPostBtn" type="button" value="Submit post!" onClick={() => this.pushPost()} class="btn btn-primary" /><br />
+                <input id="submitPostBtn" class="smallBtn" type="button" value="Submit post!" onClick={() => this.pushPost()} class="btn btn-primary" /><br />
                 {this.state.postSubmitted ? <Link to={`Post/@${this.state.account}/${this.state.permlink}`}><h1>View new post</h1></Link> : null}
             </div>
 

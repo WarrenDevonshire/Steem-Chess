@@ -16,7 +16,7 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     position: relative;
-    top:150px;
+    top:500px;
     left:100px;
 }
 
@@ -24,7 +24,7 @@ body {
 .new-msg{
     position: relative;
     display:table;
-    top:150px;
+    top:500px;
     left:100px;
 }
 

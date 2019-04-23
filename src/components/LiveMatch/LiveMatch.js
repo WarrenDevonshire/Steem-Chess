@@ -135,12 +135,16 @@ class LiveMatch extends Component {
 
     render() {
         return (
-            <div id=".Match">
+            <div id="Match">
+                <div id = "float-left">
                 <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
-                <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} gameData={this.gameData}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
+                </div>
+                <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} gameData={this.gameData}/>
+                <div id="float-right">    
                 <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
                 <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
+                </div>
             </div>
         )
     }
