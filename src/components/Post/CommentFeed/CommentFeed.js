@@ -91,7 +91,7 @@ export default class CommentFeed extends Component {
         }
 
         // check that comment body field is populated
-        if (document.getElementById('body').value === "") {
+        if (document.getElementById(bodyId).value === "") {
 
             alert("Please fill out all fields.");
             return;
@@ -144,7 +144,7 @@ export default class CommentFeed extends Component {
                 <h4>Submit a comment:</h4>
                 Comment body:<br />
                 <textarea id="commentBodyRoot" class="Replybody" rows="3" placeholder='Reply to this post...'/><br />
-                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
+                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'commentBodyRoot')} class="btn btn-primary" />
                 <div id="postLink" />
 
                 <h1>Comments</h1>
