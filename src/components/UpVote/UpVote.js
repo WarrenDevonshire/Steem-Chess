@@ -15,23 +15,11 @@ let opts = {...NetConfig.net};
         super(props);
 
         const localDB = loadState();
-        var pKey;
-
-        // check if user is logged in before attempting to gen privateKey object
-        if (localDB.account == null) {
-
-            pKey = null;
-
-        } else {
-
-            pKey = PrivateKey.fromString(localDB.key);
-            
-        }
-
+        
         this.state = {
 
             account: localDB.account, // user who is voting
-            privateKey: pKey,
+            key: localDB.key,
             author: this.props.author, // author of post to be voted on
             permlink: this.props.permlink, // permlink of post to be voted on
             weight: this.props.weight, // weight of vote
@@ -56,8 +44,38 @@ let opts = {...NetConfig.net};
             return;
 
         }
+
+        var pKey;
+
+        // if user is logged in, gen privateKey obejct from stored posting key
+        try {
+
+            pKey = PrivateKey.fromString(this.state.key);
+
+        } catch (e) {
+
+            console.error(e);
+
+            // check for garbage login, redirect to login if privatekey can't be generated
+            // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
+            if (e.message === "private key network id mismatch") {
+
+                alert("Bad password.");
+                this.props.history.push('/Login');
+                return;
+
+            } else {
+
+                // if any other exception is thrown, redirect to home
+                alert("An error occurred. See console for details.");
+                this.props.history.push('/');
+                return;
+
+            }
+
+        } 
     
-        //creating a vote object
+        // construct a vote object to broadcast
         const vote = {
 
             voter: this.state.account,
@@ -67,7 +85,8 @@ let opts = {...NetConfig.net};
 
         };
 
-        client.broadcast.vote(vote, this.state.privateKey)
+        // attempt to broadcast vote
+        client.broadcast.vote(vote, pKey)
         .then(result => {
 
             console.log('Success! Vote Has Been Submitted:', result);
@@ -77,7 +96,19 @@ let opts = {...NetConfig.net};
         function (error) {
 
             console.error(error);
-            alert("An error occurred when broadcasting. See console for details.");
+
+                // check for bad username with valid password
+                // TODO: can't redirect to login when in .then, need to pass instance of this in somehow
+                if (error.message.includes("unknown key")) {
+
+                    alert("Bad username, please login again.");
+                    
+                } else {
+
+                    // all other exceptions
+                    alert("An error occurred when broadcasting. See console for details.");
+
+                }
 
         })
 

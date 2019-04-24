@@ -11,7 +11,6 @@ const pushClient = new Client(NetConfig.url, opts);
 
 // TODO: refresh page when comment or reply is posted, may not be viable due to blockchain delays
 // TODO: use client from post component passed as callback?
-// TODO: redirect back to page when sent to login gate?
 
 export default class CommentFeed extends Component {
 
@@ -20,18 +19,6 @@ export default class CommentFeed extends Component {
         super(props);
 
         const localDB = loadState();
-        var pKey;
-
-        // check if user is logged in before attempting to gen privateKey object
-        if (localDB.account == null) {
-
-            pKey = null;
-
-        } else {
-
-            pKey = PrivateKey.fromString(localDB.key);
-            
-        }
 
         this.state = {
 
@@ -40,7 +27,7 @@ export default class CommentFeed extends Component {
             parentPermlink: this.props.permlink,
             comments: [],
             account: localDB.account,
-            privateKey: pKey
+            key: localDB.key
 
         };
 
@@ -90,6 +77,36 @@ export default class CommentFeed extends Component {
 
         }
 
+        var pKey;
+
+        // if user is logged in, gen privateKey obejct from stored posting key
+        try {
+
+            pKey = PrivateKey.fromString(this.state.key);
+
+        } catch (e) {
+
+            console.error(e);
+
+            // check for garbage login, redirect to login if privatekey can't be generated
+            // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
+            if (e.message === "private key network id mismatch") {
+
+                alert("Bad password.");
+                this.props.history.push('/Login');
+                return;
+
+            } else {
+
+                // if any other exception is thrown, redirect to home
+                alert("An error occurred. See console for details.");
+                this.props.history.push('/');
+                return;
+
+            }
+
+        }
+
         // check that comment body field is populated
         if (document.getElementById(bodyId).value === "") {
 
@@ -110,7 +127,9 @@ export default class CommentFeed extends Component {
             .toString(36)
             .substring(2);
 
+        // construct payload object to broadcast
         const payload = {
+
             author: this.state.account,
             title: '',
             body: body,
@@ -118,19 +137,39 @@ export default class CommentFeed extends Component {
             parent_permlink: parent_permlink,
             permlink: permlink,
             json_metadata: '',
+
         };
 
-        // push comment to blockchain
+        // attempt to broadcast comment
         console.log('pustCSlient.broadcast.comment payload:', payload);
-        pushClient.broadcast.comment(payload, this.state.privateKey).then(
+        pushClient.broadcast.comment(payload, pKey).then(
+
             function (result) {
+
                 console.log('client.broadcast.comment response', result);
                 alert("Success.")
+
             },
+
             function (error) {
+
                 console.error(error);
-                alert("An error occurred when broadcasting. See console for details.");
+
+                // check for bad username with valid password
+                // TODO: can't redirect to login when in .then, need to pass instance of this in somehow
+                if (error.message.includes("unknown key")) {
+
+                    alert("Bad username, please login again.");
+                    
+                } else {
+
+                    // all other exceptions
+                    alert("An error occurred when broadcasting. See console for details.");
+
+                }
+
             }
+
         );
 
     }

@@ -88,8 +88,35 @@ export default class Compose extends Component {
 
         }
 
+        var pKey;
+
         // if user is logged in, gen privateKey obejct from stored posting key
-        const pKey = PrivateKey.fromString(localDB.key);
+        try {
+
+            pKey = PrivateKey.fromString(localDB.key);
+
+        } catch (e) {
+
+            console.error(e);
+
+            // check for garbage login, redirect to login if privatekey can't be generated
+            // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
+            if (e.message === "private key network id mismatch") {
+
+                alert("Bad password.");
+                this.props.history.push('/Login');
+                return;
+
+            } else {
+
+                // if any other exception is thrown, redirect to home
+                alert("An error occurred. See console for details.");
+                this.props.history.push('/');
+                return;
+
+            }
+
+        }       
 
         this.state = {
 
@@ -116,7 +143,7 @@ export default class Compose extends Component {
 
         this.pushPost = this.pushPost.bind(this);
         this.switchEditor = this.switchEditor.bind(this);
-        this.handleChange = this.handleChange.bind(this);;
+        this.handleChange = this.handleChange.bind(this);
 
     }
 
@@ -151,7 +178,9 @@ export default class Compose extends Component {
 
         this.setState({ permlink: permlink });
 
+        // construct payload object to broadcast
         const payload = {
+
             author: this.state.account,
             body: this.state.postBody,
             json_metadata: json_metadata,
@@ -159,17 +188,37 @@ export default class Compose extends Component {
             parent_permlink: taglist[0],
             permlink: permlink,
             title: title,
+
         };
+
+        // attempt to broadcast new post
         console.log('client.broadcast.comment:', payload);
         client.broadcast.comment(payload, this.state.privateKey).then(result => {
+
             alert("Success.");
             this.setState({ postSubmitted: true });
             document.getElementById("submitPostBtn").disabled = true;
+
         },
             function (error) {
+
                 console.error(error);
-                alert("An error occurred when broadcasting. See console for details.");
+
+                // check for bad username with valid password
+                // TODO: can't redirect to login when in .then, need to pass instance of this in somehow
+                if (error.message.includes("unknown key")) {
+
+                    alert("Bad username, please login again.");
+                    
+                } else {
+
+                    // all other exceptions
+                    alert("An error occurred when broadcasting. See console for details.");
+
+                }
+
             }
+
         );
 
     }

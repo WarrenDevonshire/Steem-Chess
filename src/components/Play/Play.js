@@ -60,7 +60,34 @@ class Play extends Component {
             return;
         }
         this.username = localDB.account;
-        this.posting_key = dsteem.PrivateKey.fromString(localDB.key);
+
+        // if user is logged in, gen privateKey obejct from stored posting key
+        try {
+
+            this.posting_key = dsteem.PrivateKey.fromString(localDB.key);
+
+        } catch (e) {
+
+            console.error(e);
+
+            // check for garbage login, redirect to login if privatekey can't be generated
+            // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
+            if (e.message === "private key network id mismatch") {
+
+                alert("Bad password.");
+                this.props.history.push('/Login');
+                return;
+
+            } else {
+
+                // if any other exception is thrown, redirect to home
+                alert("An error occurred. See console for details.");
+                //this.props.history.push('/');
+                return;
+
+            }
+
+        }
     }
 
     /**
