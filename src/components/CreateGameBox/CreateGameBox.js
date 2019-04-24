@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './CreateGameBox.css';
 //import RadioButtonList from "../Radio Button/RadioButtonList";
-import Slider from '../Slider/Slider'
+import Slider from '../../shared/components/utils/Slider/Slider'
 import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";

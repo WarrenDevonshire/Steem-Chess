@@ -11,7 +11,7 @@ import UpVote from './UpVote/UpVote';
 import Compose from './Compose/Compose';
 import Play from './Play/Play';
 import Login from "../shared/components/Login/Login";
-import Spinner from "./Spinner/Spinner";
+import Spinner from "../shared/components/utils/Spinner/Spinner";
 import PubSub from 'pubsub-js';
 
 class App extends Component {
