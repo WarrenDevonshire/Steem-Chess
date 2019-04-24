@@ -3,7 +3,7 @@ import { Client, PrivateKey } from 'dsteem';
 import { Mainnet as NetConfig } from '../../configuration';
 import { loadState } from '../localStorage';
 import './UpVote.css'
-import Slider from '../Slider/Slider';
+import Slider from '../../shared/components/utils/Slider/Slider';
 
 const client = new Client('https://api.steemit.com');
 
