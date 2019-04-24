@@ -167,9 +167,9 @@ let opts = {...NetConfig.net};
             <div className="upvote">
 
                 <div id="upVote"><br />
-                <button onClick={() => this.handleClick()} id={"openVotes"} class='smallBtn'>{this.state.voteButtonValue}</button>
+                <button onClick={() => this.handleClick()} id="openVotes" class='smallBtn'>{this.state.voteButtonValue}</button>
                 { this.state.expanded ? <Slider id={this.state.weightId} min='-10000' max='10000' step='100' onValueChanged={this.weightChanged} class='input'/> : null } 
-                { this.state.expanded ? <button id="pushVote" class='smallBtn' onClick={() => this.pushVote()}>Push vote</button> : null } 
+                { this.state.expanded ? <button id="pushVoteBtn" class='smallBtn' onClick={() => this.pushVote()}>Push vote</button> : null } 
                 </div>                    
             
             </div>
