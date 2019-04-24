@@ -39,6 +39,12 @@ export default class Post extends Component {
             document.getElementById('postBody').style.display = 'block';
             document.getElementById('postBody').innerHTML = content;
 
+            })
+            
+            .catch(err => {
+
+                alert('Error occured: ' + err);
+
             });
 
     }
@@ -54,5 +60,7 @@ export default class Post extends Component {
                 
             </div>
         )
+
     }
+    
 } 

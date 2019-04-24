@@ -62,6 +62,12 @@ export default class CommentFeed extends Component {
 
                 this.setState( {comments: commentList} );
 
+            })
+
+            .catch(err => {
+
+                alert('Error occured: ' + err);
+
             });
 
     }
