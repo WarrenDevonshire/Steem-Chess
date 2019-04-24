@@ -81,8 +81,8 @@ class Play extends Component {
             } else {
 
                 // if any other exception is thrown, redirect to home
-                alert("An error occurred. See console for details.");
-                //this.props.history.push('/');
+                alert("An error occurred when generating key. See console for details.");
+                this.props.history.push('/');
                 return;
 
             }

@@ -92,14 +92,14 @@ export default class CommentFeed extends Component {
             // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
             if (e.message === "private key network id mismatch") {
 
-                alert("Bad password.");
+                alert("Bad password, please login again.");
                 this.props.history.push('/Login');
                 return;
 
             } else {
 
                 // if any other exception is thrown, redirect to home
-                alert("An error occurred. See console for details.");
+                alert("An error occurred when generating key. See console for details.");
                 this.props.history.push('/');
                 return;
 
@@ -160,6 +160,8 @@ export default class CommentFeed extends Component {
                 if (error.message.includes("unknown key")) {
 
                     alert("Bad username, please login again.");
+                    this.props.history.push('/Login');
+                    return;
                     
                 } else {
 
