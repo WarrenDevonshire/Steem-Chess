@@ -68,6 +68,86 @@ class Play extends Component {
             this.props.history.push("/Login");
         }
     }
+    
+    /**
+     * Encrypts a message using a shared key
+     * @param {*} key 
+     * @param {*} text 
+     */
+    encrypt(key, text) {
+        var shift = this.getStringHashCode(key);
+        var charCodes = [];
+        text.split("").forEach(char => {
+            charCodes.push(char.charCodeAt());
+        });
+        var shiftedChars = [];
+        charCodes.forEach(code => {
+            shiftedChars.push(String.fromCharCode(this.mod(code + shift, 70537)));
+        });
+        var shuffledChars = [];
+        for(var i = 0; i < shiftedChars.length; i++) {
+            if(i%2 == 0 && i+1 < shiftedChars.length)
+                shuffledChars.push(shiftedChars[i+1]);
+            else if(i%2 == 1 && i-1 >= 0)
+                shuffledChars.push(shiftedChars[i-1]);
+            else
+                shuffledChars.push(shiftedChars[i]);
+        }
+        return shuffledChars.join("");
+    }
+
+    /**
+     * Decrypts a message using a shared key
+     * @param {*} key 
+     * @param {*} text 
+     */
+    decrypt(key, text) {
+        var shift = this.getStringHashCode(key);
+        var encryptedChars = text.split("");
+        var unshuffledChars = [];
+        for(var i = 0; i < encryptedChars.length; i++) {
+            if(i%2 == 0 && i+1 < encryptedChars.length)
+                unshuffledChars.push(encryptedChars[i+1]);
+            else if(i%2 == 1 && i-1 >= 0)
+                unshuffledChars.push(encryptedChars[i-1]);
+            else
+                unshuffledChars.push(encryptedChars[i]);
+        }
+        var shiftedCodes = [];
+        unshuffledChars.forEach(char => {
+            shiftedCodes.push(char.charCodeAt());
+        });
+        var plainChars = [];
+        shiftedCodes.forEach(code => {
+            plainChars.push(String.fromCharCode(this.mod(code - shift, 70537)));
+        });
+        return plainChars.join("");
+    }
+
+    /**
+     * Calculates a hash code for a string
+     * @param {*} text 
+     */
+    getStringHashCode(text) {
+        var hash = 0, i, chr;
+        if (text.length === 0) return hash;
+        for (i = 0; i < text.length; i++) {
+            chr = text.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+    }
+
+    /**
+     * Performs modulus on a number, ensuring that it is
+     * always positive
+     * @param {*} number 
+     * @param {*} m 
+     */
+    mod(number, m) {
+        return ((number%m)+m)%m;
+    }
 
     /**
      * Finds the most recent block number
@@ -274,6 +354,8 @@ class Play extends Component {
         var receivingTag = initializingConnection === true ? PEER_INIT_TAG : PEER_NOT_INIT_TAG;
         var sendingTag = initializingConnection === true ? PEER_NOT_INIT_TAG : PEER_INIT_TAG;
 
+        this.sharedKey = this.gameData.time + this.gameData.typeID;
+
         console.log("starting initializePeer");
         this.peer = new Peer({ initiator: initializingConnection, trickle: false });
         this.peer.on('error', (err) => {
@@ -306,7 +388,8 @@ class Play extends Component {
         this.processor = steemState(client, dsteem, headerBlockNumber, 100, GAME_ID);
         this.processor.on(receivingTag, (signal) => {
             if (this.peer !== null) {
-                this.peer.signal(signal.signal);
+                var decryptedSignal = JSON.parse(this.decrypt(this.sharedKey, signal.signal));
+                this.peer.signal(decryptedSignal);
             }
         });
         this.processor.start();
@@ -321,8 +404,9 @@ class Play extends Component {
         if (DISABLE_BLOCKCHAIN) return;
 
         console.log("starting sendSignalToUser");
+        var encryptedSignal = this.encrypt(this.sharedKey, JSON.stringify(signal));
         this.transactor.json(this.username, this.posting_key.toString(), sendingTag, {
-            signal: signal,
+            signal: encryptedSignal,
             from: this.username
         }, (err) => {
             if (err) {
