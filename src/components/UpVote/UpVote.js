@@ -91,7 +91,7 @@ let opts = {...NetConfig.net};
             voter: this.state.account,
             author: this.state.author,
             permlink: this.state.permlink,
-            weight: this.state.weight
+            weight: parseInt(this.state.weight)
 
         };
 
