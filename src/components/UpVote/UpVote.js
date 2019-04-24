@@ -3,6 +3,7 @@ import { Client, PrivateKey } from 'dsteem';
 import { Mainnet as NetConfig } from '../../configuration';
 import { loadState } from '../localStorage';
 import './UpVote.css'
+import Slider from '../Slider/Slider';
 
 const client = new Client('https://api.steemit.com');
 
@@ -22,7 +23,7 @@ let opts = {...NetConfig.net};
             key: localDB.key,
             author: this.props.author, // author of post to be voted on
             permlink: this.props.permlink, // permlink of post to be voted on
-            weight: this.props.weight, // weight of vote
+            weight: 0, // weight of vote
             weightId: "voteWeight" + this.props.id, // unique id for each vote weight input
             voteButtonValue: "Open voting UI",
             expanded: false
@@ -32,6 +33,7 @@ let opts = {...NetConfig.net};
         this.pushVote = this.pushVote.bind(this);
         this.expandDropdown = this.expandDropdown.bind(this);
         this.closeDropdown = this.closeDropdown.bind(this);
+        this.weightChanged = this.weightChanged.bind(this);
 
     }
 
@@ -74,6 +76,14 @@ let opts = {...NetConfig.net};
             }
 
         } 
+
+        // check for useless vote
+        if (this.state.weight === 0) {
+
+            alert("Please select a weight for your vote.");
+            return;
+
+        }
     
         // construct a vote object to broadcast
         const vote = {
@@ -81,7 +91,7 @@ let opts = {...NetConfig.net};
             voter: this.state.account,
             author: this.state.author,
             permlink: this.state.permlink,
-            weight: parseInt(document.getElementById(this.state.weightId).value) //needs to be an integer for the vote function
+            weight: this.state.weight
 
         };
 
@@ -132,15 +142,21 @@ let opts = {...NetConfig.net};
 
     expandDropdown() {
 
-        this.setState( {expanded: true} );
-        this.setState( {voteButtonValue: "Close voting UI"} );
+        this.setState({ expanded: true });
+        this.setState({ voteButtonValue: "Close voting UI" });
 
     }
 
     closeDropdown() {
 
-        this.setState( {expanded: false} );
-        this.setState( {voteButtonValue: "Open voting UI"} );
+        this.setState({ expanded: false });
+        this.setState({ voteButtonValue: "Open voting UI" });
+
+    }
+
+    weightChanged(value) {
+
+        this.setState({ weight: value });
 
     }
 
@@ -152,7 +168,7 @@ let opts = {...NetConfig.net};
 
                 <div id="upVote"><br />
                 <button onClick={() => this.handleClick()} id={"openVotes"} class='smallBtn'>{this.state.voteButtonValue}</button>
-                { this.state.expanded ? <input id={this.state.weightId} defaultValue="10" class='input'/> : null } 
+                { this.state.expanded ? <Slider id={this.state.weightId} min='-10000' max='10000' step='100' onValueChanged={this.weightChanged} class='input'/> : null } 
                 { this.state.expanded ? <button id="pushVote" class='smallBtn' onClick={() => this.pushVote()}>Push vote</button> : null } 
                 </div>                    
             
