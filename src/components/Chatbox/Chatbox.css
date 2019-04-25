@@ -51,11 +51,11 @@ body {
 
 .chatbox-message-mine {
     text-align: left;
+    margin-left: 10px;
 }
 
 .chatbox-message-opponent {
     text-align: right;
-    margin-left: 10px;
     margin-right: 10px;
 }
 

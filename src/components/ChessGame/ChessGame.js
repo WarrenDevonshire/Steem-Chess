@@ -3,7 +3,7 @@ import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 import './ChessGame.css'
 
-const DISABLE_BLOCKCHAIN = true;
+const DISABLE_BLOCKCHAIN = false;
 //var PiecesEnum = Object.freeze({"Black":1, "White":2})
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.

@@ -6,7 +6,7 @@ import Timer from '../Timer/Timer';
 import { loadState } from "../../components/localStorage";
 import './LiveMatch.css';
 
-const DISABLE_BLOCKCHAIN = true;
+const DISABLE_BLOCKCHAIN = false;
 
 /**
  * Component for playing a live chess match
