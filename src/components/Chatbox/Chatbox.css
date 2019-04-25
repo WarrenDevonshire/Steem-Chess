@@ -10,7 +10,7 @@ body {
 
 .messages-list {
     height:400px;
-    width:200px;
+    width:250px;
     border: 2px solid black;
     padding: 5px 0 0 5px;
     overflow: hidden;
@@ -43,8 +43,22 @@ body {
 
 #container{
     bottom: 500px;
-    width: 450px;
+    width: 100%;
     display: table;
     position: relative;
     margin:auto;
+}
+
+.chatbox-message-mine {
+    text-align: left;
+    margin-left: 10px;
+}
+
+.chatbox-message-opponent {
+    text-align: right;
+    margin-right: 10px;
+}
+
+.message-content-end {
+    margin-bottom: 10px;
 }
