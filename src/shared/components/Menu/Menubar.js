@@ -32,6 +32,7 @@ class Menubar extends Component {
                     <input type="text" />
                     <button type="submit" class='search'>Search</button>
                 </form>
+                <img src='../Menu/Image/CherssPiece.png' alt='Logo' width='100px' height='100px'></img>
             </div>
 
         )
