@@ -89,7 +89,7 @@ export default class Comment extends Component {
                 <input id="submitReplyBtn" type="button" value="Submit reply!" onClick={() => this.pushComment(this.state.commentAuthor, this.state.commentPermlink, this.state.commentBodyId)} class="btn btn-primary" />
 
                 <button onClick={() => this.handleClick()} class="openReplies" id={"openReplies"} >{this.state.replyButtonValue}</button>
-                <div id="UpVote"><UpVote author={this.state.author} permlink={this.state.permlink} id={this.state.numericId} history={this.props.history} /></div>
+                <div id="UpVote"><UpVote author={this.state.commentAuthor} permlink={this.state.commentPermlink} id={this.state.numericId} history={this.props.history} /></div>
                 <div class="list-group" id="postComments">{this.state.comments.map(Comment => {
                     return this.state.expanded ?  <div> {Comment} </div> : null
                 })} </div>
