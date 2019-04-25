@@ -31,7 +31,9 @@ export default class PostPreview extends Component {
              <p>by {this.state.author}</p>
             <p class="list-group-item-text text-right text-nowrap">{this.state.created}</p>
             <Link to={`Post/@${this.state.author}/${this.state.permlink}`} class='articlelink'>        
-                <center class="crop"><img src={this.state.image} class="img-responsive center-block" alt=""/></center>
+                <center class="crop"> 
+                    { this.state.image ? <img src={this.state.image} class="img-responsive center-block" alt=""/> : <img src="./Images/no-image.png" /> }
+                </center>
                 <p className='link'>{this.state.title}</p>
             </Link>
             </div>
