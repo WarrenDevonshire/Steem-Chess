@@ -26,7 +26,9 @@ h2{
     margin-left: 200px;
     margin-right: 200px;
     margin-bottom: 5px;
+    display: block;
 }
+
 
 img{
     max-width: 600px;
@@ -44,6 +46,8 @@ textarea{
     margin: 30px auto;
     text-align: center;
 }
+
+
 
 
 #postBody table{

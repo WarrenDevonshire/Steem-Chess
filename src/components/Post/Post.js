@@ -55,7 +55,7 @@ export default class Post extends Component {
             <div className="Post">
 
                 <div id="postBody"></div>
-                <div id="upVote"><UpVote author={this.state.author} permlink={this.state.permlink} id={"Root"} history={this.props.history} /></div>	
+                <div id="postVote"><UpVote author={this.state.author} permlink={this.state.permlink} id={"Root"} history={this.props.history} class="postVote"/></div>	
                 <CommentFeed history={this.props.history} author={this.state.author} permlink={this.state.permlink} getAccessToken={this.props.getAccessToken} getAPI={this.props.getAPI}/>
                 
             </div>
