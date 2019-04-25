@@ -19,7 +19,7 @@ class Chatbox extends Component {
      */
     onReceiveMessage(data) {
         console.log("Received data from peer!");
-        this.state.messageList.push([data.message, Date.now, true]);
+        this.state.messageList.push([data.message, Date.now(), true]);
         this.setState({ messageList: this.state.messageList });
     }
 
