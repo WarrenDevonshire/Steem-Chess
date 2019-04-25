@@ -39,31 +39,46 @@ class Login extends Component {
     }
 
     handleLogin(e){
-        const pKey = PrivateKey.fromString(this.state.password);
-        const vote = {
+        
+        try{
+            var pKey = PrivateKey.fromString(this.state.password);
+            saveState(this.state.account, this.state.password, "loggedIn");
+            this.props.history.push('/');
+
+           /*const vote = {
 
             voter: this.state.account,
             author: 'almost-digital',
             permlink: 'dsteem-is-the-best',
             weight: 0 //needs to be an integer for the vote function
 
-        };
+            };
 
-        client.broadcast.vote(vote, pKey)
-        .then(result => {
+            client.broadcast.vote(vote, pKey)
+            .then(result => {
 
-            //console.log('Success! Vote Has Been Submitted:', result);
-            alert("Success.");
-            saveState(this.state.account, this.state.password, "loggedIn");
-            this.props.history.push('/');
+                //console.log('Success! Logged In:', result);
+                alert("Success.");
+                saveState(this.state.account, this.state.password, "loggedIn");
+                this.props.history.push('/');
 
-        },
-        function (error) {
+            },
+            function (error) {
 
-            //console.error(error);
-            alert("An error occurred when broadcasting. See console for details.");
+                //console.error(error);
+                alert("Invalid username or password.");
 
-        })
+            })*/
+           
+        }
+        catch(error)
+        {
+            console.log(error);
+            alert("Invalid username or password.");
+            
+        }
+        
+        
 
     }
 
