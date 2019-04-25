@@ -25,6 +25,12 @@
 
 }
 
+#Logo{
+    float: right;
+    position: relative;
+    left:100px;
+}
+
 .Menu li{
     list-style: none;
     display: block;

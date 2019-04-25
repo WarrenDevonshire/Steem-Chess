@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './Menubar.css';
 import {Link} from 'react-router-dom';
 import Login from '../Login/Login';
+import Logo from './Image/CherssPiece.png';
 
 
 class Menubar extends Component {
@@ -32,7 +33,7 @@ class Menubar extends Component {
                     <input type="text" />
                     <button type="submit" class='search'>Search</button>
                 </form>
-                <img src='../Menu/Image/CherssPiece.png' alt='Logo' width='100px' height='100px'></img>
+                <img src={Logo} alt='Logo' width='80px' height='80px' id="Logo"></img>
             </div>
 
         )
