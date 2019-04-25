@@ -3,6 +3,7 @@ import { Client, PrivateKey } from 'dsteem';
 import { Mainnet as NetConfig } from '../../configuration';
 import { loadState } from '../localStorage';
 import './UpVote.css'
+import Slider from '../../shared/components/utils/Slider/Slider';
 
 const client = new Client('https://api.steemit.com');
 
@@ -15,26 +16,14 @@ let opts = {...NetConfig.net};
         super(props);
 
         const localDB = loadState();
-        var pKey;
-
-        // check if user is logged in before attempting to gen privateKey object
-        if (localDB.account == null) {
-
-            pKey = null;
-
-        } else {
-
-            pKey = PrivateKey.fromString(localDB.key);
-            
-        }
-
+        
         this.state = {
 
             account: localDB.account, // user who is voting
-            privateKey: pKey,
+            key: localDB.key,
             author: this.props.author, // author of post to be voted on
             permlink: this.props.permlink, // permlink of post to be voted on
-            weight: this.props.weight, // weight of vote
+            weight: 0, // weight of vote
             weightId: "voteWeight" + this.props.id, // unique id for each vote weight input
             voteButtonValue: "Open voting UI",
             expanded: false
@@ -44,6 +33,7 @@ let opts = {...NetConfig.net};
         this.pushVote = this.pushVote.bind(this);
         this.expandDropdown = this.expandDropdown.bind(this);
         this.closeDropdown = this.closeDropdown.bind(this);
+        this.weightChanged = this.weightChanged.bind(this);
 
     }
 
@@ -56,18 +46,57 @@ let opts = {...NetConfig.net};
             return;
 
         }
+
+        var pKey;
+
+        // if user is logged in, gen privateKey obejct from stored posting key
+        try {
+
+            pKey = PrivateKey.fromString(this.state.key);
+
+        } catch (e) {
+
+            console.error(e);
+
+            // check for garbage login, redirect to login if privatekey can't be generated
+            // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
+            if (e.message === "private key network id mismatch") {
+
+                alert("Bad password, please login again.");
+                this.props.history.push('/Login');
+                return;
+
+            } else {
+
+                // if any other exception is thrown, redirect to home
+                alert("An error occurred when generating key. See console for details.");
+                this.props.history.push('/');
+                return;
+
+            }
+
+        } 
+
+        // check for useless vote
+        if (this.state.weight === 0) {
+
+            alert("Please select a weight for your vote.");
+            return;
+
+        }
     
-        //creating a vote object
+        // construct a vote object to broadcast
         const vote = {
 
             voter: this.state.account,
             author: this.state.author,
             permlink: this.state.permlink,
-            weight: parseInt(document.getElementById(this.state.weightId).value) //needs to be an integer for the vote function
+            weight: parseInt(this.state.weight)
 
         };
 
-        client.broadcast.vote(vote, this.state.privateKey)
+        // attempt to broadcast vote
+        client.broadcast.vote(vote, pKey)
         .then(result => {
 
             console.log('Success! Vote Has Been Submitted:', result);
@@ -77,7 +106,21 @@ let opts = {...NetConfig.net};
         function (error) {
 
             console.error(error);
-            alert("An error occurred when broadcasting. See console for details.");
+
+                // check for bad username with valid password
+                // TODO: can't redirect to login when in .then, need to pass instance of this in somehow
+                if (error.message.includes("unknown key")) {
+
+                    alert("Bad username, please login again.");
+                    this.props.history.push('/Login');
+                    return;
+                    
+                } else {
+
+                    // all other exceptions
+                    alert("An error occurred when broadcasting. See console for details.");
+
+                }
 
         })
 
@@ -99,15 +142,21 @@ let opts = {...NetConfig.net};
 
     expandDropdown() {
 
-        this.setState( {expanded: true} );
-        this.setState( {voteButtonValue: "Close voting UI"} );
+        this.setState({ expanded: true });
+        this.setState({ voteButtonValue: "Close voting UI" });
 
     }
 
     closeDropdown() {
 
-        this.setState( {expanded: false} );
-        this.setState( {voteButtonValue: "Open voting UI"} );
+        this.setState({ expanded: false });
+        this.setState({ voteButtonValue: "Open voting UI" });
+
+    }
+
+    weightChanged(value) {
+
+        this.setState({ weight: value });
 
     }
 
@@ -118,9 +167,9 @@ let opts = {...NetConfig.net};
             <div className="upvote">
 
                 <div id="upVote"><br />
-                <button onClick={() => this.handleClick()} id={"openVotes"} class='smallBtn'>{this.state.voteButtonValue}</button>
-                { this.state.expanded ? <input id={this.state.weightId} defaultValue="10" class='input'/> : null } 
-                { this.state.expanded ? <button id="pushVote" class='smallBtn' onClick={() => this.pushVote()}>Push vote</button> : null } 
+                <button onClick={() => this.handleClick()} id="openVotes" class='smallBtn'>{this.state.voteButtonValue}</button>
+                { this.state.expanded ? <Slider id={this.state.weightId} min='-10000' max='10000' step='100' onValueChanged={this.weightChanged} class='input'/> : null } 
+                { this.state.expanded ? <button id="pushVoteBtn" class='smallBtn' onClick={() => this.pushVote()}>Push vote</button> : null } 
                 </div>                    
             
             </div>

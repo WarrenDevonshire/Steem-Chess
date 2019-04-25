@@ -14,7 +14,9 @@ class Login extends Component {
                     localStorage.removeItem('account');
                     localStorage.removeItem('pKey');
                     localStorage.removeItem('login');
-                    this.props.history.push('/');
+                    // had to comment this out to get bad login redirects to work
+                    // causes logout button to say 'logout' after pressed once, refreshes when page is changed
+                    //this.props.history.push('/');
                 }
 
                 this.state = {
