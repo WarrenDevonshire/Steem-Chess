@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
 import './CreateGameBox.css';
-import RadioButtonList from "../Radio Button/RadioButtonList";
-import Slider from '../Slider/Slider'
+//import RadioButtonList from "../Radio Button/RadioButtonList";
+import Slider from '../../shared/components/utils/Slider/Slider'
 import BlackPiece from "../CreateGameBox/Images/rook-black.png";
 import MixedPiece from "../CreateGameBox/Images/rook-mixed.png";
 import WhitePiece from "../CreateGameBox/Images/rook-white.png";
-import { Link } from 'react-router-dom';
-import { reject } from 'q';
-
-//TEMP unitl local data storage
-const USERNAME = "mdhalloran"
 
 class CreateGameBox extends Component {
     constructor(props) {
@@ -17,8 +12,8 @@ class CreateGameBox extends Component {
         this.state = {
             timeControlOptions: ["Real Time", "Correspondence"],
             timeControlChosen: "Real Time",
-            pieceChosen: "",
-            startingColorText: "Starting Color",
+            pieceChosen: "Random",
+            startingColorText: "Starting Color: Random",
             timePerSide: 5,
             increment: 5,
         };
@@ -28,66 +23,64 @@ class CreateGameBox extends Component {
         this.incrementChanged = this.incrementChanged.bind(this);
         this.timeControlChosen = this.timeControlChosen.bind(this);
         this.grabGameData = this.grabGameData.bind(this);
+        this.createClicked = this.createClicked.bind(this);
     }
 
     pieceChanged(tag) {
-        console.log(tag);
         this.setState({ pieceChosen: tag });
         this.setState({ startingColorText: "Starting Color: " + tag });
     }
 
     timePerSideChanged(value) {
-        console.log(value);
         this.setState({ timePerSide: value });
     }
 
     incrementChanged(value) {
-        console.log(value);
         this.setState({ increment: value });
     }
 
     timeControlChosen(value) {
-        console.log(value);
         this.setState({ timeControlChosen: value });
     }
 
     grabGameData() {
         return {
-            timeControlChosen: this.state.timeControlChosen,
-            timePerSide: this.state.timePerSide,
-            increment: this.state.increment,
             startingColor: this.state.pieceChosen,
-            userId: USERNAME + Date.now(),
+            username: null,
+            time: Date.now(),
             typeID: this.state.timeControlChosen + "|" + this.state.timePerSide + "|" + this.state.increment
         }
     }
 
+    createClicked() {
+        this.props.onCreateGameClicked();
+    }
+
     render() {
         return (
-            <div className={CreateGameBox}>
-                <Title title={'Create Game'} />
-                <RadioButtonList defaultValue={this.state.timeControlChosen}
-                    options={this.state.timeControlOptions}
-                    onTimeControlChosen={this.timeControlChosen} />
-                <hr noshade="true" />
-                <h3>Time Per Side</h3>
-                <Slider min="1"
-                    max="10"
-                    value={this.state.timePerSide}
-                    step="0.5"
-                    unit="Minutes"
-                    onValueChanged={this.timePerSideChanged} />
-                <h3>Increment</h3>
-                <Slider min="1"
-                    max="10"
-                    value={this.state.increment}
-                    step="1"
-                    unit="Seconds"
-                    onValueChanged={this.incrementChanged} />
-                <hr noshade="true" />
-                <h3>{this.state.startingColorText}</h3>
-                <PieceList onPieceChanged={this.pieceChanged} />
-                <Link to={{ pathname: "/Live", gameData: this.grabGameData(), findBlockHead: this.props.findBlockHead }}><button>Create Game</button></Link>
+            <div className='CreateGameBox'>
+                <h1>Create Game</h1>
+                <div className='Box'>
+                    <hr noshade="true" className='Line' />
+                    <h3 className='Line'>Time Per Side</h3>
+                    <Slider min="1"
+                        max="10"
+                        value={this.state.timePerSide}
+                        step="0.5"
+                        unit="Minutes"
+                        onValueChanged={this.timePerSideChanged} />
+                    <h3 className='Line'>Increment</h3>
+                    <Slider min="1"
+                        max="10"
+                        value={this.state.increment}
+                        step="1"
+                        unit="Seconds"
+                        onValueChanged={this.incrementChanged} />
+                    <hr noshade="true" className='Line' />
+                    <h3 className='Line'>{this.state.startingColorText}</h3>
+                    <PieceList pieceChosen={this.state.pieceChosen} onPieceChanged={this.pieceChanged} />
+                    <button className="Button" onClick={this.createClicked}>Create Game</button>
+                </div>
             </div>
         );
     }
@@ -97,7 +90,7 @@ export default CreateGameBox;
 
 
 function Title(props) {
-    return <h1>{props.title}</h1>
+    return <h1 className="createTitle">{props.title}</h1>
 }
 
 Title.defaultProps = {
@@ -108,7 +101,7 @@ class PieceList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pieceChosen: "",
+            pieceChosen: this.props.pieceChosen ? this.props.pieceChosen : "",
             colorChoices: [[BlackPiece, "Black"], [MixedPiece, "Random"], [WhitePiece, "White"]]
         }
     }
@@ -128,7 +121,7 @@ class PieceList extends Component {
                 alt={tag} />
         )
         return (
-            <span>
+            <span className="pieceListSpan">
                 {pieces}
             </span>
         );

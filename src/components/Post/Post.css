@@ -1,6 +1,79 @@
-textarea.composeComment {
 
-    height: 100px;
-    width: 75%;
+.title{
+    margin: 20px;
+    display: inline-block;
+    font-size:40px;
+    border-bottom: 10px;
+    border-bottom-color: black;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 800px;
+    align-items: flex-start;
+}
 
+h2{
+    display: table;
+}
+
+.Post{
+    margin:auto;
+
+    display: block;
+}
+
+#postBody{
+    margin: auto;
+    margin-left: 200px;
+    margin-right: 200px;
+    margin-bottom: 5px;
+}
+
+img{
+    max-width: 600px;
+    margin: 50px auto;
+    display: table;
+}
+
+textarea{
+    resize:none;
+}
+
+#postBody p{
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin: 30px auto;
+    text-align: center;
+}
+
+
+#postBody table{
+    text-align: left;
+    margin: auto;
+    margin-bottom: 10px;
+}
+#postBody li{
+    text-align: left;
+    padding: 2px;
+    margin-left: 300px;
+}
+
+#postBody h2{
+    margin: auto;
+    text-align: left;
+}
+
+.pull-left{
+    float: left;
+    padding: 1rem;
+    max-width: 50%;
+}
+
+.pull-right{
+    float: right;
+    padding: 1rem;
+    max-width: 50%;
+}
+
+center img{
+    display: inline-table;
 }

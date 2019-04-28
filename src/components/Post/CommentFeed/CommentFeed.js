@@ -11,7 +11,6 @@ const pushClient = new Client(NetConfig.url, opts);
 
 // TODO: refresh page when comment or reply is posted, may not be viable due to blockchain delays
 // TODO: use client from post component passed as callback?
-// TODO: redirect back to page when sent to login gate?
 
 export default class CommentFeed extends Component {
 
@@ -20,18 +19,6 @@ export default class CommentFeed extends Component {
         super(props);
 
         const localDB = loadState();
-        var pKey;
-
-        // check if user is logged in before attempting to gen privateKey object
-        if (localDB.account == null) {
-
-            pKey = null;
-
-        } else {
-
-            pKey = PrivateKey.fromString(localDB.key);
-            
-        }
 
         this.state = {
 
@@ -40,11 +27,10 @@ export default class CommentFeed extends Component {
             parentPermlink: this.props.permlink,
             comments: [],
             account: localDB.account,
-            privateKey: pKey
+            key: localDB.key
 
         };
 
-        console.log(this.state.privateKey);
         this.pushComment = this.pushComment.bind(this);
         this.fetchComments(this.state.parentAuthor, this.state.parentPermlink, -1, this.fetchComments);
         
@@ -64,17 +50,23 @@ export default class CommentFeed extends Component {
 
                     if (bodyId === -1) {
 
-                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + i} />);
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + i} history={this.props.history} />);
 
                     } else {
 
-                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + bodyId + "-" + i} />);
+                        commentList.push(<Comment comment={result[i]} pushComment={this.pushComment} fetchComments={fetchCallback} id={"commentBody" + bodyId + "-" + i} history={this.props.history} />);
 
                     }
                 
                 }
 
                 this.setState( {comments: commentList} );
+
+            })
+
+            .catch(err => {
+
+                alert('Error occured: ' + err);
 
             });
 
@@ -91,8 +83,38 @@ export default class CommentFeed extends Component {
 
         }
 
+        var pKey;
+
+        // if user is logged in, gen privateKey obejct from stored posting key
+        try {
+
+            pKey = PrivateKey.fromString(this.state.key);
+
+        } catch (e) {
+
+            console.error(e);
+
+            // check for garbage login, redirect to login if privatekey can't be generated
+            // this exception is thrown if password is invalid or is not a posting key, does not check for username/password association
+            if (e.message === "private key network id mismatch") {
+
+                alert("Bad password, please login again.");
+                this.props.history.push('/Login');
+                return;
+
+            } else {
+
+                // if any other exception is thrown, redirect to home
+                alert("An error occurred when generating key. See console for details.");
+                this.props.history.push('/');
+                return;
+
+            }
+
+        }
+
         // check that comment body field is populated
-        if (document.getElementById('body').value === "") {
+        if (document.getElementById(bodyId).value === "") {
 
             alert("Please fill out all fields.");
             return;
@@ -111,7 +133,9 @@ export default class CommentFeed extends Component {
             .toString(36)
             .substring(2);
 
+        // construct payload object to broadcast
         const payload = {
+
             author: this.state.account,
             title: '',
             body: body,
@@ -119,19 +143,41 @@ export default class CommentFeed extends Component {
             parent_permlink: parent_permlink,
             permlink: permlink,
             json_metadata: '',
+
         };
 
-        // push comment to blockchain
+        // attempt to broadcast comment
         console.log('pustCSlient.broadcast.comment payload:', payload);
-        pushClient.broadcast.comment(payload, this.state.privateKey).then(
+        pushClient.broadcast.comment(payload, pKey).then(
+
             function (result) {
+
                 console.log('client.broadcast.comment response', result);
                 alert("Success.")
+
             },
+
             function (error) {
+
                 console.error(error);
-                alert("An error occurred when broadcasting. See console for details.");
+
+                // check for bad username with valid password
+                // TODO: can't redirect to login when in .then, need to pass instance of this in somehow
+                if (error.message.includes("unknown key")) {
+
+                    alert("Bad username, please login again.");
+                    this.props.history.push('/Login');
+                    return;
+                    
+                } else {
+
+                    // all other exceptions
+                    alert("An error occurred when broadcasting. See console for details.");
+
+                }
+
             }
+
         );
 
     }
@@ -144,8 +190,8 @@ export default class CommentFeed extends Component {
                 <hr />
                 <h4>Submit a comment:</h4>
                 Comment body:<br />
-                <textarea id="body" class="form-control" rows="3">Reply to this post...</textarea><br />
-                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'body')} class="btn btn-primary" />
+                <textarea id="commentBodyRoot" class="Replybody" rows="3" placeholder='Reply to this post...'/><br />
+                <input id="submitCommentBtn" type="button" value="Submit comment!" onClick={() => this.pushComment(this.state.parentAuthor, this.state.parentPermlink, 'commentBodyRoot')} class="btn btn-primary" />
                 <div id="postLink" />
 
                 <h1>Comments</h1>

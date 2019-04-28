@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import "./Chatbox.css";
 
 class Chatbox extends Component {
@@ -18,64 +18,58 @@ class Chatbox extends Component {
      * @param {*} message 
      */
     onReceiveMessage(data) {
-        console.log("Received data from peer!!!!!!!!!!!!!!!!!!!");
-        this.state.messageList.push([data.message, Date.now]);
-        this.setState({messageList: this.state.messageList});
+        console.log("Received data from peer!");
+        this.state.messageList.push([data.message, Date.now(), true]);
+        this.setState({ messageList: this.state.messageList });
     }
 
     updateDraft(area) {
-        this.setState({draftedMessage: area.target.value});
+        this.setState({ draftedMessage: area.target.value });
     }
 
     sendMessage() {
-        console.log("-----------------------------------------------------------");
-        console.log(this.state.peer);
-        console.log(this.props.peer);
-        console.log("-----------------------------------------------------------");
-        if (this.props.peer == null) {
-            var error = "Peer connection not initiated!";
-            console.error(error);
-            alert(error);
-            return;
-        }
-        if (!this.props.peer.connected) {
-            var error = "Not connected to the other player yet!";
-            console.error(error);
-            alert(error);
-            return;
-        }
-        var data = {
+        if(this.isEmptyOrSpaces(this.state.draftedMessage)) return;
+
+        this.props.sendData({
             type: "message",
-            timeSent: Date.now,
+            timeSent: Date.now(),
             message: this.state.draftedMessage,
-        }
-        this.props.peer.send(JSON.stringify(data));
-        this.setState({draftedMessage: ""});
+        });
+
+        this.state.messageList.push([this.state.draftedMessage, Date.now(), false]);
+        this.setState({ messageList: this.state.messageList });
+
+        this.setState({ draftedMessage: "" });
         this.refs.draftArea.value = ""
+    }
+
+    isEmptyOrSpaces(message) {
+        return message === null || message.match(/^ *$/) !== null;
     }
 
     render() {
         var messageList;
         if (this.state.messageList != null) {
-            messageList = this.state.messageList.map(([message, timeSent], index) =>
+            messageList = this.state.messageList.map(([message, timeSent, fromOpponent], index) =>
                 <MessageBubble key={index}
-                               message={message.toString()}/>
+                    message={message.toString()}
+                    timeSent={timeSent}
+                    fromOpponent={fromOpponent} />
             )
         }
         return (
             <div id="container">
-                <aside id="sidebar">Users</aside>
-                <section id="main">
-                    <section id="messages-list">
-            <span>
-              {messageList}
-            </span>
+                <section id="main" class='messages'>
+                    <section id="messages-list" class='messages-list'>
+                        <span>
+                            {messageList}
+                        </span>
                     </section>
-                    <section id="new-message">
-            <textarea ref="draftArea"
-                      onChange={e => this.updateDraft(e)}></textarea>
+                    <section id="new-message" class='new-msg'>
+                        <textarea ref="draftArea" class='msg'
+                            onChange={e => this.updateDraft(e)}></textarea>
 
-                        <button onClick={e => this.sendMessage()}>Send</button>
+                        <button onClick={e => this.sendMessage()} id='Send'>Send</button>
                     </section>
                 </section>
             </div>
@@ -90,15 +84,29 @@ class MessageBubble extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: this.props.message
+            message: this.props.message,
+            timeSent: this.props.timeSent,
+            fromOpponent: this.props.fromOpponent,
         }
     }
 
+    getFormattedTime(time) {
+        console.log(time);
+        var date = new Date(time);
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        // Will display time in hh:mm:ss format
+        return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    }
+
     render() {
+        var formattedTime = this.getFormattedTime(this.state.timeSent);
         return (
-            <span>
-        <h1>{this.state.message}</h1>
-      </span>
+            <div className={this.state.fromOpponent ? "chatbox-message-opponent" : "chatbox-message-mine"}>
+                <h1>{this.state.message}</h1>
+                <h5 className="message-content-end">{formattedTime}</h5>
+            </div>
         );
     }
 }

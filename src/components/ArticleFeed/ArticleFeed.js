@@ -14,8 +14,6 @@ export default class ArticleFeed extends Component {
 
         this.state = {
 
-            // this will store page number for browsing further articles in feed
-            pageNumber: 0,
             posts: []
 
         };
@@ -47,35 +45,10 @@ export default class ArticleFeed extends Component {
 
             .catch(err => {
 
-                alert('Error occured' + err);
+                alert('Error occured: ' + err);
 
             });
 
-    }
-
-    prevPage() {
-
-        if (this.state.pageNumber > 0) {
-
-            this.setState({pageNumber: this.state.pageNumber - 1});
-
-        } else {
-
-            alert("Already at first page!");
-
-        }
-
-
-    }
-
-    nextPage() {
-
-        this.setState({pageNumber: this.state.pageNumber + 1})
-
-    }
-
-    componentDidMount() {
-        this.setState({pageNumber: 0});
     }
 
     render() {
@@ -83,16 +56,14 @@ export default class ArticleFeed extends Component {
         return (
             
             <div className="ArticleFeed">
-                <Link to="/Compose">
-                    <button>Compose New Article</button>
-                </Link>
+
                 <div class="list-group" id="postList">{this.state.posts.map(PostPreview =>
                     <div> {PostPreview} </div>)}</div>
-                <button id="PrevPage" onClick={() => this.prevPage()}>Previous Page</button>
-                {this.state.pageNumber}
-                <button id="NextPage" onClick={() => this.nextPage()}>Next Page</button>
+
             </div>
 
         )
+
     }
+    
 }

@@ -1,270 +1,153 @@
 import React, { Component } from 'react';
-import Chatbox from '../Chatbox/Chatbox'
-import Peer from 'simple-peer';
-import {loadState, saveState} from "../../components/localStorage";
-import {withRouter} from 'react-router-dom';
+import Chatbox from '../Chatbox/Chatbox';
+import ChessGame from '../ChessGame/ChessGame';
+import GameInfo from '../GameInfo/GameInfo';
+import Timer from '../Timer/Timer';
+import { loadState } from "../../components/localStorage";
+import './LiveMatch.css';
 
-const GAME_ID = 'steem-chess'
-const dsteem = require('dsteem');
-const steemState = require('steem-state');
-const steemTransact = require('steem-transact');
-const client = new dsteem.Client('https://api.steemit.com');
+const DISABLE_BLOCKCHAIN = false;
 
 /**
- * Component for playing a live chess match. Must
- * be passed in the game data and if this user
- * is initiating the webRTC connection
+ * Component for playing a live chess match
  */
 class LiveMatch extends Component {
     constructor(props) {
         super(props);
+        console.log(this.props);
 
-        var localDB = loadState();
+        this.peer = this.props.location.peer;
+        this.chatboxComponent = React.createRef();
+        this.chessGameComponent = React.createRef();
+        this.opponentTimerComponent = React.createRef();
+        this.myTimerComponent = React.createRef();
 
-        this.state = {
-            gameData: this.props.location.gameData,
-            waitingPlayer: null,
-            processor: null,
-            transactor: steemTransact(client, dsteem, GAME_ID),
-            peer: null,
-            username: localDB.account,
-            posting_key: localDB.key
+        if(this.props.location.gameData != null) {
+            this.gameData = this.props.location.gameData;
+        }
+        else {
+            this.gameData = null;
         }
 
-        this.chatboxComponent = React.createRef();
+        this.sendPeerData = this.sendPeerData.bind(this);
+        this.opponentTimesUp = this.opponentTimesUp.bind(this);
+        this.myTimesUp = this.myTimesUp.bind(this); 
+        this.gameDataParser = this.gameDataParser.bind(this);
     }
 
     componentWillUnmount() {
-        if(this.state.processor !== null) {
-            this.state.processor.stop();
-        }
-        if(this.state.peer !== null) {
-            this.state.peer.destroy();
+        if (this.peer !== null && this.peer !== undefined) {
+            console.log("Destroying peer", this.peer);
+            this.peer.destroy();
         }
     }
 
     async componentDidMount() {
-        if(this.state.username == null) {
+        var localDB = loadState();
+        if(localDB.account == null) {
+            console.log("Went to LiveMatch without logging in");
             this.props.history.push("/Login");
             return;
         }
-        if (this.state.gameData == null) {
+        if (this.gameData == null) {
             this.props.history.push("/Play");
             console.error("LiveMatch not passed any game data!");
             return;
         }
-        console.log(this.state.gameData);
-        this.setState({waitingPlayer:this.props.location.waitingPlayer});
-        console.log("waiting player: " + this.state.waitingPlayer);
-        //didn't select a match to join
-        if(this.props.location.waitingPlayer == null) {
-            var opponent = await this.findWaitingPlayer(this.state.gameData);
-            console.log("OPPONENT", opponent);
-            this.setState({waitingPlayer:opponent});
+        if(this.peer == null && !DISABLE_BLOCKCHAIN) {
+            this.props.history.push("/Play");
+            console.error("LiveMatch not passed a peer!");
+            return;
         }
-        //didn't find an existing game to join
-        if (this.state.waitingPlayer == null) {
-            this.postGameRequest(this.state.gameData);
+
+        if(this.gameData.startingColor === "White") {
+            this.myTimerComponent.current.start();
         }
         else {
-            this.sendGameRequest(this.state.waitingPlayer, this.state.gameData);
+            this.opponentTimerComponent.current.start();
         }
-    }
 
-    /**
-     * Checks if a game has recently been requested with the same data
-     * @param {*} gameData 
-     */
-    async findWaitingPlayer(gameData) {//TODO won't filter out players that have already joined a game
-        var headBlockNumber = await this.props.location.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, Math.max(0, headBlockNumber - 25), 1, GAME_ID, 'latest')});
-        return new Promise((resolve, reject) => {
-            try {
-                this.state.processor.on(gameData.typeID, (json, from) => {
-                    console.log("Game block found", json);
-                    if (this.matchableGames(gameData, json.data)) {
-                        console.log("Found an opponent!!!", from);
-                        this.state.processor.stop();
-                        resolve(from);
-                    }
-                });
-                this.state.processor.onBlock((block) => {
-                    //Finish processing
-                    if(block === headBlockNumber) {
-                        this.state.processor.stop();
-                        console.log("Didn't find a waiting opponent:(");
-                        resolve(null);//Didn't find any players
-                    }
-                });
-                this.state.processor.start();
-            } catch (err) {
-                console.error(err)
-                this.state.processor.stop();
-                return reject("Failed to check for waiting players");
-            }
-        });
-    }
+        if(DISABLE_BLOCKCHAIN) return;
 
-    /**
-     * Checks if two games are compatable
-     * @param {*} first 
-     * @param {*} second 
-     */
-    matchableGames(first, second) {
-        if (first.timeControlChosen !== second.timeControlChosen ||
-            first.timePerSide !== second.timePerSide ||
-            first.increment !== second.increment)
-            return false;
-        return first.startingColor === "Random" || first.startingColor !== second.startingColor;
-    }
-
-    /**
-     * Requests to start RTC with a user
-     * @param {string} username The opponent's username
-     * @param {*} gameData
-     */
-    sendGameRequest(username, gameData) {
-        console.log("sending request to existing game");
-        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-join', {
-            data: gameData,
-            sendingTo: username
-        }, (err, result) => {
-            if (err) {
-                console.error(err);
-                alert("Failed to send game request");
-            }
-            else if (result) {
-                console.log("sent request to existing game", gameData);
-                this.initializePeer(false, username, gameData);
-            }
-        });
-    }
-
-    /**
-     * Puts game request onto the blockchain
-     * @param {*} gameData 
-     */
-    postGameRequest(gameData) {
-        console.log("posting a new game request");
-        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), gameData.typeID, {
-            data: gameData
-        }, (err, result) => {
-            if (err) {
-                console.error(err);
-                alert("Failed to request game");
-            }
-            else if (result) {
-                console.log("posted game request", result);
-                this.state.processor = steemState(client, dsteem, result.block_num, 100, GAME_ID);
-                try {
-                    this.state.processor.on('request-join', (json, from) => {
-                        if (json.userID === gameData.userID) {
-                            this.initializePeer(true, from, gameData);
-                        }
-                        else {
-                            console.error("Opponent tried to connect with incorrect game data", json.data, gameData);
-                        }
-                    });
-                    this.state.processor.start();
-                } catch(err) {
-                    console.error(err);
-                    this.state.processor.stop();
-                    alert("Game request failed");
-                }
-            }
-        });
-    }
-
-    /**
-     * Creates a new peer
-     * @param {bool} initializingConnection True if this peer is creating 
-     * @param {string} otherUsername The opponent's username
-     * the offer
-     */
-    async initializePeer(initializingConnection, otherUsername, gameData) {
-        var receivingTag;
-        var sendingTag;
-        if(initializingConnection === true) {
-            receivingTag = 'join-signal-i';
-            sendingTag = 'join-signal-ni';
-        }
-        else {
-            sendingTag = 'join-signal-i';
-            receivingTag = 'join-signal-ni';
-        }
-        console.log("starting initializePeer");
-        await this.setState({peer:new Peer({ initiator: initializingConnection, trickle: false })});
-        this.state.peer.on('error', (err) => {
-            console.error(err)
-            alert("Failed to connect to opponent :(");
-        });
-
-        this.state.peer.on('signal', (data) => {
-            this.sendSignalToUser(sendingTag, data);
-            console.log("received a signal", JSON.stringify(data));
-        });
-
-        this.state.peer.on('data', (data) => {
+        this.peer.on('data', (data) => {
             var parsedData = JSON.parse(data);
-            if(parsedData.type === 'message') {
-                console.log("bloop");
+            if (parsedData.type === 'message') {
                 this.chatboxComponent.current.onReceiveMessage(parsedData);
             }
-            else if(data.type === 'move') {
-
+            else if (parsedData.type === 'move') {
+                this.chessGameComponent.current.onReceiveMove(parsedData);
+                this.opponentTimerComponent.current.stop();
+                this.opponentTimerComponent.current.addTime(this.gameDataParser(2));
+                this.myTimerComponent.current.start();
             }
         });
-
-        this.state.peer.on('connect', () => {
-            if (initializingConnection === true) {
-                this.state.transactor.json(this.state.username, this.state.posting_key.toString(), 'request-closed', {
-                    data: gameData
-                }, (err) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                });
-            }
-            console.log('Connected to peer!!!');
-        });
-
-        var headerBlockNumber = await this.props.location.findBlockHead(client);
-        await this.setState({processor:steemState(client, dsteem, headerBlockNumber, 100, GAME_ID)});
-        this.state.processor.on(receivingTag, (signal) => {
-            if(this.state.peer !== null) {
-                this.state.peer.signal(signal.signal);
-            }
-        });
-        this.state.processor.start();
     }
 
     /**
-     * Sends a webRTC signal to the opponent through the blockchain
-     * @param {string} username 
-     * @param {*} signal 
+     * Sends data to the connected peer
      */
-    sendSignalToUser(sendingTag, signal) {
-        console.log("starting sendSignalToUser");
-        this.state.transactor.json(this.state.username, this.state.posting_key.toString(), sendingTag, {
-            signal: signal,
-            from: this.state.username
-        }, (err, success) => {
-            if (err) {
-                console.error(err);
-                alert("Failed opponent connection process");
-            }
-        });
+    sendPeerData(data) {
+        if(data.type === "move") { //TODO make sure both players agree on timer times, and implement increments
+            this.myTimerComponent.current.stop();
+            this.myTimerComponent.current.addTime(this.gameDataParser(2));
+            this.opponentTimerComponent.current.start();
+        }
+        
+        if(DISABLE_BLOCKCHAIN) return true;
+        
+        if (this.peer == null) {
+            console.error("Peer connection not initiated!");
+            alert("Peer connection not initiated!");
+            return false;
+        }
+        if (!this.peer.connected) {
+            console.error("Not connected to the other player yet!");
+            alert("Not connected to the other player yet!");
+            return false;
+        }
+        this.peer.send(JSON.stringify(data));
+        return true;
+    }
+
+    /**
+     * Called when the opponent's timer component reaches 0
+     */
+    opponentTimesUp() {
+        console.log("Opponent time's up!!!");
+        this.chessGameComponent.current.endGame();
+        alert("You win!! Opponent ran out of time");
+    }
+
+    /**
+     * Called when the local player's time reaches 0
+     */
+    myTimesUp() {
+        console.log("My time's up!!!");
+        this.chessGameComponent.current.endGame();
+        alert("Sorry, you lose! You ran out of time");
+    }
+
+    gameDataParser(index) {
+        if(this.gameData === null) return "";
+        var data = this.gameData.typeID.split("|");
+        if(data.length > index) return data[index];
     }
 
     render() {
         return (
-            <div id="liveMatch">
-                {/* <ChessGame/> */}
-                <Chatbox peer={this.state.peer} ref={this.chatboxComponent} />
+            <div id="Match">
+                <div id = "float-left">
+                <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
+                <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
+                </div>
+                <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} gameData={this.gameData}/>
+                <div id="float-right">    
+                <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
+                <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
+                </div>
             </div>
         )
     }
-
 }
 
 export default LiveMatch;

@@ -1,0 +1,8 @@
+.current-timer{
+    text-align: center;
+    font-family: monospace;
+    font-size: 2em;
+    display: inline-block;
+    border: 1px solid;
+    padding: 5px;
+}

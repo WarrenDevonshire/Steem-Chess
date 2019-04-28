@@ -1,0 +1,43 @@
+
+#submitReplyBtn{
+   float: left;
+   height: 30px;
+   border: none;  
+   width: 90px; 
+   border-radius: 10px;
+   background-color: #4CAF50;
+   color: white;
+}
+
+#Buttons{
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.openReplies{
+    float: right;
+    width: 90px;
+    height: 30px;
+    border: none;   
+    border-radius: 10px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+#postComments{
+    margin-top: 50px;
+}
+
+.commentReply{
+    width:300px;
+    padding: 2px;
+    border:2px solid lightgreen;
+    height: 40px;
+    border-radius: 10px;
+}
+
+.commentReply:focus{
+    outline: none;
+    border:2px solid green;
+    border-radius: 10px;
+}
