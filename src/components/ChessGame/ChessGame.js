@@ -154,7 +154,10 @@ class ChessGame extends PureComponent {
       fen: this.game.fen(),
       squareStyles: this.squareStyling(pieceSquare, this.history)
     }));
-    this.history = this.game.history({ verbose: true });
+    var gameHistory = this.game.history({verbose: true});
+    var mostRecentMove = gameHistory[gameHistory.length-1];
+    this.props.addMoveToHistory(mostRecentMove, Date.now());
+    this.history.push(mostRecentMove);
     if (this.game.in_draw()) {
       alert('A Draw!');
     }

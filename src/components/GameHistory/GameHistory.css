@@ -1,0 +1,53 @@
+#history-headers {
+    height: 5%;
+    display: -webkit-box;
+}
+
+#history-white-header, 
+#history-black-header {
+    width: 50%;
+    text-align: center;
+    border-bottom: 2px solid black;
+}
+
+#history-white-header {
+    border-right: 2px solid black;
+}
+
+#history-black-header {
+}
+
+#white-history-box{
+    width: calc(50% + 8px);
+    text-align: left;
+    padding: 10px;
+    border-right: 2px solid black;
+}
+
+#black-history-box {
+    width: calc(50% - 8px);
+    text-align: right;
+    padding: 10px;
+}
+
+#history-moves-div {
+    height: 95%;
+    overflow: hidden;
+    overflow-y: scroll;
+    display: flex;
+}
+
+#history-main-div {
+    border: 2px solid black;
+    height:400px;
+    width:250px;
+    margin:auto;
+}
+
+.move {
+    margin-bottom: 0px;
+}
+
+.time {
+    margin-bottom: 10px;
+}

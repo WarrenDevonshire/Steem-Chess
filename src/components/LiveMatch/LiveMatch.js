@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Chatbox from '../Chatbox/Chatbox';
 import ChessGame from '../ChessGame/ChessGame';
+import GameHistory from '../GameHistory/GameHistory';
 import GameInfo from '../GameInfo/GameInfo';
 import Timer from '../Timer/Timer';
 import { loadState } from "../../components/localStorage";
@@ -21,6 +22,7 @@ class LiveMatch extends Component {
         this.chessGameComponent = React.createRef();
         this.opponentTimerComponent = React.createRef();
         this.myTimerComponent = React.createRef();
+        this.gameHistoryComponent = React.createRef();
 
         if(this.props.location.gameData != null) {
             this.gameData = this.props.location.gameData;
@@ -32,6 +34,7 @@ class LiveMatch extends Component {
         this.sendPeerData = this.sendPeerData.bind(this);
         this.opponentTimesUp = this.opponentTimesUp.bind(this);
         this.myTimesUp = this.myTimesUp.bind(this); 
+        this.addMoveToHistory = this.addMoveToHistory.bind(this);
         this.gameDataParser = this.gameDataParser.bind(this);
     }
 
@@ -127,6 +130,11 @@ class LiveMatch extends Component {
         alert("Sorry, you lose! You ran out of time");
     }
 
+    addMoveToHistory(move, time)
+    {
+        this.gameHistoryComponent.current.addMove(move, time);
+    }
+
     gameDataParser(index) {
         if(this.gameData === null) return "";
         var data = this.gameData.typeID.split("|");
@@ -140,10 +148,11 @@ class LiveMatch extends Component {
                 <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
                 </div>
-                <ChessGame sendData={this.sendPeerData} ref={this.chessGameComponent} gameData={this.gameData}/>
+                <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData}/>
                 <div id="float-right">    
-                <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
                 <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
+                <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
+                <GameHistory ref={this.gameHistoryComponent}/>
                 </div>
             </div>
         )
