@@ -3,7 +3,7 @@ import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 import './ChessGame.css'
 
-const DISABLE_BLOCKCHAIN = false;
+const DISABLE_BLOCKCHAIN = true;
 //var PiecesEnum = Object.freeze({"Black":1, "White":2})
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.
@@ -158,10 +158,17 @@ class ChessGame extends PureComponent {
     var mostRecentMove = gameHistory[gameHistory.length-1];
     this.props.addMoveToHistory(mostRecentMove, Date.now());
     this.history.push(mostRecentMove);
+    console.log(this.game);//TEMP
+    if(this.game.in_stalemate()) {
+      this.props.gameEnded();
+      alert('Stalemate!');
+    }
     if (this.game.in_draw()) {
+      this.props.gameEnded();
       alert('A Draw!');
     }
     else if (this.game.in_checkmate()) {
+      this.props.gameEnded();
       alert('Checkmate!');
     }
   }

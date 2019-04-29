@@ -7,7 +7,14 @@ import Timer from '../Timer/Timer';
 import { loadState } from "../../components/localStorage";
 import './LiveMatch.css';
 
-const DISABLE_BLOCKCHAIN = false;
+const dsteem = require('dsteem');
+const steemTransact = require('steem-transact');
+const client = new dsteem.Client('https://api.steemit.com');
+
+const GAME_ID = 'steem-chess'
+const MATCH_END_TAG = "game-ended";
+
+const DISABLE_BLOCKCHAIN = true;
 
 /**
  * Component for playing a live chess match
@@ -51,6 +58,15 @@ class LiveMatch extends Component {
             console.log("Went to LiveMatch without logging in");
             this.props.history.push("/Login");
             return;
+        }
+        else {
+            this.username = localDB.account;
+            try {
+                this.posting_key = dsteem.PrivateKey.fromString(localDB.key);
+            }
+            catch (e) {
+                console.error(e);
+            }
         }
         if (this.gameData == null) {
             this.props.history.push("/Play");
@@ -117,6 +133,7 @@ class LiveMatch extends Component {
      */
     opponentTimesUp() {
         console.log("Opponent time's up!!!");
+        this.stopTimers();
         this.chessGameComponent.current.endGame();
         alert("You win!! Opponent ran out of time");
     }
@@ -126,13 +143,32 @@ class LiveMatch extends Component {
      */
     myTimesUp() {
         console.log("My time's up!!!");
+        this.stopTimers();
         this.chessGameComponent.current.endGame();
         alert("Sorry, you lose! You ran out of time");
     }
 
-    addMoveToHistory(move, time)
-    {
+    addMoveToHistory(move, time) {
         this.gameHistoryComponent.current.addMove(move, time);
+    }
+
+    stopTimers() {
+        this.myTimerComponent.current.stop();
+        this.opponentTimerComponent.current.stop();
+    }
+
+    gameEnded(matchData) {
+        this.stopTimers();
+
+        if(DISABLE_BLOCKCHAIN) return;
+
+        var transactor = steemTransact(client, dsteem, GAME_ID);
+        transactor.json(this.username, this.posting_key.toString(), MATCH_END_TAG, matchData,
+                (err, _) => {
+                    if (err) {
+                        console.error(err);
+                    }
+                });
     }
 
     gameDataParser(index) {
@@ -148,7 +184,7 @@ class LiveMatch extends Component {
                 <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
                 </div>
-                <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData}/>
+                <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData} gameEnded={this.gameEnded}/>
                 <div id="float-right">    
                 <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
                 <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
