@@ -50,6 +50,7 @@ class LiveMatch extends Component {
             console.log("Destroying peer", this.peer);
             this.peer.destroy();
         }
+        this.stopTimers();
     }
 
     async componentDidMount() {
@@ -153,8 +154,10 @@ class LiveMatch extends Component {
     }
 
     stopTimers() {
-        this.myTimerComponent.current.stop();
-        this.opponentTimerComponent.current.stop();
+        if(this.myTimerComponent.current !== null)
+            this.myTimerComponent.current.stop();
+        if(this.opponentTimerComponent.current !== null)
+            this.opponentTimerComponent.current.stop();
     }
 
     gameEnded(matchData) {

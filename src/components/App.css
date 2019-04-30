@@ -1,32 +1,112 @@
-.App {
-    text-align: center;
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
-.App-header {
-    background-color: #282c34;
-    min-height: 10vh;
-    position: fixed;
-    width:100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
-    top:0;
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: "Press Start 2P";
+    text-align: center;
+    height: 90%;
+    /* background: green; Used for testing purposes */
+}
+
+#root, .App {
+    height: 100%;
 }
 
 .App-content{
-    padding-top: 5em;
+    /* background: #61dafb; Used for testing purposes*/
+    min-height: 100%;
 }
 
 .App-footer{
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   align-self: flex-end;
   bottom: 0;
-  font-size: 15px;
+  font-size: 15px; */
+  clear: both;
+    position: relative;
+    height: 40px;
+    margin-top: -40px;
 }
 
 .App-link {
     color: #61dafb;
+}
+
+header {
+    background-color: #282c34;
+    text-decoration: none;
+    z-index: 9999;
+    height: 10%;
+    font-size: 2em;
+    color: white;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    width: 100%;
+}
+
+.form{
+    left: 80px;
+    margin-top:20px;
+    margin-left:30px;
+}
+  
+.search-box{
+    height: 40px;
+    position: absolute;
+    top: 2%;
+  }
+
+  .search-container{
+    white-space: nowrap;
+    position: absolute;
+    float: right !important;
+  }
+
+  .search-container input#search{
+    width: 300px;
+    height: 40px;
+    border: none;
+    padding-left: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    float: right !important;
+  }
+
+.input{
+    font-size:inherit;
+}
+
+li:hover {
+    background-color: aliceblue;
+}
+
+li {
+    margin: 10px;
+}
+
+.h1{
+    display: flex;
+    float: left;
+}
+
+#menubar-list {
+    list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: contents;
+  line-height: 2;
+  top: 1%;
 }

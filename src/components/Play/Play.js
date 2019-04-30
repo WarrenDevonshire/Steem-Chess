@@ -495,14 +495,12 @@ class Play extends Component {
 
     render() {
         return (
-            <div className="horizontal">
+            <div className="horizontal play-div">
                 <CreateGameBox ref={this.createGameComponent}
-                    onCreateGameClicked={this.createGameClicked}
-                    className="box" />
+                    onCreateGameClicked={this.createGameClicked}/>
                 <JoinGameBox ref={this.joinGameComponent}
                     onJoinGameClicked={this.joinGameClicked}
-                    findBlockHead={this.findBlockHead}
-                    className="box" />
+                    findBlockHead={this.findBlockHead}/>
             </div>
         )
     }

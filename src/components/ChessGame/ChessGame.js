@@ -226,8 +226,8 @@ class ChessGame extends PureComponent {
     const { squareStyles } = this.state;
 
     return (
-      <div id='Chessboard'>
-        <Chessboard width={512}
+      <div id='chess-div'>
+        <Chessboard id='chessboard' width={512}
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
           orientation={this.color === "b" ? "black" : "white"}

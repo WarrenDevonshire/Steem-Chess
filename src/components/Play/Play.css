@@ -6,17 +6,7 @@
 }
 
 .horizontal {
-    margin: 0;
-    padding: 0;
-    display: inline-flex;
-}
-
-.box {
-    border: 3px solid gray;
-    border-radius: 15px;
-    background-repeat: repeat-y;
-    padding-top: 20px;
-    height: 555px;
+    display: block;
 }
 
 .Button{
@@ -35,3 +25,15 @@
 .Line{
     margin-bottom: 30px;
 }
+
+.playBox{
+    height:600px;
+    width:550px;
+    margin-top: 40px;
+    margin-left: 50px;
+    margin-right: 50px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 50px;
+    display: inline-block;
+   }

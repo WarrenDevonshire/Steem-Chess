@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './JoinGameBox.css';
+import '../Play/Play.css';
 //import ComboBox from '../Combo Box/ComboBox'
 //import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
@@ -123,7 +124,7 @@ class JoinGameBox extends Component {
 
     render() {
         return (
-            <div className='JoinGameBox'>
+            <div className='playBox'>
                 <div>
                     <h1>Join Game</h1>
                 </div>

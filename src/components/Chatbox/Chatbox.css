@@ -1,13 +1,3 @@
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
-body {
-    font-family: "Press Start 2P";
-}
-
 .messages-list {
     height:400px;
     width:250px;
