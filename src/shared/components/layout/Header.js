@@ -15,7 +15,7 @@ class Header extends Component {
 
     render() {
         return (
-            <header className="App-header">
+            <header>
                 <h1>{this.state.title}</h1>
                 <ul id="menubar-list">
                     <li><Link to="/Play">Play</Link></li>
@@ -25,11 +25,10 @@ class Header extends Component {
                     <li><Link to='/Compose'>Compose</Link></li>
                     <li><Link to={"/Login"}>{localStorage.getItem('login') === null ? 'Login' : 'Logout'}</Link></li>
                 </ul>
-                <div class="search-box">
-                    <div class="search-container">
+                {/* <div class="search-box">
                         <input type="search" id="search" placeholder="Search..." />
-                    </div>
-                </div>
+                </div> */}
+                <h1/>
             </header>
         );
     }

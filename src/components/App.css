@@ -50,9 +50,8 @@ header {
     color: white;
     margin: 0;
     padding: 0;
-    overflow: hidden;
     display: -webkit-box;
-    width: 100%;
+    min-width: max-content;
 }
 
 .form{
@@ -65,15 +64,11 @@ header {
     height: 40px;
     position: absolute;
     top: 2%;
-  }
-
-  .search-container{
     white-space: nowrap;
-    position: absolute;
     float: right !important;
   }
 
-  .search-container input#search{
+  .search-box input#search{
     width: 300px;
     height: 40px;
     border: none;
@@ -105,7 +100,6 @@ li {
     list-style-type: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
   display: contents;
   line-height: 2;
   top: 1%;

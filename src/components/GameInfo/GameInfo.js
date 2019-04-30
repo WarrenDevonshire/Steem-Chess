@@ -17,7 +17,7 @@ class GameInfo extends Component{
     
     render(){
         return(
-            <div className="box"id="box">
+            <div id="game-info-box">
                 <div class='Top'>
                     <h4>{this.state.gameType} {this.state.gameTime} - {this.state.increment} {this.state.ranked}</h4>
                 </div>

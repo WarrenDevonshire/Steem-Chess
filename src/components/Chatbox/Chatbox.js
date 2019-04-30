@@ -28,7 +28,7 @@ class Chatbox extends Component {
     }
 
     sendMessage() {
-        if(this.isEmptyOrSpaces(this.state.draftedMessage)) return;
+        if (this.isEmptyOrSpaces(this.state.draftedMessage)) return;
 
         this.props.sendData({
             type: "message",
@@ -58,21 +58,19 @@ class Chatbox extends Component {
             )
         }
         return (
-            <div id="container">
-                <section id="main" class='messages'>
-                    <section id="messages-list" class='messages-list'>
-                        <span>
-                            {messageList}
-                        </span>
-                    </section>
-                    <section id="new-message" class='new-msg'>
-                        <textarea ref="draftArea" class='msg'
-                            onChange={e => this.updateDraft(e)}></textarea>
-
-                        <button onClick={e => this.sendMessage()} id='Send'>Send</button>
-                    </section>
+            <section id="messages-main">
+                <section id="messages-list" class='messages-list'>
+                    <span>
+                        {messageList}
+                    </span>
                 </section>
-            </div>
+                <section id="new-message" class='new-msg'>
+                    <textarea ref="draftArea" class='msg'
+                        onChange={e => this.updateDraft(e)}></textarea>
+
+                    <button onClick={e => this.sendMessage()} id='Send'>Send</button>
+                </section>
+            </section>
         );
     }
 }

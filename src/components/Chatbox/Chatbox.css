@@ -1,38 +1,33 @@
 .messages-list {
     height:400px;
-    width:250px;
+    width:100%;
     border: 2px solid black;
     padding: 5px 0 0 5px;
     overflow: hidden;
     overflow-y: scroll;
     position: relative;
-    top:500px;
-    left:100px;
 }
 
 
 .new-msg{
     position: relative;
     display:table;
-    top:500px;
-    left:100px;
 }
 
 .msg{
     height: 40px;
-    width: 140px;
+    width: 75%;
     resize: none;
 }
 
 #Send{
     height: 40px;
-    width: 60px;
+    width: 25%;
     position: relative;
     bottom:16px;
 }
 
 #container{
-    bottom: 500px;
     width: 100%;
     display: table;
     position: relative;
@@ -51,4 +46,9 @@
 
 .message-content-end {
     margin-bottom: 10px;
+}
+
+#messages-main {
+    position: relative;
+    left: 100px;
 }

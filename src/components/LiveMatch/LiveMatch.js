@@ -43,6 +43,8 @@ class LiveMatch extends Component {
         this.myTimesUp = this.myTimesUp.bind(this); 
         this.addMoveToHistory = this.addMoveToHistory.bind(this);
         this.gameDataParser = this.gameDataParser.bind(this);
+        this.stopTimers = this.stopTimers.bind(this);
+        this.gameHasEnded = this.gameHasEnded.bind(this);
     }
 
     componentWillUnmount() {
@@ -160,7 +162,8 @@ class LiveMatch extends Component {
             this.opponentTimerComponent.current.stop();
     }
 
-    gameEnded(matchData) {
+    gameHasEnded(matchData) {
+        console.log(this);
         this.stopTimers();
 
         if(DISABLE_BLOCKCHAIN) return;
@@ -187,7 +190,7 @@ class LiveMatch extends Component {
                 <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
                 </div>
-                <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData} gameEnded={this.gameEnded}/>
+                <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData} gameEnded={this.gameHasEnded}/>
                 <div id="float-right">    
                 <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
                 <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>
