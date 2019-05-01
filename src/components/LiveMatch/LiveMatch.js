@@ -14,7 +14,7 @@ const client = new dsteem.Client('https://api.steemit.com');
 const GAME_ID = 'steem-chess'
 const MATCH_END_TAG = "game-ended";
 
-const DISABLE_BLOCKCHAIN = true;
+const DISABLE_BLOCKCHAIN = false;
 
 /**
  * Component for playing a live chess match

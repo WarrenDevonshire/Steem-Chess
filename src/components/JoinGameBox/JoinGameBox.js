@@ -54,8 +54,10 @@ class JoinGameBox extends Component {
         var maxWaitingTime = 1000 * 60 * 15;//5 minutes
         var headBlockNumber = await this.props.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 350), 0, GAME_ID, 'latest');
-        this.processor.on(POST_GAME_TAG, (data) => {
-            console.log("found BLOCK", data);
+        this.processor.on(POST_GAME_TAG, (block) => {
+            console.log("found BLOCK", block);
+            var data = block.data;
+            data.pKey = block.pKey
             //If the request was made less than 5 minutes ago
             if ((Date.now() - data.time) < maxWaitingTime) {
                 var gameIndex = waitingOpponents.indexOf(data.username);

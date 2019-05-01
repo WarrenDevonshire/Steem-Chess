@@ -5,6 +5,8 @@ import CreateGameBox from "../CreateGameBox/CreateGameBox";
 import Peer from 'simple-peer';
 import { loadState } from "../../components/localStorage";
 import PubSub from 'pubsub-js';
+import RSA from 'cryptico';
+const cryptico = require('cryptico');
 
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
@@ -20,7 +22,7 @@ const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
-const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
 
 class Play extends Component {
     constructor(props) {
@@ -42,6 +44,83 @@ class Play extends Component {
         this.findBlockHead = this.findBlockHead.bind(this);
         this.createGameClicked = this.createGameClicked.bind(this);
         this.joinGameClicked = this.joinGameClicked.bind(this);
+
+        //this.test();
+    }
+
+    test() {
+        //Creating my key and key string
+        console.log(RSA);
+        var myRSA = cryptico.generateRSAKey(Math.random().toString(), 1024);
+        var myPublicKey = cryptico.publicKeyString(myRSA);
+        console.log("myRSA", myRSA);
+        console.log("myKeyString", myPublicKey);
+
+        //Creating opponent key and key string
+        //var otherRSA = cryptico.generateRSAKey(Math.random().toString(), 1024);
+        //var otherPublicKey = cryptico.publicKeyString(otherRSA);
+        //console.log("otherRSA", otherRSA);
+        //console.log("otherKeyString", otherPublicKey);
+
+        //Encrypting my message with opponent's key, and vice-versa
+        var myEncrypting = cryptico.encrypt("Why hello there fren", myPublicKey);
+        var myCipher = myEncrypting.cipher;
+        //var otherEncrypting = cryptico.encrypt("Ello chap", otherPublicKey);
+        //var otherCipher = otherEncrypting.cipher;
+        console.log("myEncrypting", myEncrypting);
+        console.log("myCipher", myCipher);
+        //console.log("otherEncrypting", otherEncrypting);
+        //console.log("otherCipher", otherCipher);
+
+        //Decrypting opponent's message with my key, and vice-versa
+        var myDecrypted = RSA.adecrypt(myCipher, myRSA);
+        //var otherDecrypted = otherRSA.decrypt(otherCipher);
+        console.log("myDecrypted", myDecrypted);
+        //console.log("otherDecrypted", otherDecrypted);
+    }
+
+    generatePersonalKey() {
+        this.personalRSA = cryptico.generateRSAKey(Math.random().toString(), 1024);
+        this.publicKey = cryptico.publicKeyString(this.personalRSA);
+        console.log("Public key", this.publicKey);
+    }
+
+    encrypt(message, publicKey)
+    {
+        if(publicKey === undefined)
+        {
+            console.error("Tried to encrypt without a key");
+            return;
+        }
+        console.log("encrypting...", message, publicKey)
+        var encrypted = cryptico.encrypt(message.toString(), publicKey);
+        if(encrypted.status === "success") return encrypted.cipher;
+        console.error("Failed to encrypt message");
+        return null;
+    }
+
+    decrypt(message)
+    {
+        console.log("decrypting...", message, this.personalRSA);
+        var decrypted = RSA.adecrypt(message.toString(), this.personalRSA);
+        if(decrypted.status === "success") return decrypted.plaintext;
+        console.error("Failed to decrypt message");
+        return null;
+    }
+
+        /**
+     * Calculates a hash code for a string
+     * @param {*} text 
+     */
+    getStringHashCode(text) {
+        var hash = 0, i, chr;
+        if (text.length === 0) return hash;
+        for (i = 0; i < text.length; i++) {
+            chr = text.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
     }
 
     componentWillUnmount() {
@@ -83,88 +162,8 @@ class Play extends Component {
                 return;
 
             }
-
         }
-    }
-
-    /**
-     * Encrypts a message using a shared key
-     * @param {*} key 
-     * @param {*} text 
-     */
-    encrypt(key, text) {
-        var shift = this.getStringHashCode(key);
-        var charCodes = [];
-        text.split("").forEach(char => {
-            charCodes.push(char.charCodeAt());
-        });
-        var shiftedChars = [];
-        charCodes.forEach(code => {
-            shiftedChars.push(String.fromCharCode(this.mod(code + shift, 70537)));
-        });
-        var shuffledChars = [];
-        for(var i = 0; i < shiftedChars.length; i++) {
-            if(i%2 == 0 && i+1 < shiftedChars.length)
-                shuffledChars.push(shiftedChars[i+1]);
-            else if(i%2 == 1 && i-1 >= 0)
-                shuffledChars.push(shiftedChars[i-1]);
-            else
-                shuffledChars.push(shiftedChars[i]);
-        }
-        return shuffledChars.join("");
-    }
-
-    /**
-     * Decrypts a message using a shared key
-     * @param {*} key 
-     * @param {*} text 
-     */
-    decrypt(key, text) {
-        var shift = this.getStringHashCode(key);
-        var encryptedChars = text.split("");
-        var unshuffledChars = [];
-        for(var i = 0; i < encryptedChars.length; i++) {
-            if(i%2 == 0 && i+1 < encryptedChars.length)
-                unshuffledChars.push(encryptedChars[i+1]);
-            else if(i%2 == 1 && i-1 >= 0)
-                unshuffledChars.push(encryptedChars[i-1]);
-            else
-                unshuffledChars.push(encryptedChars[i]);
-        }
-        var shiftedCodes = [];
-        unshuffledChars.forEach(char => {
-            shiftedCodes.push(char.charCodeAt());
-        });
-        var plainChars = [];
-        shiftedCodes.forEach(code => {
-            plainChars.push(String.fromCharCode(this.mod(code - shift, 70537)));
-        });
-        return plainChars.join("");
-    }
-
-    /**
-     * Calculates a hash code for a string
-     * @param {*} text 
-     */
-    getStringHashCode(text) {
-        var hash = 0, i, chr;
-        if (text.length === 0) return hash;
-        for (i = 0; i < text.length; i++) {
-            chr = text.charCodeAt(i);
-            hash = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
-        }
-        return hash;
-    }
-
-    /**
-     * Performs modulus on a number, ensuring that it is
-     * always positive
-     * @param {*} number 
-     * @param {*} m 
-     */
-    mod(number, m) {
-        return ((number%m)+m)%m;
+        this.generatePersonalKey();
     }
 
     /**
@@ -196,10 +195,10 @@ class Play extends Component {
         var headBlockNumber = await this.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 150), 1, GAME_ID, 'latest');
         try {
-            this.processor.on(POST_GAME_TAG, (data) => {
-                console.log("Game block found", data);
-                if (this.matchableGames(gameData, data)) {
-                    this.gameRequestBlocks.push(data);
+            this.processor.on(POST_GAME_TAG, (block) => {
+                console.log("Game block found", block);
+                if (this.matchableGames(gameData, block.data)) {
+                    this.gameRequestBlocks.push(block);
                 }
             });
             this.processor.on(CLOSE_REQUEST_TAG, (data) => {
@@ -235,8 +234,8 @@ class Play extends Component {
             for (var i = this.gameRequestBlocks.length - 1; i >= 0; --i) {
                 //TODO check that the user is not the same as the current person once testing is complete
                 var iBlock = this.gameRequestBlocks[i];
-                if (!waitingPlayers.includes(iBlock.username) &&
-                    (Date.now() - iBlock.time) < maxWaitingTime) {
+                if (!waitingPlayers.includes(iBlock.data.username) &&
+                    (Date.now() - iBlock.data.time) < maxWaitingTime) {
                     waitingPlayers.push(iBlock);
                 }
             }
@@ -280,7 +279,7 @@ class Play extends Component {
             console.log("sending request to existing game");
             this.gameData.startingColor = this.decideRandom(this.gameData.startingColor, opponentData.startingColor);
             opponentData.startingColor = this.decideRandom(opponentData.startingColor, this.gameData.startingColor);
-            this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, opponentData,
+            this.transactor.json(this.username, this.posting_key.toString(), JOIN_TAG, {data:opponentData, pKey:this.publicKey},
                 (err, result) => {
                     if (err) {
                         console.error(err);
@@ -314,7 +313,7 @@ class Play extends Component {
             if (DISABLE_BLOCKCHAIN) resolve();
 
             console.log("posting a new game request");
-            this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, this.gameData,
+            this.transactor.json(this.username, this.posting_key.toString(), POST_GAME_TAG, {data:this.gameData, pKey:this.publicKey},
                 (err, result) => {
                     if (err) {
                         console.error(err);
@@ -337,9 +336,12 @@ class Play extends Component {
         this.processor = steemState(client, dsteem, currentBlockNumber, 100, GAME_ID);
         try {
             this.processor.on(JOIN_TAG, (block) => {
-                if (this.username === block.username && this.gameData.typeID === block.typeID) {
+                console.log("Listen for join tag block", block);
+                var data = block.data;
+                if (this.username === data.username && this.gameData.typeID === data.typeID) {
                     console.log("accepted join block");
-                    this.gameData.startingColor = block.startingColor;
+                    this.gameData.startingColor = block.data.startingColor;
+                    this.opponentKey = block.pKey;
                     this.initializePeer(true);
                 }
             });
@@ -372,8 +374,6 @@ class Play extends Component {
         var receivingTag = initializingConnection === true ? PEER_INIT_TAG : PEER_NOT_INIT_TAG;
         var sendingTag = initializingConnection === true ? PEER_NOT_INIT_TAG : PEER_INIT_TAG;
 
-        this.sharedKey = this.gameData.time + this.gameData.typeID;
-
         console.log("starting initializePeer");
         this.peer = new Peer({ initiator: initializingConnection, trickle: false });
         this.peer.on('error', (err) => {
@@ -383,7 +383,6 @@ class Play extends Component {
 
         this.peer.on('signal', (data) => {
             this.sendSignalToUser(sendingTag, data);
-            console.log("received a signal", JSON.stringify(data));
         });
 
         this.peer.on('connect', () => {
@@ -399,15 +398,18 @@ class Play extends Component {
                 gameData: this.gameData,
                 peer: this.peer,
             });
-            console.log('Connected to peer!!!');
+            console.log('Connected to peer!');
         });
 
         var headerBlockNumber = await this.findBlockHead(client);
         this.processor = steemState(client, dsteem, headerBlockNumber, 100, GAME_ID);
         this.processor.on(receivingTag, (signal) => {
             if (this.peer !== null) {
-                var decryptedSignal = JSON.parse(this.decrypt(this.sharedKey, signal.signal));
-                this.peer.signal(decryptedSignal);
+                var decryptedSignal = JSON.parse(this.decrypt(signal.signal));
+                if(decryptedSignal == null)
+                    console.error("Failed to decrypt incoming RTC signal");
+                else
+                    this.peer.signal(decryptedSignal);
             }
         });
         this.processor.start();
@@ -422,7 +424,7 @@ class Play extends Component {
         if (DISABLE_BLOCKCHAIN) return;
 
         console.log("starting sendSignalToUser");
-        var encryptedSignal = this.encrypt(this.sharedKey, JSON.stringify(signal));
+        var encryptedSignal = this.encrypt(JSON.stringify(signal), this.opponentKey);
         this.transactor.json(this.username, this.posting_key.toString(), sendingTag, {
             signal: encryptedSignal,
             from: this.username
@@ -453,13 +455,13 @@ class Play extends Component {
         this.findWaitingPlayers(this.gameData);
         //If opponent not found after 15 seconds, post a game request
         this.createGameTimeout = setTimeout(() => {
-            var opponentData = this.checkWaitingPlayers();
-            console.log("in timeout thingy", this.gameData, opponentData);
-            if (opponentData == null) {
+            var opponentBlock = this.checkWaitingPlayers();
+            if (opponentBlock == null) {
                 this.postGameRequest();
             }
             else {
-                this.sendGameRequest(opponentData);
+                this.opponentKey = opponentBlock.pKey
+                this.sendGameRequest(opponentBlock.data);
             }
         }, 15000);
     }
@@ -472,6 +474,7 @@ class Play extends Component {
             console.error("Opponent data null");
             return;
         }
+        this.opponentKey = opponentData.pKey;
 
         this.gameData = {
             startingColor: "Random",
@@ -497,10 +500,10 @@ class Play extends Component {
         return (
             <div className="horizontal play-div">
                 <CreateGameBox ref={this.createGameComponent}
-                    onCreateGameClicked={this.createGameClicked}/>
+                    onCreateGameClicked={this.createGameClicked} />
                 <JoinGameBox ref={this.joinGameComponent}
                     onJoinGameClicked={this.joinGameClicked}
-                    findBlockHead={this.findBlockHead}/>
+                    findBlockHead={this.findBlockHead} />
             </div>
         )
     }
