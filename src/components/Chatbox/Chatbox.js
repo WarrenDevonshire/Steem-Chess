@@ -102,7 +102,9 @@ class MessageBubble extends Component {
         var formattedTime = this.getFormattedTime(this.state.timeSent);
         return (
             <div className={this.state.fromOpponent ? "chatbox-message-opponent" : "chatbox-message-mine"}>
-                <h1>{this.state.message}</h1>
+                <div className={this.state.fromOpponent ? "chatbox-bubble-opponent" : "chatbox-bubble-mine"}>
+                    <h1>{this.state.message}</h1>
+                </div>
                 <h5 className="message-content-end">{formattedTime}</h5>
             </div>
         );
