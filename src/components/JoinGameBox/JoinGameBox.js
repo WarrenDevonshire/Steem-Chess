@@ -130,7 +130,7 @@ class JoinGameBox extends Component {
                 <div>
                     <h1>Join Game</h1>
                 </div>
-                <div>
+                <div id="join-table-div">
                     <ReactTable
                         data={this.state.availableGames}
                         columns={[{
@@ -176,8 +176,7 @@ class JoinGameBox extends Component {
                         className="table"
                         resizable={false} />
                 </div>
-                <hr noshade="true" className='Line' />
-                <button className="Button" onClick={this.joinClicked}>Join Game</button>
+                <button id="join-game-button" className="Button" onClick={this.joinClicked}>Join Game</button>
             </div>
         );
     }

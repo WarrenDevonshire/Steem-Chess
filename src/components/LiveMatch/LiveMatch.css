@@ -1,15 +1,31 @@
 #Match{
     max-width: 100%;
+    top: 50px;
+    text-align: center;
 }
 
 #float-left{
+    min-width: 200px;
     float: left;
+    width: 25%;
     position: relative;
-    top:50px;
+    /* border: 2px solid red; */
 }
 
 #float-right{
+    min-width: 200px;
     float: right;
+    width: 25%;
     position: relative;
-    bottom:450px;
+    /* border: 2px solid blue; */
+
+}
+
+#middle-div {
+    width: 50%;
+    min-width: 560px;
+    /* border: 3px solid green; */
+    padding: 10px;
+    text-align: -webkit-center;
+    display: inline-block;
 }

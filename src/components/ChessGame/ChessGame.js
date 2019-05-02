@@ -3,7 +3,7 @@ import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 import './ChessGame.css'
 
-const DISABLE_BLOCKCHAIN = false;
+const DISABLE_BLOCKCHAIN = true;
 //var PiecesEnum = Object.freeze({"Black":1, "White":2})
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.
@@ -226,17 +226,14 @@ class ChessGame extends PureComponent {
     const { squareStyles } = this.state;
 
     return (
-      <div id='chess-div'>
-        <Chessboard id='chessboard' width={512}
+        <Chessboard id='chessboard'
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
           orientation={this.color === "b" ? "black" : "white"}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
           onMouseOutSquare={e => this.onMouseOutSquare(e)}
           squareStyles={squareStyles}
-          dropSquareStyle={this.dropSquareStyle} 
-          />
-      </div>
+          dropSquareStyle={this.dropSquareStyle} />
     );
   }
 }

@@ -22,7 +22,7 @@ const PEER_INIT_TAG = 'join-signal-i';
 const PEER_NOT_INIT_TAG = 'join-signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
-const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
 
 class Play extends Component {
     constructor(props) {

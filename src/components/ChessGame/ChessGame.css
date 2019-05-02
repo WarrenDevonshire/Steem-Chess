@@ -1,7 +1,2 @@
-#chess-div{
-    margin: auto;
-  width: 50%;
-  /* border: 3px solid green; Used for testing purposes */
-  padding: 10px;
-  text-align: -webkit-center;
+#chessboard{
 }

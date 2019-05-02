@@ -14,7 +14,7 @@ const client = new dsteem.Client('https://api.steemit.com');
 const GAME_ID = 'steem-chess'
 const MATCH_END_TAG = "game-ended";
 
-const DISABLE_BLOCKCHAIN = false;
+const DISABLE_BLOCKCHAIN = true;
 
 /**
  * Component for playing a live chess match
@@ -190,7 +190,9 @@ class LiveMatch extends Component {
                 <GameInfo gameType={this.gameDataParser(0)} gameTime={this.gameDataParser(1)} increment={this.gameDataParser(2)} ranked={false}/>
                 <Chatbox sendData={this.sendPeerData} ref={this.chatboxComponent} />
                 </div>
-                <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData} gameEnded={this.gameHasEnded}/>
+                <div id="middle-div">
+                    <ChessGame sendData={this.sendPeerData} addMoveToHistory={this.addMoveToHistory} ref={this.chessGameComponent} gameData={this.gameData} gameEnded={this.gameHasEnded}/>
+                </div>
                 <div id="float-right">    
                 <Timer timesUp={this.myTimesUp} ref={this.myTimerComponent} minutes={this.gameDataParser(1)}/>
                 <Timer timesUp={this.opponentTimesUp} ref={this.opponentTimerComponent} minutes={this.gameDataParser(1)}/>

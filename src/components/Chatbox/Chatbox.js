@@ -84,7 +84,7 @@ class MessageBubble extends Component {
         this.state = {
             message: this.props.message,
             timeSent: this.props.timeSent,
-            fromOpponent: this.props.fromOpponent,
+            fromOpponent: Math.random() < 0.5// this.props.fromOpponent,
         }
     }
 

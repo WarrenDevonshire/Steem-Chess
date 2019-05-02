@@ -1,7 +1,6 @@
 .messages-list {
     height:400px;
     width:100%;
-    max-width: 300px;
     border: 2px solid black;
     padding: 5px 0 0 5px;
     overflow: hidden;
@@ -12,7 +11,6 @@
 
 .new-msg{
     position: relative;
-    display:table;
 }
 
 .msg{
@@ -37,15 +35,20 @@
 
 .chatbox-message-mine, .chatbox-message-opponent {
     word-break: break-all;
-    max-width: 100px;
+    max-width: 75%;
+    position: relative;
 }
 
 .chatbox-message-mine {
     text-align: left;
+    margin-right: auto;
+    margin-left: 0;
 }
 
 .chatbox-message-opponent {
     text-align: right;
+    margin-left:auto;
+    margin-right:5px;
 }
 
 .message-content-end {
@@ -54,7 +57,11 @@
 
 #messages-main {
     position: relative;
-    left: 100px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 100px;
+    float: right;
+    margin-right: 20px;
 }
 
 .chatbox-bubble-mine, .chatbox-bubble-opponent {
@@ -64,12 +71,17 @@
     font-size: 0.8em;
     border-radius: 10px;
     width: fit-content;
+    margin-bottom: 3px;
 }
 
 .chatbox-bubble-mine {
     background: green;
+    margin-right: auto;
+    margin-left: 0;
 }
 
 .chatbox-bubble-opponent {
     background: dodgerblue;
+    margin-left:auto;
+    margin-right:0;
 }

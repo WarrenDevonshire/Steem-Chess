@@ -39,9 +39,11 @@
 
 #history-main-div {
     border: 2px solid black;
-    height:400px;
-    width:250px;
-    margin:auto;
+    height: 400px;
+    width: 250px;
+    margin: auto;
+    position: relative;
+    display: table;
 }
 
 .move {
