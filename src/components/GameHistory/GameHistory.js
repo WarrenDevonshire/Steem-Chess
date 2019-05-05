@@ -1,6 +1,19 @@
 import React, { Component } from "react";
 import "./GameHistory.css";
 
+const pieceToUnicode = {
+    "wp": "\u2659",
+    "wn": "\u2658",
+    "wr": "\u2656",
+    "wb": "\u2657",
+    "wq": "\u2655",
+    "bp": "\u265F",
+    "bn": "\u265E",
+    "br": "\u265C",
+    "bb": "\u265D",
+    "bq": "\u265B",
+}
+
 class GameHistory extends Component {
     constructor(props) {
         super(props);
@@ -20,7 +33,7 @@ class GameHistory extends Component {
             this.setState({ blackMoves: [...this.state.blackMoves, [move, time]] });
 
         }
-        console.log("GOT TO ADD MOVE", this.state.history);
+        console.log("GOT TO ADD MOVE",move, this.state.history);
     }
 
     render() {
@@ -75,7 +88,12 @@ class Move extends Component {
 
     getFormattedMove() {
         if (this.state.move == null || this.state.move == undefined) return "";
-        return this.state.move.from + " \u2192 " + this.state.move.to;
+        var returnString = "";
+        if(this.state.move.captured !== undefined) {
+            var opponentColor = this.state.move.color === "w" ? "b" : "w";
+            returnString += pieceToUnicode[opponentColor + this.state.move.captured] + " ";
+        }
+        return returnString += this.state.move.from + " \u2192 " + this.state.move.to;
     }
 
     getFormattedTime() {

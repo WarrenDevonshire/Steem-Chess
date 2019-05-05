@@ -163,7 +163,7 @@ class ChessGame extends PureComponent {
       this.props.gameEnded();
       alert('Stalemate!');
     }
-    if (this.game.in_draw()) {
+    else if (this.game.in_draw()) {
       this.props.gameEnded();
       alert('A Draw!');
     }

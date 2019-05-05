@@ -6,3 +6,19 @@
     border: 1px solid;
     padding: 5px;
 }
+
+.timer-on {
+    background: white;
+}
+
+.timer-blank {
+    background: white;
+}
+
+.timer-paused {
+    background: gold;
+}
+
+.timer-finished {
+    background: crimson;
+}

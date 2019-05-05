@@ -30,6 +30,7 @@ class LiveMatch extends Component {
         this.opponentTimerComponent = React.createRef();
         this.myTimerComponent = React.createRef();
         this.gameHistoryComponent = React.createRef();
+        this.gameFinished = false;
 
         if(this.props.location.gameData != null) {
             this.gameData = this.props.location.gameData;
@@ -46,7 +47,6 @@ class LiveMatch extends Component {
         this.stopTimers = this.stopTimers.bind(this);
         this.gameHasEnded = this.gameHasEnded.bind(this);
     }
-
     componentWillUnmount() {
         if (this.peer !== null && this.peer !== undefined) {
             console.log("Destroying peer", this.peer);
@@ -98,7 +98,7 @@ class LiveMatch extends Component {
             }
             else if (parsedData.type === 'move') {
                 this.chessGameComponent.current.onReceiveMove(parsedData);
-                this.opponentTimerComponent.current.stop();
+                this.opponentTimerComponent.current.pause();
                 this.opponentTimerComponent.current.addTime(this.gameDataParser(2));
                 this.myTimerComponent.current.start();
             }
@@ -110,7 +110,7 @@ class LiveMatch extends Component {
      */
     sendPeerData(data) {
         if(data.type === "move") { //TODO make sure both players agree on timer times, and implement increments
-            this.myTimerComponent.current.stop();
+            this.myTimerComponent.current.pause();
             this.myTimerComponent.current.addTime(this.gameDataParser(2));
             this.opponentTimerComponent.current.start();
         }
@@ -164,6 +164,7 @@ class LiveMatch extends Component {
 
     gameHasEnded(matchData) {
         console.log(this);
+        this.gameFinished = true;
         this.stopTimers();
 
         if(DISABLE_BLOCKCHAIN) return;

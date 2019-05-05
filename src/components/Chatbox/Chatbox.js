@@ -59,13 +59,13 @@ class Chatbox extends Component {
         }
         return (
             <section id="messages-main">
-                <section id="messages-list" class='messages-list'>
+                <section id="messages-list" className='messages-list'>
                     <span>
                         {messageList}
                     </span>
                 </section>
-                <section id="new-message" class='new-msg'>
-                    <textarea ref="draftArea" class='msg'
+                <section id="new-message" className='new-msg'>
+                    <textarea ref="draftArea" className='msg'
                         onChange={e => this.updateDraft(e)}></textarea>
 
                     <button onClick={e => this.sendMessage()} id='Send'>Send</button>

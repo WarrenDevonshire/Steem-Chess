@@ -15,11 +15,11 @@ const client = new dsteem.Client('https://api.steemit.com');
 const maxWaitingTime = 1000 * 60 * 5;
 
 //Blockchain message tags
-const GAME_ID = 'steem-chess'
+const GAME_ID = 'steem-chess-'
 const POST_GAME_TAG = 'post-game'
 const JOIN_TAG = 'request-join';
-const PEER_INIT_TAG = 'join-signal-i';
-const PEER_NOT_INIT_TAG = 'join-signal-ni';
+const PEER_INIT_TAG = 'signal-i';
+const PEER_NOT_INIT_TAG = 'signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
 const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
@@ -44,39 +44,6 @@ class Play extends Component {
         this.findBlockHead = this.findBlockHead.bind(this);
         this.createGameClicked = this.createGameClicked.bind(this);
         this.joinGameClicked = this.joinGameClicked.bind(this);
-
-        //this.test();
-    }
-
-    test() {
-        //Creating my key and key string
-        console.log(RSA);
-        var myRSA = cryptico.generateRSAKey(Math.random().toString(), 1024);
-        var myPublicKey = cryptico.publicKeyString(myRSA);
-        console.log("myRSA", myRSA);
-        console.log("myKeyString", myPublicKey);
-
-        //Creating opponent key and key string
-        //var otherRSA = cryptico.generateRSAKey(Math.random().toString(), 1024);
-        //var otherPublicKey = cryptico.publicKeyString(otherRSA);
-        //console.log("otherRSA", otherRSA);
-        //console.log("otherKeyString", otherPublicKey);
-
-        //Encrypting my message with opponent's key, and vice-versa
-        var myEncrypting = cryptico.encrypt("Why hello there fren", myPublicKey);
-        var myCipher = myEncrypting.cipher;
-        //var otherEncrypting = cryptico.encrypt("Ello chap", otherPublicKey);
-        //var otherCipher = otherEncrypting.cipher;
-        console.log("myEncrypting", myEncrypting);
-        console.log("myCipher", myCipher);
-        //console.log("otherEncrypting", otherEncrypting);
-        //console.log("otherCipher", otherCipher);
-
-        //Decrypting opponent's message with my key, and vice-versa
-        var myDecrypted = RSA.adecrypt(myCipher, myRSA);
-        //var otherDecrypted = otherRSA.decrypt(otherCipher);
-        console.log("myDecrypted", myDecrypted);
-        //console.log("otherDecrypted", otherDecrypted);
     }
 
     generatePersonalKey() {
@@ -445,7 +412,7 @@ class Play extends Component {
         if (DISABLE_BLOCKCHAIN) {
             this.props.history.push({
                 pathname: '/Live',
-                gameData: this.gameData,
+                gameData: this.gameData
             });
             return;
         }
@@ -510,4 +477,4 @@ class Play extends Component {
 
 }
 
-export default Play;
+export default Play
