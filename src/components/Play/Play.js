@@ -22,7 +22,7 @@ const PEER_INIT_TAG = 'signal-i';
 const PEER_NOT_INIT_TAG = 'signal-ni';
 const CLOSE_REQUEST_TAG = 'request-closed';
 
-const DISABLE_BLOCKCHAIN = true;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
+const DISABLE_BLOCKCHAIN = false;//Used for testing purposes. Allows developer to go to chess page without communicating with blockchain
 
 class Play extends Component {
     constructor(props) {
@@ -49,7 +49,6 @@ class Play extends Component {
     generatePersonalKey() {
         this.personalRSA = cryptico.generateRSAKey(Math.random().toString(), 1024);
         this.publicKey = cryptico.publicKeyString(this.personalRSA);
-        console.log("Public key", this.publicKey);
     }
 
     encrypt(message, publicKey)
@@ -59,7 +58,6 @@ class Play extends Component {
             console.error("Tried to encrypt without a key");
             return;
         }
-        console.log("encrypting...", message, publicKey)
         var encrypted = cryptico.encrypt(message.toString(), publicKey);
         if(encrypted.status === "success") return encrypted.cipher;
         console.error("Failed to encrypt message");
@@ -68,7 +66,6 @@ class Play extends Component {
 
     decrypt(message)
     {
-        console.log("decrypting...", message, this.personalRSA);
         var decrypted = RSA.adecrypt(message.toString(), this.personalRSA);
         if(decrypted.status === "success") return decrypted.plaintext;
         console.error("Failed to decrypt message");
@@ -218,7 +215,6 @@ class Play extends Component {
                 }
             }
             if (waitingPlayers.length > 0) {
-                console.log("got eem");
                 return waitingPlayers[0];
             }
         }
@@ -255,6 +251,7 @@ class Play extends Component {
                     }
                     else if (result) {
                         console.log("sent request to existing game", this.gameData);
+                        this.opponentUsername = opponentData.username;
                         this.initializePeer(false);
                         resolve();
                     }
@@ -308,6 +305,7 @@ class Play extends Component {
                 if (this.username === data.username && this.gameData.typeID === data.typeID) {
                     console.log("accepted join block");
                     this.gameData.startingColor = block.data.startingColor;
+                    this.opponentUsername = block.username;
                     this.opponentKey = block.pKey;
                     this.initializePeer(true);
                 }
@@ -412,7 +410,8 @@ class Play extends Component {
         if (DISABLE_BLOCKCHAIN) {
             this.props.history.push({
                 pathname: '/Live',
-                gameData: this.gameData
+                gameData: this.gameData,
+                opponentUsername: this.opponentUsername,
             });
             return;
         }
@@ -454,6 +453,7 @@ class Play extends Component {
             this.props.history.push({
                 pathname: '/Live',
                 gameData: this.gameData,
+                opponentUsername: this.opponentUsername,
             });
             return;
         }

@@ -27,13 +27,10 @@ class GameHistory extends Component {
     addMove(move, time) {
         if (move.color === "w") {
             this.setState({ whiteMoves: [...this.state.whiteMoves, [move, time]] });
-
         }
         else {
             this.setState({ blackMoves: [...this.state.blackMoves, [move, time]] });
-
         }
-        console.log("GOT TO ADD MOVE",move, this.state.history);
     }
 
     render() {

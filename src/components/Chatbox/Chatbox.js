@@ -84,12 +84,11 @@ class MessageBubble extends Component {
         this.state = {
             message: this.props.message,
             timeSent: this.props.timeSent,
-            fromOpponent: Math.random() < 0.5// this.props.fromOpponent,
+            fromOpponent: this.props.fromOpponent,
         }
     }
 
     getFormattedTime(time) {
-        console.log(time);
         var date = new Date(time);
         var hours = date.getHours();
         var minutes = "0" + date.getMinutes();

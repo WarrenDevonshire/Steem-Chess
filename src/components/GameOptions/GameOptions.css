@@ -1,0 +1,17 @@
+.gameOption {
+    width: 30px;
+    height: 20px;
+    align-content: center;
+    display: inline-block;
+    margin: 0px;
+    transition: background-color .2s;
+}
+
+.gameOption:hover {
+    background-color: #4CAF50;
+}
+
+#gameOptionsDiv {
+    display: inline-block;
+    padding: 5px;
+}

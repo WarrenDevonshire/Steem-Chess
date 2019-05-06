@@ -3,7 +3,7 @@ import Chessboard from 'chessboardjsx'
 import Chess from 'chess.js'
 import './ChessGame.css'
 
-const DISABLE_BLOCKCHAIN = true;
+const DISABLE_BLOCKCHAIN = false;
 //var PiecesEnum = Object.freeze({"Black":1, "White":2})
 
 //This component will encapsulate the chessboardjsx ui and the chess.js engine.
@@ -95,7 +95,6 @@ class ChessGame extends PureComponent {
       console.warn("Tried to move a piece while it was the opponent's turn");
       return;
     }
-    console.log("EEEEE", e);
 
     if (!this.isValidMove(e.sourceSquare, e.targetSquare)) {
       console.warn("Tried to move to an invalid square");
@@ -160,15 +159,20 @@ class ChessGame extends PureComponent {
     this.history.push(mostRecentMove);
     console.log(this.game);//TEMP
     if(this.game.in_stalemate()) {
-      this.props.gameEnded();
+      this.props.gameEnded("stalemate");
       alert('Stalemate!');
     }
     else if (this.game.in_draw()) {
-      this.props.gameEnded();
+      this.props.gameEnded("draw");
       alert('A Draw!');
     }
     else if (this.game.in_checkmate()) {
-      this.props.gameEnded();
+      if(this.myTurn) {
+        this.props.gameEnded("checkmate won");
+      }
+      else {
+        this.props.gameEnded("checkmate lost");
+      }
       alert('Checkmate!');
     }
   }
@@ -220,6 +224,10 @@ class ChessGame extends PureComponent {
 
   endGame() {
     this.gameOver = true;
+  }
+
+  getGameHistory() {
+    return this.history;
   }
 
   render() {

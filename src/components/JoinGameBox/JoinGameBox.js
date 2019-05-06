@@ -7,7 +7,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 //import LiveMatch from '../LiveMatch/LiveMatch'
 
-const GAME_ID = 'steem-chess'
+const GAME_ID = 'steem-chess-'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const client = new dsteem.Client('https://api.steemit.com');
@@ -27,8 +27,6 @@ class JoinGameBox extends Component {
 
         this.processor = null;
 
-        this.filterChanged = this.filterChanged.bind(this);
-        this.joinViewChanged = this.joinViewChanged.bind(this);
         this.getFormattedTime = this.getFormattedTime.bind(this);
         this.joinClicked = this.joinClicked.bind(this);
     }
@@ -87,18 +85,7 @@ class JoinGameBox extends Component {
         this.processor.start();
     }
 
-    filterChanged(value) {
-        console.log(value);
-        this.setState({ filterValue: value });
-    }
-
-    //TODO
-    joinViewChanged(e) {
-        console.log(e);
-    }
-
     getFormattedTime(time) {
-        console.log(time);
         var date = new Date(time);
         var hours = date.getHours();
         var minutes = "0" + date.getMinutes();
