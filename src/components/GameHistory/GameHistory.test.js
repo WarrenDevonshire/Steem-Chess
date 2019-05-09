@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Menubar from './Menubar';
+import GameHistory from './GameHistory';
 
 it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<Menubar/>, div);
+    ReactDOM.render(<GameHistory/>, div);
     ReactDOM.unmountComponentAtNode(div);
 });

@@ -1,9 +1,14 @@
-#box{
-    height:80px;
-    width:200px;
+#game-info-box{
+    height:60px;
+    width:100%;
+    max-width: 300px;
+    min-width: 100px;
     display: table;
     position: relative;
-    left:100px;
+    border: 2px solid black;
+    line-height: 60px;
+    float: right;
+    margin-right: 20px;
 }
 
 h4{

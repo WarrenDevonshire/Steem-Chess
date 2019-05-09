@@ -14,6 +14,7 @@ class Timer extends Component {
         this.state = {
             ended: false,
             display: null,
+            timerColor: "timer-paused",
         }
     }
 
@@ -41,6 +42,7 @@ class Timer extends Component {
     }
 
     start(startTime) {
+        this.setState({timerColor:"timer-on"})
         if(isNaN(startTime)) {
             startTime = Date.now();
         }
@@ -56,6 +58,7 @@ class Timer extends Component {
             if (this.on) {
                 if (this.timeLeft <= 0) {
                     this.on = false;
+                    this.setState({timerColor:"timer-finished"});
                     this.props.timesUp();
                 }
                 this.tickLoop();
@@ -63,7 +66,15 @@ class Timer extends Component {
         }, rate);
     }
 
+    pause() {
+        this.setState({timerColor:"timer-paused"});
+        this.on = false;
+    }
+
     stop() {
+        if(this.state.timerColor === "timer-paused") {
+            this.setState({timerColor:"timer-blank"});
+        }
         this.on = false;
     }
 
@@ -87,7 +98,7 @@ class Timer extends Component {
 
     render() {
         return (
-            <div className="current-timer">
+            <div className={"current-timer " + this.state.timerColor}>
                 {this.state.display}
             </div>
         );

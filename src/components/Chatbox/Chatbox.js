@@ -28,7 +28,7 @@ class Chatbox extends Component {
     }
 
     sendMessage() {
-        if(this.isEmptyOrSpaces(this.state.draftedMessage)) return;
+        if (this.isEmptyOrSpaces(this.state.draftedMessage)) return;
 
         this.props.sendData({
             type: "message",
@@ -58,21 +58,19 @@ class Chatbox extends Component {
             )
         }
         return (
-            <div id="container">
-                <section id="main" class='messages'>
-                    <section id="messages-list" class='messages-list'>
-                        <span>
-                            {messageList}
-                        </span>
-                    </section>
-                    <section id="new-message" class='new-msg'>
-                        <textarea ref="draftArea" class='msg'
-                            onChange={e => this.updateDraft(e)}></textarea>
-
-                        <button onClick={e => this.sendMessage()} id='Send'>Send</button>
-                    </section>
+            <section id="messages-main">
+                <section id="messages-list" className='messages-list'>
+                    <span>
+                        {messageList}
+                    </span>
                 </section>
-            </div>
+                <section id="new-message" className='new-msg'>
+                    <textarea ref="draftArea" className='msg'
+                        onChange={e => this.updateDraft(e)}></textarea>
+
+                    <button onClick={e => this.sendMessage()} id='Send'>Send</button>
+                </section>
+            </section>
         );
     }
 }
@@ -91,7 +89,6 @@ class MessageBubble extends Component {
     }
 
     getFormattedTime(time) {
-        console.log(time);
         var date = new Date(time);
         var hours = date.getHours();
         var minutes = "0" + date.getMinutes();
@@ -104,7 +101,9 @@ class MessageBubble extends Component {
         var formattedTime = this.getFormattedTime(this.state.timeSent);
         return (
             <div className={this.state.fromOpponent ? "chatbox-message-opponent" : "chatbox-message-mine"}>
-                <h1>{this.state.message}</h1>
+                <div className={this.state.fromOpponent ? "chatbox-bubble-opponent" : "chatbox-bubble-mine"}>
+                    <h1>{this.state.message}</h1>
+                </div>
                 <h5 className="message-content-end">{formattedTime}</h5>
             </div>
         );
