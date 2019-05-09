@@ -1,64 +1,87 @@
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
-body {
-    font-family: "Press Start 2P";
-}
-
 .messages-list {
     height:400px;
-    width:250px;
+    width:100%;
     border: 2px solid black;
     padding: 5px 0 0 5px;
     overflow: hidden;
     overflow-y: scroll;
     position: relative;
-    top:500px;
-    left:100px;
 }
 
 
 .new-msg{
     position: relative;
-    display:table;
-    top:500px;
-    left:100px;
 }
 
 .msg{
     height: 40px;
-    width: 140px;
+    width: 75%;
     resize: none;
 }
 
 #Send{
     height: 40px;
-    width: 60px;
+    width: 25%;
     position: relative;
     bottom:16px;
 }
 
 #container{
-    bottom: 500px;
     width: 100%;
     display: table;
     position: relative;
     margin:auto;
 }
 
+.chatbox-message-mine, .chatbox-message-opponent {
+    word-break: break-all;
+    max-width: 75%;
+    position: relative;
+}
+
 .chatbox-message-mine {
     text-align: left;
-    margin-left: 10px;
+    margin-right: auto;
+    margin-left: 0;
 }
 
 .chatbox-message-opponent {
     text-align: right;
-    margin-right: 10px;
+    margin-left:auto;
+    margin-right:5px;
 }
 
 .message-content-end {
     margin-bottom: 10px;
+}
+
+#messages-main {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    min-width: 100px;
+    float: right;
+    margin-right: 20px;
+}
+
+.chatbox-bubble-mine, .chatbox-bubble-opponent {
+    color: white;
+    text-align: center;
+    padding: 5px;
+    font-size: 0.8em;
+    border-radius: 10px;
+    width: fit-content;
+    margin-bottom: 3px;
+}
+
+.chatbox-bubble-mine {
+    background: green;
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.chatbox-bubble-opponent {
+    background: dodgerblue;
+    margin-left:auto;
+    margin-right:0;
 }

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import './JoinGameBox.css';
+import '../Play/Play.css';
 //import ComboBox from '../Combo Box/ComboBox'
 //import ToggleSwitch from '../Toggle Switch/ToggleSwitch';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 //import LiveMatch from '../LiveMatch/LiveMatch'
 
-const GAME_ID = 'steem-chess'
+const GAME_ID = 'steem-chess-'
 const dsteem = require('dsteem');
 const steemState = require('steem-state');
 const client = new dsteem.Client('https://api.steemit.com');
@@ -26,8 +27,6 @@ class JoinGameBox extends Component {
 
         this.processor = null;
 
-        this.filterChanged = this.filterChanged.bind(this);
-        this.joinViewChanged = this.joinViewChanged.bind(this);
         this.getFormattedTime = this.getFormattedTime.bind(this);
         this.joinClicked = this.joinClicked.bind(this);
     }
@@ -53,8 +52,10 @@ class JoinGameBox extends Component {
         var maxWaitingTime = 1000 * 60 * 15;//5 minutes
         var headBlockNumber = await this.props.findBlockHead(client);
         this.processor = steemState(client, dsteem, Math.max(0, headBlockNumber - 350), 0, GAME_ID, 'latest');
-        this.processor.on(POST_GAME_TAG, (data) => {
-            console.log("found BLOCK", data);
+        this.processor.on(POST_GAME_TAG, (block) => {
+            console.log("found BLOCK", block);
+            var data = block.data;
+            data.pKey = block.pKey
             //If the request was made less than 5 minutes ago
             if ((Date.now() - data.time) < maxWaitingTime) {
                 var gameIndex = waitingOpponents.indexOf(data.username);
@@ -84,18 +85,7 @@ class JoinGameBox extends Component {
         this.processor.start();
     }
 
-    filterChanged(value) {
-        console.log(value);
-        this.setState({ filterValue: value });
-    }
-
-    //TODO
-    joinViewChanged(e) {
-        console.log(e);
-    }
-
     getFormattedTime(time) {
-        console.log(time);
         var date = new Date(time);
         var hours = date.getHours();
         var minutes = "0" + date.getMinutes();
@@ -123,11 +113,11 @@ class JoinGameBox extends Component {
 
     render() {
         return (
-            <div className='JoinGameBox'>
+            <div className='playBox'>
                 <div>
                     <h1>Join Game</h1>
                 </div>
-                <div>
+                <div id="join-table-div">
                     <ReactTable
                         data={this.state.availableGames}
                         columns={[{
@@ -173,8 +163,7 @@ class JoinGameBox extends Component {
                         className="table"
                         resizable={false} />
                 </div>
-                <hr noshade="true" className='Line' />
-                <button className="Button" onClick={this.joinClicked}>Join Game</button>
+                <button id="join-game-button" className="Button" onClick={this.joinClicked}>Join Game</button>
             </div>
         );
     }
