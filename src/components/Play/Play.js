@@ -66,7 +66,7 @@ class Play extends Component {
 
     decrypt(message)
     {
-        var decrypted = RSA.adecrypt(message.toString(), this.personalRSA);
+        var decrypted = RSA.decrypt(message.toString(), this.personalRSA);
         if(decrypted.status === "success") return decrypted.plaintext;
         console.error("Failed to decrypt message");
         return null;
