@@ -8,7 +8,7 @@ class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: this.props.title ? this.props.title : "Steem Chess",
+            title: this.props.title ? this.props.title : "SteemChess",
             url: 'http://localhost:3000'
         }
     }
