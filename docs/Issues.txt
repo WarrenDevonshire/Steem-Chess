@@ -1,0 +1,4 @@
+- If no games can be found loading screen will persist indefinitely.
+- Search does not work.
+- CSS does not resize properly for different screen sizes.
+- Game result conflicts are not resolved.
