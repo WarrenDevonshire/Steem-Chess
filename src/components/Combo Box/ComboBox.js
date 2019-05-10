@@ -12,7 +12,6 @@ class ComboBox extends Component {
     }
 
     optionClicked(e) {
-        console.log(e.target.value);
         this.setState({valueChosen: e.target.value});
         this.props.onSelectedChanged(e.target.value);
     };

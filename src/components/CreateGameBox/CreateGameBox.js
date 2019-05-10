@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './CreateGameBox.css';
+import '../Play/Play.css';
 //import RadioButtonList from "../Radio Button/RadioButtonList";
 import Slider from '../../shared/components/utils/Slider/Slider'
 import BlackPiece from "../CreateGameBox/Images/rook-black.png";
@@ -58,9 +59,9 @@ class CreateGameBox extends Component {
 
     render() {
         return (
-            <div className='CreateGameBox'>
+            <div className='playBox'>
                 <h1>Create Game</h1>
-                <div className='Box'>
+                <div>
                     <hr noshade="true" className='Line' />
                     <h3 className='Line'>Time Per Side</h3>
                     <Slider min="1"

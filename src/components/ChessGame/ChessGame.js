@@ -95,7 +95,6 @@ class ChessGame extends PureComponent {
       console.warn("Tried to move a piece while it was the opponent's turn");
       return;
     }
-    console.log("EEEEE", e);
 
     if (!this.isValidMove(e.sourceSquare, e.targetSquare)) {
       console.warn("Tried to move to an invalid square");
@@ -154,11 +153,26 @@ class ChessGame extends PureComponent {
       fen: this.game.fen(),
       squareStyles: this.squareStyling(pieceSquare, this.history)
     }));
-    this.history = this.game.history({ verbose: true });
-    if (this.game.in_draw()) {
+    var gameHistory = this.game.history({verbose: true});
+    var mostRecentMove = gameHistory[gameHistory.length-1];
+    this.props.addMoveToHistory(mostRecentMove, Date.now());
+    this.history.push(mostRecentMove);
+    console.log(this.game);//TEMP
+    if(this.game.in_stalemate()) {
+      this.props.gameEnded("stalemate");
+      alert('Stalemate!');
+    }
+    else if (this.game.in_draw()) {
+      this.props.gameEnded("draw");
       alert('A Draw!');
     }
     else if (this.game.in_checkmate()) {
+      if(this.myTurn) {
+        this.props.gameEnded("checkmate won");
+      }
+      else {
+        this.props.gameEnded("checkmate lost");
+      }
       alert('Checkmate!');
     }
   }
@@ -212,21 +226,22 @@ class ChessGame extends PureComponent {
     this.gameOver = true;
   }
 
+  getGameHistory() {
+    return this.history;
+  }
+
   render() {
     const { squareStyles } = this.state;
 
     return (
-      <div id='Chessboard'>
-        <Chessboard width={512}
+        <Chessboard id='chessboard'
           position={this.state.fen}
           onDrop={e => this.onDrop(e)}
           orientation={this.color === "b" ? "black" : "white"}
           onMouseOverSquare={e => this.onMouseOverSquare(e)}
           onMouseOutSquare={e => this.onMouseOutSquare(e)}
           squareStyles={squareStyles}
-          dropSquareStyle={this.dropSquareStyle} 
-          />
-      </div>
+          dropSquareStyle={this.dropSquareStyle} />
     );
   }
 }
