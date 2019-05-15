@@ -1,0 +1,22 @@
+{
+  "main.css": "/Steem-Chess/static/css/main.74948e8f.chunk.css",
+  "main.js": "/Steem-Chess/static/js/main.f694251e.chunk.js",
+  "main.js.map": "/Steem-Chess/static/js/main.f694251e.chunk.js.map",
+  "runtime~main.js": "/Steem-Chess/static/js/runtime~main.214861b4.js",
+  "runtime~main.js.map": "/Steem-Chess/static/js/runtime~main.214861b4.js.map",
+  "static/css/2.c75c92de.chunk.css": "/Steem-Chess/static/css/2.c75c92de.chunk.css",
+  "static/js/2.2ae57648.chunk.js": "/Steem-Chess/static/js/2.2ae57648.chunk.js",
+  "static/js/2.2ae57648.chunk.js.map": "/Steem-Chess/static/js/2.2ae57648.chunk.js.map",
+  "index.html": "/Steem-Chess/index.html",
+  "precache-manifest.082e089e764cf208161c9484883e0925.js": "/Steem-Chess/precache-manifest.082e089e764cf208161c9484883e0925.js",
+  "service-worker.js": "/Steem-Chess/service-worker.js",
+  "static/css/2.c75c92de.chunk.css.map": "/Steem-Chess/static/css/2.c75c92de.chunk.css.map",
+  "static/css/main.74948e8f.chunk.css.map": "/Steem-Chess/static/css/main.74948e8f.chunk.css.map",
+  "static/media/Draw.png": "/Steem-Chess/static/media/Draw.17b6a969.png",
+  "static/media/Resign.png": "/Steem-Chess/static/media/Resign.5997b080.png",
+  "static/media/no-image.png": "/Steem-Chess/static/media/no-image.301ce772.png",
+  "static/media/rook-black.png": "/Steem-Chess/static/media/rook-black.3d52ae77.png",
+  "static/media/rook-mixed.png": "/Steem-Chess/static/media/rook-mixed.f81d7ebe.png",
+  "static/media/rook-white.png": "/Steem-Chess/static/media/rook-white.285f87a2.png",
+  "static/media/spinner.gif": "/Steem-Chess/static/media/spinner.5fe4039b.gif"
+}
